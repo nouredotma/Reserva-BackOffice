@@ -38,7 +38,7 @@ const AnimatedText = ({ className = "" }: { className?: string }) => {
         <h2 className="text-2xl lg:text-2xl font-extrabold text-white mb-4 leading-tight text-left">
           {messages[currentIndex].title}
         </h2>
-        <p className="text-sm lg:text-base text-blue-100 font-medium leading-relaxed text-left">
+        <p className="text-sm lg:text-base text-white/80 font-medium leading-relaxed text-left">
           {messages[currentIndex].subtitle}
         </p>
       </div>
@@ -58,24 +58,6 @@ const AnimatedText = ({ className = "" }: { className?: string }) => {
     </div>
   );
 };
-
-// Feature Pill Component
-const FeaturePill = ({ icon, text }: { icon: string; text: string }) => (
-  <div className="px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-full border border-white/20 flex items-center gap-2 hover:bg-white/15 transition-all duration-300 hover:scale-105 cursor-default shadow-lg">
-    <span className="text-lg">{icon}</span>
-    <span className="text-white font-semibold text-sm">{text}</span>
-  </div>
-);
-
-// Stat Item Component
-const StatItem = ({ number, label }: { number: string; label: string }) => (
-  <div className="text-center group cursor-default">
-    <div className="text-3xl lg:text-4xl font-bold text-white mb-1 group-hover:scale-110 transition-transform duration-300">
-      {number}
-    </div>
-    <div className="text-sm text-blue-100 font-medium">{label}</div>
-  </div>
-);
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -182,101 +164,41 @@ export default function LoginPage() {
 
   const handleModeSwitch = (newMode: 'login' | 'signup') => {
     setMode(newMode);
+    setShowForgotPassword(false);
     setError('');
     setFieldErrors({});
+    router.replace(newMode === 'signup' ? '/login?mode=signup' : '/login', { scroll: false });
   };
 
-  // Simulate redirect if authenticated
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      // In real Next.js app: router.push('/dashboard');
-      console.log('User authenticated, would redirect to /dashboard/rendez-vous');
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('mode') === 'signup') {
+      setMode('signup');
     }
-  }, [isAuthenticated]);
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/dashboard/rendez-vous');
+    }
+  }, [isAuthenticated, router]);
 
   return (
     <>
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-          }
-          50% {
-            transform: translateY(-20px) translateX(10px);
-          }
-        }
-        
-        @keyframes float-delayed {
-          0%, 100% {
-            transform: translateY(0) translateX(0);
-          }
-          50% {
-            transform: translateY(20px) translateX(-10px);
-          }
-        }
-        
-        @keyframes float-slow {
-          0%, 100% {
-            transform: translateY(0) translateX(0) scale(1);
-          }
-          50% {
-            transform: translateY(-15px) translateX(-15px) scale(1.1);
-          }
-        }
-        
-        .animate-float {
-          animation: float 8s ease-in-out infinite;
-        }
-        
-        .animate-float-delayed {
-          animation: float-delayed 10s ease-in-out infinite;
-        }
-        
-        .animate-float-slow {
-          animation: float-slow 12s ease-in-out infinite;
-        }
-      `}</style>
-      
-      <div className="h-screen flex flex-col lg:flex-row overflow-hidden">
-        {/* Left Side - Image Section */}
-        <div className="w-full lg:w-[700px] bg-[#f6f6ef] relative overflow-hidden">
+      <div className="min-h-screen lg:h-screen flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden bg-white">
+        {/* Left Side - Brand Section */}
+        <div className="w-full h-[320px] lg:h-full lg:w-[700px] bg-white relative overflow-hidden">
           {/* left - Full Height */}
           <div className="relative w-full h-full p-4">
-            <div className="w-full h-full rounded-3xl overflow-hidden bg-primary flex flex-col items-center justify-center relative">
-              {/* Background Image */}
-              <img 
-                src="/Images/log2.svg" 
-                alt="Fond de connexion" 
-                className="absolute inset-0 w-full h-full object-cover rounded-3xl z-0" 
-              />
-              
-              {/* Animated Gradient Overlay 
-              <div className="absolute inset-0 bg-gradient-to-br from-[#FFC900]/90 via-[#FFD83D]/80 to-[#FFE680]/70 z-[1]"></div>
-              */}
-              {/* Floating Shapes */}
-              <div className="absolute inset-0 overflow-hidden z-[2]">
-                <div className="absolute top-20 left-10 w-32 h-32 bg-white/5 rounded-full blur-3xl animate-float"></div>
-                <div className="absolute bottom-20 right-10 w-40 h-40 bg-blue-300/10 rounded-full blur-3xl animate-float-delayed"></div>
-                <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-white/5 rounded-full blur-2xl animate-float-slow"></div>
-                <span className="absolute top-10 left-18 -translate-x-1/2 ext-2xl lg:text-5xl text-white select-none pointer-events-none" style={{zIndex:3}}>*</span>
-              </div>
-              
-              <div className="relative h-full flex flex-col items-start justify-center p-0 lg:p-0 z-10">
-                <div className="space-y-8 max-w-lg text-left">
-                  <div className="mb-0 flex flex-col gap-4 -mt-74">
-                    <div>
-                      {/* Removed star from here */}
-                      <h3 className="text-2xl lg:text-5xl text-white font-medium leading-tight text-left">
-                        <span className="inline-block align-middle ml-2">
-                          <img src="/Images/logos/logo-transparent.png" alt="Logo" className="h-6 lg:h-7 w-auto" />
-                        </span>
-                      </h3>
-                    </div>
-                    {/* Dynamic Animated Text - now separated from WELLBE text */}
-                    <div className="-mt-0 pl-0">
-                      <AnimatedText className="text-white w-[380px] lg:w-[620px] min-w-[520px] max-w-full pl-0 lg:pl-2" />
-                    </div>
-                  </div>
+            <div className="w-full h-full rounded-3xl overflow-hidden bg-foreground flex flex-col items-center justify-center relative">
+              <div className="relative h-full w-full flex flex-col items-start justify-between p-8 lg:p-12 z-10">
+                <div className="h-20 w-20 rounded-2xl border border-white/30 bg-white/10 flex items-center justify-center">
+                  <img src="/icon.png" alt="Reserva" className="h-12 w-12 object-contain brightness-0 invert" />
+                </div>
+
+                <div className="space-y-8 max-w-xl text-left">
+                  <AnimatedText className="text-white w-full max-w-[620px] pl-0" />
                 </div>
               </div>
             </div>
@@ -284,7 +206,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="flex-1 bg-[#f6f6ef] flex items-start justify-center p-6 lg:p-12 overflow-y-auto relative">
+        <div className="flex-1 bg-white flex items-start justify-center p-6 lg:p-12 overflow-y-auto relative">
           {loading ? (
             <div className="w-full h-full flex items-center justify-center">
               <LoadingOverlay />
@@ -349,7 +271,7 @@ export default function LoginPage() {
                         placeholder="vous@exemple.com"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
-                        className="w-full px-6 py-3 bg-transparent border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-base font-medium"
+                        className="w-full px-6 py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-base font-medium"
                         autoFocus
                       />
                       {resetError && (
@@ -357,7 +279,7 @@ export default function LoginPage() {
                       )}
                     </div>
 
-                    <div className="bg-transparent border border-gray-200 rounded-2xl p-4 text-left">
+                    <div className="bg-white border border-gray-200 rounded-2xl p-4 text-left">
                       <p className="text-sm text-gray-900 font-semibold mb-2">Prochaines étapes :</p>
                       <ol className="text-sm text-gray-900 space-y-1.5 ml-4 list-decimal">
                         <li>Vérifiez votre boîte de réception</li>
@@ -382,7 +304,7 @@ export default function LoginPage() {
                         textColor="#ffffff"
                         borderColor="#FFC900"
                         hoverTextColor="#000000"
-                        hoverColor="#FCFBF4"
+                        hoverColor="#ffffff"
                         styles={{
                           width: '100%',
                           padding: '12px 24px',
@@ -451,7 +373,7 @@ export default function LoginPage() {
                       placeholder="Jean"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full px-6 py-3 bg-transparent border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-base font-medium"
+                      className="w-full px-6 py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-base font-medium"
                     />
                     {fieldErrors.firstName && (
                       <p className="mt-2 text-sm text-red-500">{fieldErrors.firstName}</p>
@@ -467,7 +389,7 @@ export default function LoginPage() {
                       placeholder="Dupont"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full px-6 py-3 bg-transparent border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-base font-medium"
+                      className="w-full px-6 py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-base font-medium"
                     />
                     {fieldErrors.lastName && (
                       <p className="mt-2 text-sm text-red-500">{fieldErrors.lastName}</p>
@@ -488,7 +410,7 @@ export default function LoginPage() {
                     placeholder="vous@exemple.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-6 py-3 bg-transparent border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-12 text-base font-medium"
+                    className="w-full px-6 py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-12 text-base font-medium"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
                     <Mail size={18} />
@@ -511,7 +433,7 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-6 py-3 bg-transparent border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-12 text-base font-medium"
+                    className="w-full px-6 py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-12 text-base font-medium"
                   />
                   <button
                     type="button"
@@ -540,7 +462,7 @@ export default function LoginPage() {
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full px-6 py-3 bg-transparent border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-12 text-base font-medium"
+                      className="w-full px-6 py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-12 text-base font-medium"
                     />
                     <button
                       type="button"
@@ -572,7 +494,7 @@ export default function LoginPage() {
                       id="keepLoggedIn"
                       checked={keepLoggedIn}
                       onCheckedChange={checked => setKeepLoggedIn(checked === true)}
-                      className="w-5 h-5 ml-1 rounded-full border-2 bg-[#FCFBF4] border-gray-300 text-[#000000] cursor-pointer"
+                      className="w-5 h-5 ml-1 rounded-full border-2 bg-white border-gray-300 text-[#000000] cursor-pointer"
                     />
                     <span className="ml-2 text-sm font-semibold text-gray-700 group-hover:text-gray-900">
                       Rester connecté
@@ -593,7 +515,7 @@ export default function LoginPage() {
                       id="acceptTerms"
                       checked={acceptTerms}
                       onCheckedChange={checked => setAcceptTerms(checked === true)}
-                      className="w-5 h-5 bg-[#f6f6ef] rounded-full border-1 border-gray-300 text-[#000000] cursor-pointer mt-0.5"
+                      className="w-5 h-5 bg-white rounded-full border-1 border-gray-300 text-[#000000] cursor-pointer mt-0.5"
                     />
                     <span className="ml-3 text-sm font-semibold text-gray-700 group-hover:text-gray-900">
                       J&apos;accepte les{' '}
@@ -623,7 +545,7 @@ export default function LoginPage() {
                     textColor="#ffffff"
                     borderColor="#FFC900"
                     hoverTextColor="#0A0A0A"
-                    hoverColor="#FCFBF4"
+                    hoverColor="#ffffff"
                     styles={{
                       width: '100%',
                       padding: '12px 24px',
@@ -665,7 +587,7 @@ export default function LoginPage() {
                   Se connecter avec Google
                 </span>
               }
-              color="#f6f6ef"
+              color="#ffffff"
               textColor="#374151"
               borderColor="#e5e7eb"
               hoverTextColor="#ffffff"

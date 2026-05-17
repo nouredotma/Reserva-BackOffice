@@ -879,7 +879,7 @@ export default function Sidebar() {
 				<div className="p-6 pb-4">
 					<div className="flex items-center justify-between">
 						<h1 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-							<img src="/Images/logos/logo-blue.svg" alt="Logo" className="w-6 h-6 ml-2" />
+							<img src="/icon.png" alt="Reserva" className="w-6 h-6 ml-2 object-contain" />
 
 							Reserva
 						</h1>

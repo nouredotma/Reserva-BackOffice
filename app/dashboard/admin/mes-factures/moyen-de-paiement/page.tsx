@@ -424,7 +424,7 @@ export default function PaymentMethodsPage() {
 
                             {/* Contactless Icon */}
                             <div className="text-white/40">
-                         <img src="/Images/logos/logo-transparent.png" alt="Visa" className="h-6 w-auto object-contain" />
+                         <img src="/icon.png" alt="Reserva" className="h-6 w-auto object-contain brightness-0 invert" />
 
                             </div>
                           </div>
@@ -488,7 +488,7 @@ export default function PaymentMethodsPage() {
                           
                           {/* Bottom Logos */}
                           <div className="flex items-center justify-between mt-8">
-                            <div className="text-white/40 text-xs"> <img src="/Images/logos/logo-transparent.png" alt="Visa" className="h-6 w-auto object-contain" />
+                            <div className="text-white/40 text-xs"> <img src="/icon.png" alt="Reserva" className="h-6 w-auto object-contain brightness-0 invert" />
 </div>
                             <div className="text-white/40 text-xs">Verified by VISA / MASTERCARD</div>
                           </div>

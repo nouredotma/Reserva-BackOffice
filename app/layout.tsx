@@ -16,9 +16,9 @@ export const metadata: Metadata = {
   },
   description: "Back office Reserva pour la gestion des reservations, clients, paiements et operations.",
   icons: {
-    icon: "/Images/logos/logo.png",
-    shortcut: "/Images/logos/logo.png",
-    apple: "/Images/logos/logo.png",
+    icon: "/icon.png",
+    shortcut: "/favicon.ico",
+    apple: "/icon.png",
   },
 };
 

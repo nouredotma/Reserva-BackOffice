@@ -462,7 +462,7 @@ const CaissePDFDocument: React.FC<CaissePrintDocumentProps> = ({
             </View>
             <View style={{ alignItems: 'flex-end' }}>
               <Image 
-                src="/Images/logos/logo.png" 
+                src="/logo.png" 
                 style={[styles.logo, { marginLeft: 12 }]} 
               />
             </View>

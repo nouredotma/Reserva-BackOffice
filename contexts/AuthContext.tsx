@@ -1,11 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState } from 'react';
+import { authenticateMockUser, type MockUser } from '@/lib/mock-auth';
 
-interface User {
-  email: string;
-  name: string;
-}
+type User = MockUser;
 
 interface AuthContextType {
   user: User | null;
@@ -33,15 +31,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   const login = (email: string, password: string): boolean => {
-    // Updated credentials
-    if (email === 'wail@ouz.ma' && password === 'ouz1234') {
-      const userData = { email, name: 'Wail Ouz' };
-      localStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
-      setIsAuthenticated(true);
-      return true;
+    const userData = authenticateMockUser(email, password);
+
+    if (!userData) {
+      return false;
     }
-    return false;
+
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+    setIsAuthenticated(true);
+    return true;
   };
 
   const logout = () => {

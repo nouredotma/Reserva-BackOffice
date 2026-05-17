@@ -5,6 +5,7 @@ import "./CurvySlideButton.css";
 
 export default function CurvySlideButton({
   onClick,
+  type = "button",
   text = "Hover Me!",
   color = "#FFC900",
   textColor = "black",
@@ -14,6 +15,7 @@ export default function CurvySlideButton({
   styles,
 }: {
   onClick?: () => void;
+  type?: "button" | "submit" | "reset";
   text?: string | React.ReactNode;
   color?: string;
   textColor?: string;
@@ -25,6 +27,7 @@ export default function CurvySlideButton({
   return (
     <div className="btn-animated">
       <button
+        type={type}
         onClick={onClick}
         style={{
           ...styles,
