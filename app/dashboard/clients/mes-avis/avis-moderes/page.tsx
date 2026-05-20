@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search, X, Star, MessageSquare, Eye, EyeOff, Reply, Trash2, Share2, ExternalLink, TrendingUp, User, Bubbles } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { sampleApprovedReviews } from '@/lib/mockData';
 
 interface Review {
   id: string;
@@ -30,71 +31,10 @@ export default function AvisModeresPage() {
   const [showUnpublishModal, setShowUnpublishModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [replyText, setReplyText] = useState('');
-
   useEffect(() => {
-    // Always load fresh sample data with employee names
-    const sampleReviews: Review[] = [
-        {
-          id: 'a1',
-          clientName: 'Fatima Zahra El Amrani',
-          clientEmail: 'fatima.zahra@email.com',
-          rating: 5,
-          comment: 'Service exceptionnel ! Équipe très professionnelle et accueillante. Je recommande vivement.',
-          service: 'Coupe et brushing',
-          date: new Date('2024-02-15'),
-          status: 'approved',
-          isPublic: true,
-          views: 124,
-          reply: 'Merci beaucoup pour votre retour ! Nous sommes ravis de vous avoir satisfaite. À bientôt !',
-          replyDate: new Date('2024-02-16'),
-          employeeName: 'Yassine El Fassi',
-        },
-        {
-          id: 'a2',
-          clientName: 'Mohamed Benali',
-          clientEmail: 'mohamed.benali@email.com',
-          rating: 4,
-          comment: 'Très satisfait de ma coupe. Ambiance agréable, bon rapport qualité-prix.',
-          service: 'Coupe homme',
-          date: new Date('2024-02-14'),
-          status: 'approved',
-          isPublic: true,
-          views: 89,
-          employeeName: 'Samira Bouzid',
-        },
-        {
-          id: 'a3',
-          clientName: 'Imane El Idrissi',
-          clientEmail: 'imane.idrissi@email.com',
-          rating: 5,
-          comment: 'Première visite et déjà conquise ! Le personnel est à l\'écoute et très compétent.',
-          service: 'Coloration',
-          date: new Date('2024-02-13'),
-          status: 'approved',
-          isPublic: true,
-          views: 156,
-          reply: 'Nous sommes très heureux de vous compter parmi nos clients ! Merci pour votre confiance.',
-          replyDate: new Date('2024-02-14'),
-          employeeName: 'Khalid Ait Lahcen',
-        },
-        {
-          id: 'a4',
-          clientName: 'Rachid El Mansouri',
-          clientEmail: 'rachid.elmansouri@email.com',
-          rating: 5,
-          comment: 'Excellent service, personnel sympathique et professionnel. Je reviendrai certainement.',
-          service: 'Barbe et coupe',
-          date: new Date('2024-02-10'),
-          status: 'approved',
-          isPublic: false,
-          views: 45,
-          employeeName: 'Nadia El Khatib',
-        },
-      ];
-      localStorage.setItem('approvedReviews', JSON.stringify(sampleReviews));
-      setReviews(sampleReviews);
+    localStorage.setItem('approvedReviews', JSON.stringify(sampleApprovedReviews));
+    setReviews(sampleApprovedReviews);
   }, []);
-
   const filteredReviews = reviews.filter(review => {
     const matchesSearch =
       review.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||

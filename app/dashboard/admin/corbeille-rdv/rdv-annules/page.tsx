@@ -2,63 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { Trash2, Calendar, Download, Printer, Check } from 'lucide-react';
+import { CancelledAppointment, generateSampleCancelledAppointments } from '@/lib/mockData';
 
 export default function CancelledAppointments() {
   const [mounted, setMounted] = useState(false);
+  const [appointments, setAppointments] = useState<CancelledAppointment[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    setAppointments(generateSampleCancelledAppointments(10));
   }, []);
-
-  // Sample data for cancelled appointments
-  // Dates are now within the last 30 days from 12/11/2025
-  const collaboratorNames = [
-    'Yassine El Fassi',
-    'Samira Bouzid',
-    'Khalid Ait Lahcen',
-    'Nadia El Khatib'
-  ];
-  const actualClients = [
-    'Yassine El Bou Fatima',
-    'Mohamed Ben Khadija',
-    'Omar Ait Sara',
-    'Hassan Bou Imane',
-    'Soufiane Al Nadia',
-    'Abdelkader El Amina',
-    'Rachid Ben Samira',
-    'Mehdi Ait Meryem',
-    'Hamza Bou Salma',
-    'Ayoub Al Zineb',
-  ];
-  // Helper to format date
-  function formatDate(date: Date) {
-    return date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-  }
-  // Generate dates within last 30 days from 12/11/2025
-  const baseDate = new Date('2025-11-12T10:00:00');
-  const appointments = Array.from({ length: 10 }).map((_, i) => {
-    const daysAgo = 29 - i * 3;
-    const rdvDate = new Date(baseDate);
-    rdvDate.setDate(baseDate.getDate() - daysAgo);
-    rdvDate.setHours(9 + (i % 8), 0);
-    const creationDate = new Date(rdvDate);
-    creationDate.setDate(rdvDate.getDate() - 1);
-    creationDate.setHours(rdvDate.getHours() - 1, 30);
-    const cancellationDate = new Date(rdvDate);
-    cancellationDate.setHours(rdvDate.getHours() - 1, 45);
-    return {
-      id: i + 1,
-      collaborator: collaboratorNames[i % collaboratorNames.length],
-      date: formatDate(rdvDate),
-      client: actualClients[i % actualClients.length],
-      takenOnline: i % 2 === 0,
-      creationDate: creationDate.toLocaleDateString('fr-FR'),
-      creationTime: creationDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      cancellationDate: cancellationDate.toLocaleDateString('fr-FR'),
-      cancellationTime: cancellationDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      cancelledByClient: i % 2 === 1
-    };
-  });
 
   const exportData = () => {
     const csvContent = [

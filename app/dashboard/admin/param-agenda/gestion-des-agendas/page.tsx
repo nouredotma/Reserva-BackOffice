@@ -6,6 +6,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Sketch } from '@uiw/react-color';
 import { Checkbox } from '@/components/ui/checkbox';
 import DatePickerDemo from '@/components/ui/datepicker';
+import { defaultAgendas, defaultWorkingHours } from '@/lib/mockData';
 
 type WorkingHours = {
   day: string;
@@ -30,15 +31,7 @@ type EmployeeAgenda = {
   status: 'active' | 'inactive' | 'vacation';
 };
 
-const defaultWorkingHours: WorkingHours[] = [
-  { day: 'Lundi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Mardi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Mercredi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Jeudi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Vendredi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Samedi', isWorking: false, startTime: '09:00', endTime: '18:00', breaks: [] },
-  { day: 'Dimanche', isWorking: false, startTime: '09:00', endTime: '18:00', breaks: [] },
-];
+
 
 const GestionDesAgendas = () => {
   const [mounted, setMounted] = useState(false);
@@ -56,65 +49,6 @@ const GestionDesAgendas = () => {
       if (stored) {
         setAgendas(JSON.parse(stored));
       } else {
-        // Default agendas
-        const defaultAgendas: EmployeeAgenda[] = [
-          {
-            id: 1,
-            name: 'Yassine El Fassi',
-            email: 'yassine.fassi@wellbe.com',
-            color: '#3B82F6',
-            role: 'Coiffeur Senior',
-            workingHours: defaultWorkingHours,
-            timeSlotDuration: 30,
-            bufferTime: 5,
-            maxAppointmentsPerDay: 12,
-            allowOnlineBooking: true,
-            services: ['Coupe Homme Classique', 'Coupe + Barbe', 'Coupe Femme + Brushing'],
-            status: 'active'
-          },
-          {
-            id: 2,
-            name: 'Samira Bouzid',
-            email: 'samira.bouzid@wellbe.com',
-            color: '#EC4899',
-            role: 'Coloriste',
-            workingHours: defaultWorkingHours,
-            timeSlotDuration: 45,
-            bufferTime: 10,
-            maxAppointmentsPerDay: 8,
-            allowOnlineBooking: true,
-            services: ['Coloration Complète', 'Mèches Balayage', 'Lissage Brésilien'],
-            status: 'active'
-          },
-          {
-            id: 3,
-            name: 'Khalid Ait Lahcen',
-            email: 'khalid.lahcen@wellbe.com',
-            color: '#8B5CF6',
-            role: 'Barbier',
-            workingHours: defaultWorkingHours,
-            timeSlotDuration: 30,
-            bufferTime: 5,
-            maxAppointmentsPerDay: 15,
-            allowOnlineBooking: true,
-            services: ['Coupe Homme Classique', 'Coupe + Barbe', 'Rasage Traditionnel'],
-            status: 'active'
-          },
-          {
-            id: 4,
-            name: 'Nadia El Khatib',
-            email: 'nadia.khatib@wellbe.com',
-            color: '#10B981',
-            role: 'Esthéticienne',
-            workingHours: defaultWorkingHours,
-            timeSlotDuration: 60,
-            bufferTime: 15,
-            maxAppointmentsPerDay: 6,
-            allowOnlineBooking: true,
-            services: ['Soin du Visage Complet', 'Massage Relaxant Corps Complet', 'Manucure Classique'],
-            status: 'active'
-          }
-        ];
         setAgendas(defaultAgendas);
         localStorage.setItem('employeeAgendas', JSON.stringify(defaultAgendas));
       }

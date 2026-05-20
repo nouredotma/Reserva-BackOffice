@@ -3,27 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Crown, TrendingUp, Calendar, DollarSign, Star, Award, Medal, Trophy, ChevronDown, ChevronUp, Filter, Download, Search, X } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-
-interface Client {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  status?: string;
-  address?: string;
-  totalSpent?: number;
-  totalVisits?: number;
-  averageRating?: number;
-  lastVisit?: Date;
-  lifetimeValue?: number;
-  favoriteService?: string;
-}
-
-interface ClientRanking extends Client {
-  rank: number;
-  growth: number;
-  loyaltyScore: number;
-}
+import { ClientRanking, enrichAndRankClients, generateSampleRankedClients } from '@/lib/mockData';
 
 export default function MeilleursClientsPage() {
   const [clients, setClients] = useState<ClientRanking[]>([]);
@@ -32,60 +12,21 @@ export default function MeilleursClientsPage() {
   const [sortBy, setSortBy] = useState<'spent' | 'visits' | 'rating' | 'loyalty'>('spent');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<'month' | 'quarter' | 'year' | 'all'>('all');
-
   useEffect(() => {
     // Load clients from localStorage
     const storedClients = localStorage.getItem('clients');
     if (storedClients) {
       const parsedClients = JSON.parse(storedClients);
-      
-      // Enrich with ranking data
-      const enrichedClients: ClientRanking[] = parsedClients.map((client: Client, index: number) => ({
-        ...client,
-        rank: index + 1,
-        totalSpent: client.totalSpent || Math.floor(Math.random() * 19500) + 500, // MAD realistic
-        totalVisits: client.totalVisits || Math.floor(Math.random() * 50) + 5,
-        averageRating: client.averageRating || (Math.random() * 2 + 3).toFixed(1),
-        lastVisit: client.lastVisit || new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
-        growth: Math.floor(Math.random() * 60) - 20,
-        loyaltyScore: Math.floor(Math.random() * 40) + 60,
-        favoriteService: client.favoriteService || ['Coiffeur', 'Spa', 'Massage', 'Manucure'][Math.floor(Math.random() * 4)],
-      }));
-
-      // Sort by total spent by default
-      enrichedClients.sort((a, b) => (b.totalSpent || 0) - (a.totalSpent || 0));
-      
-      // Assign ranks
-      enrichedClients.forEach((client, index) => {
-        client.rank = index + 1;
-      });
-
+      const enrichedClients = enrichAndRankClients(parsedClients);
       setClients(enrichedClients);
       setFilteredClients(enrichedClients.slice(0, 100));
     } else {
       // Generate sample data if no clients exist
-      const sampleClients: ClientRanking[] = Array.from({ length: 100 }, (_, i) => ({
-        id: i + 1,
-        name: `Client ${i + 1}`,
-        email: `client${i + 1}@email.com`,
-        phone: `+33 6 ${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
-        status: 'Active',
-        rank: i + 1,
-        totalSpent: Math.floor(Math.random() * 5500) + 500, // MAD realistic, max 6000
-        totalVisits: Math.floor(Math.random() * 50) + 5,
-        averageRating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-        lastVisit: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
-        growth: Math.floor(Math.random() * 60) - 20,
-        loyaltyScore: Math.floor(Math.random() * 40) + 60,
-        favoriteService: ['Coiffeur', 'Spa', 'Massage', 'Manucure'][Math.floor(Math.random() * 4)],
-      }));
-
-      sampleClients.sort((a, b) => (b.totalSpent || 0) - (a.totalSpent || 0));
-      setClients(sampleClients);
-      setFilteredClients(sampleClients);
+      const generatedClients = generateSampleRankedClients(100);
+      setClients(generatedClients);
+      setFilteredClients(generatedClients);
     }
   }, []);
-
   // Search and filter
   useEffect(() => {
     let filtered = [...clients];
@@ -107,7 +48,7 @@ export default function MeilleursClientsPage() {
         filtered.sort((a, b) => (b.totalVisits || 0) - (a.totalVisits || 0));
         break;
       case 'rating':
-        filtered.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+        filtered.sort((a, b) => parseFloat(String(b.averageRating || 0)) - parseFloat(String(a.averageRating || 0)));
         break;
       case 'loyalty':
         filtered.sort((a, b) => (b.loyaltyScore || 0) - (a.loyaltyScore || 0));

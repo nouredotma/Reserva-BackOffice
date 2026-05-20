@@ -5,6 +5,7 @@ import { Calendar, Clock, User, Phone, Mail, X, ChevronLeft, ChevronRight, MoreV
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { sampleAppointments } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import {
@@ -594,12 +595,6 @@ const RendezVousPage = () => {
 
   // Sample appointments data - normalize dates and load from localStorage
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
-    const normalizeDate = (year: number, month: number, day: number) => {
-      const date = new Date(year, month, day);
-      date.setHours(0, 0, 0, 0);
-      return date;
-    };
-    
     // Try to load from localStorage first
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('appointments');
@@ -618,86 +613,7 @@ const RendezVousPage = () => {
     }
     
     // Default appointments if nothing in localStorage
-    return [
-      {
-        id: 1,
-        clientName: 'Fatima Zahra El Amrani',
-        service: 'Consultation',
-        time: '09:00',
-        duration: 60,
-        status: 'confirmed',
-        employee: 'Yassine El Fassi',
-        phone: '+212 6 12 34 56 78',
-        email: 'fatima.zahra@email.com',
-        date: normalizeDate(2025, 10, 10),
-        notes: 'Première consultation'
-      },
-      {
-        id: 2,
-        clientName: 'Mohamed Benali',
-        service: 'Suivi',
-        time: '11:00',
-        duration: 45,
-        status: 'pending',
-        employee: 'Samira Bouzid',
-        phone: '+212 6 98 76 54 32',
-        email: 'mohamed.benali@email.com',
-        date: normalizeDate(2025, 10, 11),
-        notes: ''
-      },
-      {
-        id: 3,
-        clientName: 'Imane El Idrissi',
-        service: 'Thérapie',
-        time: '14:00',
-        duration: 90,
-        status: 'confirmed',
-        employee: 'Khalid Ait Lahcen',
-        phone: '+212 6 11 22 33 44',
-        email: 'imane.idrissi@email.com',
-        date: normalizeDate(2025, 10, 12),
-        notes: 'Session régulière'
-      },
-      {
-        id: 4,
-        clientName: 'Rachid El Mansouri',
-        service: 'Consultation',
-        time: '16:00',
-        duration: 60,
-        status: 'cancelled',
-        employee: 'Nadia El Khatib',
-        phone: '+212 6 55 66 77 88',
-        email: 'rachid.elmansouri@email.com',
-        date: normalizeDate(2025, 10, 13),
-        notes: 'Annulé par le client'
-      },
-      {
-        id: 5,
-        clientName: 'Sara El Baraka',
-        service: 'Massage',
-        time: '10:00',
-        duration: 60,
-        status: 'confirmed',
-        employee: 'Yassine El Fassi',
-        phone: '+212 6 77 88 99 00',
-        email: 'sara.elbaraka@email.com',
-        date: normalizeDate(2025, 10, 14),
-        notes: 'Massage relaxant'
-      },
-      {
-        id: 6,
-        clientName: 'Omar El Haddad',
-        service: 'Manucure',
-        time: '15:00',
-        duration: 45,
-        status: 'pending',
-        employee: 'Samira Bouzid',
-        phone: '+212 6 22 33 44 55',
-        email: 'omar.elhaddad@email.com',
-        date: normalizeDate(2025, 10, 15),
-        notes: 'Première manucure'
-      }
-    ];
+    return sampleAppointments;
   });
 
   // Save appointments to localStorage whenever they change

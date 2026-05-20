@@ -3,29 +3,7 @@
 import { useState, useEffect } from 'react';
 import { UserPlus, Calendar, TrendingUp, Star, Download, Filter, Search, X, ChevronUp, ChevronDown } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-
-const moroccanNames = [
-  'Yassine', 'Fatima', 'Mohamed', 'Khadija', 'Omar', 'Sara', 'Hassan', 'Imane', 'Soufiane', 'Nadia',
-  'Abdelkader', 'Amina', 'Rachid', 'Samira', 'Mehdi', 'Meryem', 'Hamza', 'Salma', 'Ayoub', 'Zineb',
-  'Mustapha', 'Laila', 'Reda', 'Siham', 'Anas', 'Hajar', 'Karim', 'Asmaa', 'Adil', 'Ilham',
-  'Abdelilah', 'Rania', 'Youssef', 'Sofia', 'Abderrahim', 'Nawal', 'Tarik', 'Houda', 'Othmane', 'Ikram',
-  'Abdellah', 'Latifa', 'Walid', 'Aicha', 'Saad', 'Rim', 'Ismail', 'Malika', 'Zakaria', 'Bouchra'
-];
-
-// Add firstVisit to NewClient type
-interface NewClient {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  joinedDate: Date;
-  visits: number;
-  totalSpent: number;
-  rating: number;
-  growth: number;
-  firstVisit: Date;
-  lastVisit?: Date;
-}
+import { NewClient, generateSampleNewClients } from '@/lib/mockData';
 
 export default function NouveauxClientsPage() {
   const [clients, setClients] = useState<NewClient[]>([]);
@@ -36,29 +14,7 @@ export default function NouveauxClientsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<'month' | 'quarter' | 'year' | 'all'>('month');
 
   useEffect(() => {
-    // Generate sample new clients with real Moroccan names
-    const now = Date.now();
-    const sampleClients: NewClient[] = Array.from({ length: 50 }, (_, i) => {
-      const name = moroccanNames[i % moroccanNames.length] + ' ' + ['El', 'Ben', 'Ait', 'Bou', 'Al'][Math.floor(Math.random() * 5)] + ' ' + moroccanNames[(i * 3) % moroccanNames.length];
-      const visits = Math.floor(Math.random() * 5) + 1;
-      const firstVisit = new Date(now - Math.random() * 30 * 24 * 60 * 60 * 1000);
-      // Ensure lastVisit is always after firstVisit
-      const lastVisitOffset = Math.random() * (now - firstVisit.getTime());
-      const lastVisit = new Date(firstVisit.getTime() + lastVisitOffset);
-      return {
-        id: i + 1,
-        name,
-        email: `${name.replace(/\s/g, '').toLowerCase()}@email.com`,
-        phone: `+212 6 ${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
-        joinedDate: new Date(now - Math.random() * 30 * 24 * 60 * 60 * 1000),
-        visits,
-        totalSpent: Math.floor(Math.random() * 2000) + 100,
-        rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-        growth: Math.floor(Math.random() * 40) - 10,
-        firstVisit,
-        lastVisit,
-      };
-    });
+    const sampleClients = generateSampleNewClients(50);
     setClients(sampleClients);
     setFilteredClients(sampleClients);
   }, []);

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TrendingUp, Users, Calendar, DollarSign, Download, Printer, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { sampleCollaborators } from '@/lib/mockData';
 
 export default function AnalyticsDashboard() {
   const [mounted, setMounted] = useState(false);
@@ -25,51 +26,7 @@ export default function AnalyticsDashboard() {
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  // Sample data - Moroccan collaborators with actual colors
-  const collaborators = [
-    {
-      id: 1,
-      name: 'Yassine El Fassi',
-      color: '#3B82F6',
-      totalServices: 52,
-      inSalon: 8,
-      online: 44,
-      onlineRate: 84.6,
-      revenue: 2847.50
-    },
-    {
-      id: 2,
-      name: 'Samira Bouzid',
-      color: '#EC4899',
-      totalServices: 48,
-      inSalon: 12,
-      online: 36,
-      onlineRate: 75.0,
-      revenue: 2615.00
-    },
-    {
-      id: 3,
-      name: 'Khalid Ait Lahcen',
-      color: '#10B981',
-      totalServices: 41,
-      inSalon: 6,
-      online: 35,
-      onlineRate: 85.4,
-      revenue: 2234.80
-    },
-    {
-      id: 4,
-      name: 'Nadia El Khatib',
-      color: '#F59E0B',
-      totalServices: 38,
-      inSalon: 10,
-      online: 28,
-      onlineRate: 73.7,
-      revenue: 2068.40
-    }
-  ];
-
+  const collaborators = sampleCollaborators;
   const totals = {
     totalServices: collaborators.reduce((sum, c) => sum + c.totalServices, 0),
     inSalon: collaborators.reduce((sum, c) => sum + c.inSalon, 0),

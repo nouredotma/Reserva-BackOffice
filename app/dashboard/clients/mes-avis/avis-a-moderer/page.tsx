@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, X, Star, ThumbsUp, ThumbsDown, Mail, Check, AlertCircle, Eye, Grid3x3, List, User, Bubbles } from 'lucide-react';
+import { samplePendingReviews } from '@/lib/mockData';
 
 interface Review {
   id: string;
@@ -35,59 +36,10 @@ export default function AvisAModererPage() {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [actionType, setActionType] = useState<'approve' | 'reject'>('approve');
   const [rejectReason, setRejectReason] = useState('');
-
   useEffect(() => {
-    // Always load fresh sample data with employee names
-    const sampleReviews: Review[] = [
-      {
-        id: '1',
-        clientName: 'Fatima Zahra El Amrani',
-        clientEmail: 'fatima.zahra@email.com',
-        rating: 5,
-        comment: 'Service exceptionnel ! Équipe très professionnelle et accueillante. Je recommande vivement.',
-        service: 'Coupe et brushing',
-        employeeName: 'Yassine El Fassi',
-        date: new Date('2024-02-15'),
-        status: 'pending',
-      },
-      {
-        id: '2',
-        clientName: 'Mohamed Benali',
-        clientEmail: 'mohamed.benali@email.com',
-        rating: 4,
-        comment: 'Très satisfait de ma coupe. Ambiance agréable, bon rapport qualité-prix.',
-        service: 'Coupe homme',
-        employeeName: 'Samira Bouzid',
-        date: new Date('2024-02-14'),
-        status: 'pending',
-      },
-      {
-        id: '3',
-        clientName: 'Imane El Idrissi',
-        clientEmail: 'imane.idrissi@email.com',
-        rating: 5,
-        comment: 'Première visite et déjà conquise ! Le personnel est à l\'écoute et très compétent.',
-        service: 'Coloration',
-        employeeName: 'Khalid Ait Lahcen',
-        date: new Date('2024-02-13'),
-        status: 'pending',
-      },
-      {
-        id: '4',
-        clientName: 'Rachid El Mansouri',
-        clientEmail: 'rachid.elmansouri@email.com',
-        rating: 3,
-        comment: 'Service correct mais temps d\'attente un peu long. Résultat satisfaisant.',
-        service: 'Barbe',
-        employeeName: 'Nadia El Khatib',
-        date: new Date('2024-02-12'),
-        status: 'pending',
-      },
-    ];
-    localStorage.setItem('pendingReviews', JSON.stringify(sampleReviews));
-    setReviews(sampleReviews);
+    localStorage.setItem('pendingReviews', JSON.stringify(samplePendingReviews));
+    setReviews(samplePendingReviews);
   }, []);
-
   const filteredReviews = reviews.filter(review => {
     const matchesSearch =
       review.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||

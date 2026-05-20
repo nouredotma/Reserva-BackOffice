@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { sampleDuplicates } from '@/lib/mockData';
 
 interface DuplicateClient {
   id: string;
@@ -33,74 +34,9 @@ export default function DoublonsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showMergeModal, setShowMergeModal] = useState(false);
   const [selectedDuplicate, setSelectedDuplicate] = useState<DuplicateClient | null>(null);
-
   useEffect(() => {
-    // Simulate fetching duplicates from localStorage or API
-    const sampleDuplicates: DuplicateClient[] = [
-      {
-        id: '1',
-        name: 'Fatima Zahra El Amrani',
-        email: 'fatima.zahra@email.com',
-        phone: '+212 6 12 34 56 78',
-        address: '12 Rue Ibn Khaldoun, Casablanca',
-        status: 'Active',
-        notes: 'Cliente régulière',
-        duplicates: [
-          {
-            id: '4',
-            name: 'F. Z. El Amrani',
-            email: 'fatima.zahra@email.com',
-            phone: '+212 6 12 34 56 78',
-            address: '12 Rue Ibn Khaldoun, Casablanca',
-            status: 'Active',
-            notes: 'Doublon détecté par email et téléphone',
-          },
-        ],
-      },
-      {
-        id: '2',
-        name: 'Mohamed Benali',
-        email: 'mohamed.benali@email.com',
-        phone: '+212 6 98 76 54 32',
-        address: '45 Avenue Hassan II, Rabat',
-        status: 'Active',
-        notes: '',
-        duplicates: [
-          {
-            id: '5',
-            name: 'M. Benali',
-            email: 'mohamed.benali@email.com',
-            phone: '+212 6 98 76 54 32',
-            address: '45 Avenue Hassan II, Rabat',
-            status: 'Active',
-            notes: 'Doublon détecté par nom et email',
-          },
-        ],
-      },
-      {
-        id: '3',
-        name: 'Imane El Idrissi',
-        email: 'imane.idrissi@email.com',
-        phone: '+212 6 11 22 33 44',
-        address: '78 Boulevard Zerktouni, Marrakech',
-        status: 'Inactive',
-        notes: 'N\'a pas répondu aux derniers appels',
-        duplicates: [
-          {
-            id: '6',
-            name: 'I. El Idrissi',
-            email: 'imane.idrissi@email.com',
-            phone: '+212 6 11 22 33 44',
-            address: '78 Boulevard Zerktouni, Marrakech',
-            status: 'Inactive',
-            notes: 'Doublon détecté par téléphone',
-          },
-        ],
-      },
-    ];
     setDuplicates(sampleDuplicates);
   }, []);
-
   const filteredDuplicates = duplicates.filter(dup => {
     const matchesSearch =
       dup.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

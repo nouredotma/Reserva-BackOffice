@@ -5,6 +5,7 @@ import { DollarSign, CreditCard, RefreshCcw, Download, Plus, Search, Filter, Cal
 import { BarChart, Bar, PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { generateCaissePDF } from '@/components/CaissePrintDocument';
+import { sampleTransactions } from '@/lib/mockData';
 
 interface Transaction {
   id: string;
@@ -49,118 +50,7 @@ export default function CaissePage({
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Sample transactions with more data
-    const sample: Transaction[] = [
-      {
-        id: '1',
-        type: 'Vente',
-        amount: 350,
-        method: 'Espèces',
-        client: 'Fatima Zahra El Amrani',
-        employee: 'Yassine El Fassi',
-        date: new Date('2024-06-01T10:15:00'),
-        note: 'Coupe et brushing',
-        category: 'Coiffure'
-      },
-      {
-        id: '2',
-        type: 'Vente',
-        amount: 480,
-        method: 'Carte',
-        client: 'Mohamed Benali',
-        employee: 'Samira Bouzid',
-        date: new Date('2024-06-01T11:30:00'),
-        note: 'Coloration',
-        category: 'Coloration'
-      },
-      {
-        id: '3',
-        type: 'Remboursement',
-        amount: -120,
-        method: 'Espèces',
-        client: 'Imane El Idrissi',
-        employee: 'Khalid Ait Lahcen',
-        date: new Date('2024-06-02T09:45:00'),
-        note: 'Annulation RDV',
-        category: 'Remboursement'
-      },
-      {
-        id: '4',
-        type: 'Dépôt',
-        amount: 1000,
-        method: 'Virement',
-        employee: 'Nadia El Khatib',
-        date: new Date('2024-06-02T14:00:00'),
-        note: 'Dépôt caisse',
-        category: 'Dépôt'
-      },
-      {
-        id: '5',
-        type: 'Retrait',
-        amount: -500,
-        method: 'Chèque',
-        employee: 'Rachid Benjelloun',
-        date: new Date('2024-06-03T16:30:00'),
-        note: 'Retrait pour achat fournitures',
-        category: 'Fournitures'
-      },
-      {
-        id: '6',
-        type: 'Vente',
-        amount: 280,
-        method: 'Carte',
-        client: 'Laila Bennani',
-        employee: 'Yassine El Fassi',
-        date: new Date('2024-06-03T14:20:00'),
-        note: 'Coupe homme',
-        category: 'Coiffure'
-      },
-      {
-        id: '7',
-        type: 'Vente',
-        amount: 650,
-        method: 'Espèces',
-        client: 'Hassan El Khatib',
-        employee: 'Samira Bouzid',
-        date: new Date('2024-06-03T15:45:00'),
-        note: 'Soin capillaire complet',
-        category: 'Soins'
-      },
-      {
-        id: '8',
-        type: 'Vente',
-        amount: 420,
-        method: 'Carte',
-        client: 'Aisha Mansouri',
-        employee: 'Khalid Ait Lahcen',
-        date: new Date('2024-06-04T10:00:00'),
-        note: 'Brushing et coiffure',
-        category: 'Coiffure'
-      },
-      {
-        id: '9',
-        type: 'Vente',
-        amount: 180,
-        method: 'Espèces',
-        client: 'Omar Ziani',
-        employee: 'Nadia El Khatib',
-        date: new Date('2024-06-04T11:30:00'),
-        note: 'Coupe barbe',
-        category: 'Barber'
-      },
-      {
-        id: '10',
-        type: 'Vente',
-        amount: 550,
-        method: 'Virement',
-        client: 'Salma Tazi',
-        employee: 'Rachid Benjelloun',
-        date: new Date('2024-06-04T13:15:00'),
-        note: 'Coloration premium',
-        category: 'Coloration'
-      },
-    ];
-    setTransactions(sample);
+    setTransactions(sampleTransactions);
   }, []);
 
   // Filtering

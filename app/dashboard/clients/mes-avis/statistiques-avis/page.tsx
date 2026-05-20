@@ -3,22 +3,7 @@
 import { useState, useEffect } from 'react';
 import { TrendingUp, Star, MessageSquare, Eye, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-
-interface ReviewStats {
-  totalReviews: number;
-  pendingReviews: number;
-  approvedReviews: number;
-  rejectedReviews: number;
-  averageRating: number;
-  totalViews: number;
-  ratingDistribution: { rating: number; count: number }[];
-  trendsLastMonth: {
-    total: number;
-    approved: number;
-    rejected: number;
-    averageRating: number;
-  };
-}
+import { ReviewStats, sampleReviewPeriodStats, sampleEmployeeReviewStats } from '@/lib/mockData';
 
 export default function StatistiquesAvisPage() {
   const [stats, setStats] = useState<ReviewStats>({
@@ -81,136 +66,10 @@ export default function StatistiquesAvisPage() {
     });
   };
 
-  // Mock data for different periods
-  const mockData = {
-    week: {
-      trendData: [
-        { name: 'Lun', avis: 12, vues: 340 },
-        { name: 'Mar', avis: 19, vues: 520 },
-        { name: 'Mer', avis: 15, vues: 480 },
-        { name: 'Jeu', avis: 22, vues: 650 },
-        { name: 'Ven', avis: 18, vues: 590 },
-        { name: 'Sam', avis: 25, vues: 720 },
-        { name: 'Dim', avis: 20, vues: 610 },
-      ],
-      ratingTrendData: [
-        { month: 'Jan', rating: 4.2 },
-        { month: 'Fév', rating: 4.3 },
-        { month: 'Mar', rating: 4.1 },
-        { month: 'Avr', rating: 4.4 },
-        { month: 'Mai', rating: 4.6 },
-        { month: 'Jun', rating: 4.5 },
-      ],
-      stats: {
-        totalReviews: 50,
-        pendingReviews: 10,
-        approvedReviews: 35,
-        rejectedReviews: 5,
-        averageRating: 4.3,
-        totalViews: 3200,
-        ratingDistribution: [
-          { rating: 5, count: 20 },
-          { rating: 4, count: 15 },
-          { rating: 3, count: 10 },
-          { rating: 2, count: 3 },
-          { rating: 1, count: 2 },
-        ],
-        trendsLastMonth: {
-          total: 12,
-          approved: 8,
-          rejected: 2,
-          averageRating: 4.5,
-        },
-      },
-    },
-    month: {
-      trendData: [
-        { name: 'S1', avis: 60, vues: 1200 },
-        { name: 'S2', avis: 75, vues: 1500 },
-        { name: 'S3', avis: 80, vues: 1700 },
-        { name: 'S4', avis: 90, vues: 2000 },
-      ],
-      ratingTrendData: [
-        { month: 'Jan', rating: 4.1 },
-        { month: 'Fév', rating: 4.2 },
-        { month: 'Mar', rating: 4.3 },
-        { month: 'Avr', rating: 4.4 },
-        { month: 'Mai', rating: 4.5 },
-        { month: 'Jun', rating: 4.6 },
-      ],
-      stats: {
-        totalReviews: 305,
-        pendingReviews: 40,
-        approvedReviews: 240,
-        rejectedReviews: 25,
-        averageRating: 4.4,
-        totalViews: 6400,
-        ratingDistribution: [
-          { rating: 5, count: 120 },
-          { rating: 4, count: 80 },
-          { rating: 3, count: 60 },
-          { rating: 2, count: 30 },
-          { rating: 1, count: 15 },
-        ],
-        trendsLastMonth: {
-          total: 90,
-          approved: 70,
-          rejected: 10,
-          averageRating: 4.4,
-        },
-      },
-    },
-    year: {
-      trendData: [
-        { name: 'Jan', avis: 120, vues: 2400 },
-        { name: 'Fév', avis: 150, vues: 3000 },
-        { name: 'Mar', avis: 170, vues: 3400 },
-        { name: 'Avr', avis: 180, vues: 3600 },
-        { name: 'Mai', avis: 200, vues: 4000 },
-        { name: 'Jun', avis: 210, vues: 4200 },
-        { name: 'Jul', avis: 220, vues: 4400 },
-        { name: 'Aoû', avis: 230, vues: 4600 },
-        { name: 'Sep', avis: 240, vues: 4800 },
-        { name: 'Oct', avis: 250, vues: 5000 },
-        { name: 'Nov', avis: 260, vues: 5200 },
-        { name: 'Déc', avis: 270, vues: 5400 },
-      ],
-      ratingTrendData: [
-        { month: 'Jan', rating: 4.0 },
-        { month: 'Fév', rating: 4.1 },
-        { month: 'Mar', rating: 4.2 },
-        { month: 'Avr', rating: 4.3 },
-        { month: 'Mai', rating: 4.4 },
-        { month: 'Jun', rating: 4.5 },
-      ],
-      stats: {
-        totalReviews: 2500,
-        pendingReviews: 300,
-        approvedReviews: 2000,
-        rejectedReviews: 200,
-        averageRating: 4.2,
-        totalViews: 48000,
-        ratingDistribution: [
-          { rating: 5, count: 900 },
-          { rating: 4, count: 700 },
-          { rating: 3, count: 500 },
-          { rating: 2, count: 250 },
-          { rating: 1, count: 150 },
-        ],
-        trendsLastMonth: {
-          total: 270,
-          approved: 220,
-          rejected: 30,
-          averageRating: 4.3,
-        },
-      },
-    },
-  };
-
   // Use filtered data based on timeFilter
-  const filteredStats = mockData[timeFilter].stats;
-  const trendData = mockData[timeFilter].trendData;
-  const ratingTrendData = mockData[timeFilter].ratingTrendData;
+  const filteredStats = sampleReviewPeriodStats[timeFilter].stats;
+  const trendData = sampleReviewPeriodStats[timeFilter].trendData;
+  const ratingTrendData = sampleReviewPeriodStats[timeFilter].ratingTrendData;
   const distributionData = filteredStats.ratingDistribution
     .sort((a, b) => b.rating - a.rating)
     .map(item => ({
@@ -558,13 +417,7 @@ export default function StatistiquesAvisPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          {[
-            { name: 'Yassine El Fassi', role: 'Coiffeur', reviews: 45, avgRating: 4.8, stars5: 35, stars4: 8, stars3: 2, responses: 42, trend: '+12%' },
-            { name: 'Samira Bouzid', role: 'Manager', reviews: 38, avgRating: 4.6, stars5: 28, stars4: 7, stars3: 3, responses: 35, trend: '+8%' },
-            { name: 'Khalid Ait Lahcen', role: 'Coiffeur', reviews: 52, avgRating: 4.9, stars5: 48, stars4: 3, stars3: 1, responses: 50, trend: '+15%' },
-            { name: 'Nadia El Khatib', role: 'Esthéticienne', reviews: 31, avgRating: 4.5, stars5: 22, stars4: 6, stars3: 3, responses: 28, trend: '+5%' },
-            { name: 'Rachid Benjelloun', role: 'Responsable', reviews: 29, avgRating: 4.7, stars5: 23, stars4: 5, stars3: 1, responses: 27, trend: '+10%' },
-          ].map((employee, index) => (
+          {sampleEmployeeReviewStats.map((employee, index) => (
             <div key={index} className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all">
               <div className="flex items-center justify-between">
                 {/* Employee Info */}

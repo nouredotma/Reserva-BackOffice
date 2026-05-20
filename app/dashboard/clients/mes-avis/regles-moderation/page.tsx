@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, X, Shield, Check, AlertTriangle, Star, MessageSquare, Clock, TrendingUp, ToggleLeft, ToggleRight } from 'lucide-react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { sampleModerationRules } from '@/lib/mockData';
 
 interface ModerationRule {
   id: string;
@@ -38,54 +39,8 @@ export default function ReglesModerationPage() {
       }));
       setRules(parsed);
     } else {
-      const sampleRules: ModerationRule[] = [
-        {
-          id: '1',
-          name: 'Langage inapproprié',
-          description: 'Bloque automatiquement les avis contenant des insultes ou propos offensants',
-          type: 'keyword',
-          condition: 'nul, horrible, arnaque',
-          action: 'auto-reject',
-          isActive: true,
-          createdDate: new Date('2024-01-15'),
-          appliedCount: 12,
-        },
-        {
-          id: '2',
-          name: 'Notes faibles',
-          description: 'Signale les avis avec moins de 3 étoiles pour révision manuelle',
-          type: 'rating',
-          condition: '< 3 étoiles',
-          action: 'flag',
-          isActive: true,
-          createdDate: new Date('2024-01-10'),
-          appliedCount: 28,
-        },
-        {
-          id: '3',
-          name: 'Avis trop courts',
-          description: 'Rejette les commentaires de moins de 10 caractères',
-          type: 'length',
-          condition: '< 10 caractères',
-          action: 'auto-reject',
-          isActive: true,
-          createdDate: new Date('2024-01-05'),
-          appliedCount: 5,
-        },
-        {
-          id: '4',
-          name: 'Validation 5 étoiles',
-          description: 'Approuve automatiquement les excellents avis détaillés',
-          type: 'auto-approve',
-          condition: '5 étoiles + > 50 caractères',
-          action: 'auto-approve',
-          isActive: false,
-          createdDate: new Date('2024-01-20'),
-          appliedCount: 0,
-        },
-      ];
-      localStorage.setItem('moderationRules', JSON.stringify(sampleRules));
-      setRules(sampleRules);
+      localStorage.setItem('moderationRules', JSON.stringify(sampleModerationRules));
+      setRules(sampleModerationRules);
     }
   }, []);
 

@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { sampleClients } from '@/lib/mockData';
 
 interface Appointment {
   id: number;
@@ -116,43 +117,6 @@ export default function ClientsGestionPage() {
         syncClientsWithAppointments(parsedClients);
       }, 0);
     } else {
-      const sampleClients: Client[] = [
-        { 
-          id: '1', 
-          name: 'Fatima Zahra El Amrani', 
-          email: 'fatima.zahra@email.com', 
-          phone: '+212 6 12 34 56 78',
-          address: '12 Rue Ibn Khaldoun, Casablanca',
-          status: 'Active',
-          lastVisit: new Date('2026-01-15'),
-          nextAppointment: new Date('2026-02-20'),
-          totalVisits: 14,
-          notes: 'Cliente fidèle, préfère les rendez-vous du soir'
-        },
-        { 
-          id: '2', 
-          name: 'Mohamed Benali', 
-          email: 'mohamed.benali@email.com', 
-          phone: '+212 6 98 76 54 32',
-          address: '45 Avenue Hassan II, Rabat',
-          status: 'Active',
-          lastVisit: new Date('2026-01-10'),
-          nextAppointment: new Date('2026-02-15'),
-          totalVisits: 9,
-          notes: ''
-        },
-        { 
-          id: '3', 
-          name: 'Imane El Idrissi', 
-          email: 'imane.idrissi@email.com', 
-          phone: '+212 6 11 22 33 44',
-          address: '78 Boulevard Zerktouni, Marrakech',
-          status: 'Inactive',
-          lastVisit: new Date('2025-12-01'),
-          totalVisits: 4,
-          notes: 'N\'a pas répondu aux derniers appels'
-        },
-      ];
       localStorage.setItem('clients', JSON.stringify(sampleClients));
       setTimeout(() => setClients(sampleClients), 0);
     }

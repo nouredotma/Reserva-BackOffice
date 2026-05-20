@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, Trash2, Users, Settings, File, BarChart3, LogOut, Settings2, ChevronRight, LayoutPanelLeft, Search, Calendar, Clock, Filter, UserCheck, Building, TrendingUp, FileText, ChevronDown, Bell, Menu, CreditCard, LifeBuoy, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { employees as mockEmployees } from '@/lib/mockData';
 import { useEffect, useState, useRef } from 'react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 
@@ -28,7 +29,7 @@ const RendezVousSidebar = () => {
 	const [statusFilter, setStatusFilter] = useState('all');
 	const [monthYear, setMonthYear] = useState('');
 
-	const employees = ['Tous', 'Yassine El Fassi', 'Samira Bouzid', 'Khalid Ait Lahcen', 'Nadia El Khatib'];
+	const employees = ['Tous', ...mockEmployees];
 
 	useEffect(() => {
 		setMounted(true);

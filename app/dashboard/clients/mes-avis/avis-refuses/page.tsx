@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search, X, Star, AlertCircle, RotateCcw, Trash2, MessageSquare, Eye, Bubbles, User, Scissors, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { sampleRejectedReviews } from '@/lib/mockData';
 
 interface RejectedReview {
   id: string;
@@ -28,54 +29,10 @@ export default function AvisRefusesPage() {
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState<RejectedReview | null>(null);
-
   useEffect(() => {
-    // Always load fresh sample data with employee names
-    const sampleReviews: RejectedReview[] = [
-      {
-        id: 'r1',
-        clientName: 'Rachid El Mansouri',
-        clientEmail: 'rachid.elmansouri@email.com',
-        rating: 3,
-        comment: "Service correct mais temps d'attente un peu long. Résultat satisfaisant.",
-        service: 'Barbe',
-        employeeName: 'Nadia El Khatib',
-        date: new Date('2024-02-12'),
-        status: 'rejected',
-        rejectReason: "Commentaire négatif sur le temps d'attente",
-        rejectedDate: new Date('2024-02-13'),
-      },
-      {
-        id: 'r2',
-        clientName: 'Samira Bouzid',
-        clientEmail: 'samira.bouzid@email.com',
-        rating: 2,
-        comment: "Déçue par la prestation. Le résultat ne correspond pas à ce qui était demandé.",
-        service: 'Coupe femme',
-        employeeName: 'Yassine El Fassi',
-        date: new Date('2024-02-10'),
-        status: 'rejected',
-        rejectReason: 'Avis trop négatif sans détails constructifs',
-        rejectedDate: new Date('2024-02-11'),
-      },
-      {
-        id: 'r3',
-        clientName: 'Khalid Ait Lahcen',
-        clientEmail: 'khalid.aitlahcen@email.com',
-        rating: 1,
-        comment: 'Très mauvaise expérience, prix exorbitants pour une qualité moyenne.',
-        service: 'Coloration',
-        employeeName: 'Imane El Idrissi',
-        date: new Date('2024-02-08'),
-        status: 'rejected',
-        rejectReason: 'Langage inapproprié et accusations non fondées',
-        rejectedDate: new Date('2024-02-09'),
-      },
-    ];
-    localStorage.setItem('rejectedReviews', JSON.stringify(sampleReviews));
-    setReviews(sampleReviews);
+    localStorage.setItem('rejectedReviews', JSON.stringify(sampleRejectedReviews));
+    setReviews(sampleRejectedReviews);
   }, []);
-
   const filteredReviews = reviews.filter(review => {
     const matchesSearch =
       review.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -3,6 +3,7 @@
 import React, { useState, useRef, use, useEffect } from 'react';
 import { Upload, Image, Trash2, Edit3, Grid, List, Search, Filter, Download, Eye, X, Check, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, MoreVertical, FolderOpen, Star, Calendar, Tag, Crop } from 'lucide-react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { samplePhotos, Photo } from '@/lib/mockData';
 
 const PhotoManagement = () => {
   const [viewMode, setViewMode] = useState('grid');
@@ -11,21 +12,9 @@ const PhotoManagement = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showPhotoViewer, setShowPhotoViewer] = useState(false);
-  const [currentPhoto, setCurrentPhoto] = useState<typeof photos[0] | null>(null);
+  const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
-  type Photo = {
-    id: number;
-    url: string;
-    title: string;
-    status: string;
-    date: Date;
-    category: string;
-    tags: string[];
-    size: string;
-    dimensions: string;
-    rejectionReason?: string;
-  };
   const [photoCrop, setPhotoCrop] = useState<Photo | null>(null);
   const [cropArea, setCropArea] = useState({ x: 10, y: 10, width: 80, height: 80 });
   const [isDragging, setIsDragging] = useState(false);
@@ -34,66 +23,7 @@ const PhotoManagement = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cropImageRef = useRef(null);
   const cropContainerRef = useRef<HTMLDivElement>(null);
-
-  // Sample photos data
-  const [photos, setPhotos] = useState([
-    {
-      id: 1,
-      url: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400',
-      title: 'Manucure élégante',
-      status: 'validated',
-      date: new Date('2025-11-08'),
-      category: 'Manucure',
-      tags: ['rouge', 'élégant'],
-      size: '2.4 MB',
-      dimensions: '1920x1080'
-    },
-    {
-      id: 2,
-      url: 'https://images.unsplash.com/photo-1610992015732-2449b76344bc?w=400',
-      title: 'Manucure pastel',
-      status: 'validated',
-      date: new Date('2025-11-07'),
-      category: 'Manucure',
-      tags: ['bleu', 'pastel'],
-      size: '1.8 MB',
-      dimensions: '1920x1080'
-    },
-    {
-      id: 3,
-      url: 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=400',
-      title: 'Coiffure moderne',
-      status: 'validated',
-      date: new Date('2025-11-06'),
-      category: 'Coiffure',
-      tags: ['moderne', 'professionnel'],
-      size: '3.2 MB',
-      dimensions: '1920x1080'
-    },
-    {
-      id: 4,
-      url: 'https://images.unsplash.com/photo-1522337094846-8a818192de1f?w=400',
-      title: 'Spa relaxant',
-      status: 'validated',
-      date: new Date('2025-11-05'),
-      category: 'Spa',
-      tags: ['relaxation', 'bien-être'],
-      size: '2.9 MB',
-      dimensions: '1920x1080'
-    },
-    {
-      id: 5,
-      url: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-      title: 'Massage thérapeutique',
-      status: 'rejected',
-      date: new Date('2025-11-04'),
-      category: 'Massage',
-      tags: ['thérapie'],
-      size: '2.1 MB',
-      dimensions: '1920x1080',
-      rejectionReason: 'Qualité insuffisante'
-    }
-  ]);
+  const [photos, setPhotos] = useState<Photo[]>(samplePhotos);
 
   const filteredPhotos = photos.filter(photo => {
     const matchesTab = photo.status === selectedTab;

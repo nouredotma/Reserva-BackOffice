@@ -3,19 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, TrendingUp, Users, Download, Filter, Search, X, BarChart2 } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-
-interface ServiceCategory {
-  id: number;
-  name: string;
-  totalVisits: number;
-  maleVisits: number;
-  femaleVisits: number;
-  malePercentage: number;
-  femalePercentage: number;
-  avgDuration: number; // in minutes
-  revenue: number;
-  growth: number;
-}
+import { ServiceCategory, generateSampleServiceCategories } from '@/lib/mockData';
 
 export default function FrequencesGlobalesPage() {
   const [services, setServices] = useState<ServiceCategory[]>([]);
@@ -26,60 +14,10 @@ export default function FrequencesGlobalesPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<'month' | 'quarter' | 'year' | 'all'>('all');
 
   useEffect(() => {
-    // Generate sample service category data
-    const servicesList = [
-      'Coiffure Homme',
-      'Coiffure Femme',
-      'Spa & Bien-être',
-      'Massage Thérapeutique',
-      'Manucure & Pédicure',
-      'Soins du Visage',
-      'Épilation',
-      'Coloration',
-      'Maquillage',
-      'Consultation Beauté',
-      'Soins Capillaires',
-      'Barbier'
-    ];
-    
-    const sampleServices: ServiceCategory[] = servicesList.map((name, i) => {
-      let malePercentage: number;
-      let femalePercentage: number;
-      if (name === 'Coiffure Homme' || name === 'Barbier') {
-        malePercentage = 100;
-        femalePercentage = 0;
-      } else if (
-        name === 'Coiffure Femme' ||
-        name === 'Manucure & Pédicure' ||
-        name === 'Maquillage'
-      ) {
-        malePercentage = 0;
-        femalePercentage = 100;
-      } else {
-        malePercentage = Math.floor(Math.random() * 60) + 20;
-        femalePercentage = 100 - malePercentage;
-      }
-      const totalVisits = Math.floor(Math.random() * 300) + 50;
-      const maleVisits = Math.floor((totalVisits * malePercentage) / 100);
-      const femaleVisits = totalVisits - maleVisits;
-      
-      return {
-        id: i + 1,
-        name,
-        totalVisits,
-        maleVisits,
-        femaleVisits,
-        malePercentage,
-        femalePercentage,
-        avgDuration: Math.floor(Math.random() * 90) + 30,
-        revenue: Math.floor(Math.random() * 50000) + 10000,
-        growth: Math.floor(Math.random() * 50) - 10,
-      };
-    });
+    const sampleServices = generateSampleServiceCategories();
     setServices(sampleServices);
     setFilteredServices(sampleServices);
   }, []);
-
   useEffect(() => {
     let filtered = [...services];
     
