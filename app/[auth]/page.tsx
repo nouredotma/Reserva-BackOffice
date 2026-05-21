@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { Eye, EyeOff, Mail } from 'lucide-react';
 import CurvySlideButton from '@/components/CurvySlideButton';
 import { Checkbox } from "@/components/ui/checkbox";
 import LoadingOverlay from '@/components/LoadingOverlay';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+import { useRouter, notFound } from 'next/navigation';
+import { useAuth } from '@/lib/mock-auth';
 
 // Animated Text Component
 const AnimatedText = ({ className = "" }: { className?: string }) => {
   const messages = [
     { title: "Gestion simplifiée de votre établissement", subtitle: "Pilotez votre activité en toute sérénité et gagnez du temps chaque jour et à long terme." },
-    { title: "Gérez vos rdv de manière efficace", subtitle: "Planifiez, suivez et optimisez vos rendez-vous sans effort en un clin d'œil." },
+    { title: "Gerez vos rdv de manière efficace", subtitle: "Planifiez, suivez et optimisez vos rendez-vous sans effort en un clin d'œil." },
     { title: "Optimisez votre temps et vos ressources", subtitle: "Automatisez les tâches répétitives et concentrez-vous sur ce qui compte vraiment." },
     { title: "Restez organisé à tout moment", subtitle: "Accédez à vos outils où que vous soyez, sur tous vos appareils en toute simplicité." }
   ];
@@ -33,7 +33,7 @@ const AnimatedText = ({ className = "" }: { className?: string }) => {
   }, []);
   
   return (
-    <div className={`min-h-[140px] flex flex-col justify-center text-left pl-2 lg:pl-0 ${className}`}> {/* reduced padding to move left */}
+    <div className={`min-h-[140px] flex flex-col justify-center text-left pl-2 lg:pl-0 ${className}`}>
       <div className={`transition-all duration-500 pr-0 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}> 
         <h2 className="text-2xl lg:text-2xl font-extrabold text-white mb-4 leading-tight text-left">
           {messages[currentIndex].title}
@@ -59,8 +59,20 @@ const AnimatedText = ({ className = "" }: { className?: string }) => {
   );
 };
 
-export default function LoginPage() {
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+type Params = Promise<{ auth: string }>;
+
+export default function AuthPage({ params }: { params: Params }) {
+  const resolvedParams = use(params);
+  const auth = resolvedParams.auth;
+
+  // Validate route parameter
+  if (auth !== 'login' && auth !== 'register') {
+    notFound();
+  }
+
+  // Derive mode from the path
+  const mode = auth === 'login' ? 'login' : 'signup';
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -139,7 +151,6 @@ export default function LoginPage() {
         return;
       }
       alert('Compte créé avec succès! Redirection...');
-      // In real Next.js app: create account and router.push('/dashboard');
     } else {
       // Login validation
       if (!email.trim()) errors.email = 'L\'email est requis';
@@ -163,20 +174,11 @@ export default function LoginPage() {
   };
 
   const handleModeSwitch = (newMode: 'login' | 'signup') => {
-    setMode(newMode);
     setShowForgotPassword(false);
     setError('');
     setFieldErrors({});
-    router.replace(newMode === 'signup' ? '/login?mode=signup' : '/login', { scroll: false });
+    router.replace(newMode === 'signup' ? '/register' : '/login', { scroll: false });
   };
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get('mode') === 'signup') {
-      setMode('signup');
-    }
-  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -201,6 +203,13 @@ export default function LoginPage() {
                   <AnimatedText className="text-white w-full max-w-[620px] pl-0" />
                 </div>
               </div>
+              
+              {/* Decorative background tile */}
+              <img 
+                src="/tile.webp" 
+                alt="" 
+                className="absolute -bottom-20 -right-20 w-[400px] h-auto rotate-12 brightness-0 invert pointer-events-none select-none"
+              />
             </div>
           </div>
         </div>
@@ -214,13 +223,12 @@ export default function LoginPage() {
           ) : (
             <div className="w-full max-w-md pt-4">
             
-
             {/* Header */}
             <div className="mt-4 mb-10">
               <h1 className="text-4xl lg:text-4xl font-extrabold text-[#000000] mb-3">
                 {showForgotPassword ? 'Mot de passe oublié ?' : 'Bienvenue !'}
               </h1>
-              {/* Mode Toggle Links - now left aligned and below the subtitle */}
+              {/* Mode Toggle Links */}
               <div className="mt-2 text-left">
                 {showForgotPassword ? (
                   <p className="text-gray-600 font-medium text-sm">
@@ -558,7 +566,7 @@ export default function LoginPage() {
               </form>
             )}
 
-            {/* Divider and Social Login - Only show when not in forgot password mode */}
+            {/* Divider and Social Login */}
             {!showForgotPassword && (
               <>
                 <div className="flex items-center gap-4 my-8">
