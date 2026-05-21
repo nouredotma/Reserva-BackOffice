@@ -103,7 +103,7 @@ export default function NouveauxClientsPage() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-5xl font-light text-gray-900 tracking-tight">Nouveaux Clients</h1>
+              <h1 className="text-5xl font-light text-gray-900 tracking-tight">Nouveaux clients</h1>
             </div>
             <p className="text-sm text-gray-400">Suivi et analyse des nouveaux clients inscrits</p>
           </div>
@@ -198,7 +198,7 @@ export default function NouveauxClientsPage() {
             </div>
           </div>
           <p className="text-3xl font-light text-gray-900">{totalVisits}</p>
-          <p className="text-xs text-gray-400 mt-1">Rendez-vous cumulés</p>
+          <p className="text-xs text-gray-400 mt-1">Réservations cumulés</p>
         </div>
         <div className="bg-white rounded-lg border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-3">
@@ -231,7 +231,7 @@ export default function NouveauxClientsPage() {
         {filteredClients.map((client) => (
           <div
             key={client.id}
-            className={`rounded-lg border p-5 hover:shadow-lg transition-all bg-white border-gray-100`}
+            className={`rounded-lg border p-5  transition-all bg-white border-gray-100`}
           >
             <div className="flex items-center gap-6">
               {/* Avatar */}

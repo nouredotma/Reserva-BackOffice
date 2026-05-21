@@ -30,28 +30,28 @@ export default function IndicateursPage() {
 
   // Data for different metrics
   const employees = [
-    'Yassine El Fassi',
-    'Samira Bouzid',
-    'Khalid Ait Lahcen',
-    'Nadia El Khatib',
+    'Restaurant floor',
+    'Wellness suites',
+    'Pool & beach',
+    'Concierge desk',
   ];
 
   const services = [
-    'Coupe Homme Classique',
-    'Coupe + Barbe',
-    'Coupe Femme + Brushing',
+    'Table VIP - Le Jardin',
+    'Brunch signature',
+    'Suite deluxe',
     'Coloration Complète',
     'Mèches Balayage',
     'Lissage Brésilien',
-    'Soin du Visage Complet',
-    'Massage Relaxant Corps Complet',
-    'Manucure Classique',
+    'Day pass rooftop pool',
+    'Rituel hammam & massage',
+    'Transfert aéroport premium',
     'Rasage Traditionnel',
-    'Soin Anti-Âge',
+    'Cabine duo spa',
     'Nettoyage de Peau Profond',
     'Pose Vernis Semi-Permanent',
-    'Pédicure Spa',
-    'Massage Dos et Épaules',
+    'Cabana privée',
+    'Demande sur mesure',
     'Hammam + Gommage',
     'Épilation Sourcils',
     'Épilation Jambes Complètes',
@@ -60,32 +60,32 @@ export default function IndicateursPage() {
 
   // Example: distribute values for demo (replace with real stats if available)
   const rdvPrisData = [
-    { name: 'Pris en salon', value: 40, color: '#10b981' },
+    { name: 'Pris en direct', value: 40, color: '#10b981' },
     { name: 'Pris en ligne', value: 60, color: '#d1d5db' },
   ];
 
-  const prestationsSalonData = [
+  const offresDirectData = [
     { name: employees[0], value: 35, color: '#3B82F6' },
     { name: employees[1], value: 25, color: '#EC4899' },
     { name: employees[2], value: 20, color: '#8B5CF6' },
     { name: employees[3], value: 20, color: '#10B981' },
   ]; // total 100
 
-  const prestationsLigneData = [
+  const offresLigneData = [
     { name: employees[0], value: 30, color: '#3B82F6' },
     { name: employees[1], value: 30, color: '#EC4899' },
     { name: employees[2], value: 25, color: '#8B5CF6' },
     { name: employees[3], value: 15, color: '#10B981' },
   ]; // total 100
 
-  const totalPrestationsData = [
+  const totalOffresData = [
     { name: employees[0], value: 32.5, color: '#3B82F6' },
     { name: employees[1], value: 27.5, color: '#EC4899' },
     { name: employees[2], value: 22.5, color: '#8B5CF6' },
     { name: employees[3], value: 17.5, color: '#10B981' },
   ]; // total 100
 
-  const rdvSalonParPrestationData = [
+  const rdvDirectParOffreData = [
     { name: services[0], value: 33, color: '#3B82F6' },
     { name: services[1], value: 25, color: '#EC4899' },
     { name: services[2], value: 17, color: '#8B5CF6' },
@@ -94,7 +94,7 @@ export default function IndicateursPage() {
     { name: services[5], value: 5, color: '#EF4444' },
   ]; // total 100
 
-  const rdvLigneParPrestationData = [
+  const rdvLigneParOffreData = [
     { name: services[0], value: 30, color: '#3B82F6' },
     { name: services[1], value: 20, color: '#EC4899' },
     { name: services[2], value: 18, color: '#8B5CF6' },
@@ -103,7 +103,7 @@ export default function IndicateursPage() {
     { name: services[5], value: 7, color: '#EF4444' },
   ]; // total 100
 
-  const totalRdvParPrestationData = [
+  const totalRdvParOffreData = [
     { name: services[0], value: 31, color: '#3B82F6' },
     { name: services[1], value: 22, color: '#EC4899' },
     { name: services[2], value: 17, color: '#8B5CF6' },
@@ -117,7 +117,7 @@ export default function IndicateursPage() {
     const currentView = getView(chartId);
     
     return (
-      <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all">
+      <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all">
         <div className="mb-4">
           <h3 className="text-sm font-medium text-gray-900 mb-1">{title}</h3>
           {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
@@ -147,7 +147,7 @@ export default function IndicateursPage() {
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         return (
-                          <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-100">
+                          <div className="bg-white px-3 py-2 rounded-lg  border border-gray-100">
                             <p className="text-xs font-medium text-gray-900">{payload[0].name}</p>
                             <p className="text-xs text-gray-500">{payload[0].value}%</p>
                           </div>
@@ -280,7 +280,7 @@ export default function IndicateursPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-5xl font-light text-gray-900 tracking-tight mb-2">Indicateurs</h1>
-            <p className="text-sm text-gray-400">Analyse détaillée des performances par collaborateur</p>
+            <p className="text-sm text-gray-400">Analyse détaillée des performances par ressource</p>
           </div>
           <div className="flex items-center gap-6">
             {/* Date Navigation - same design as vue-ensemble */}
@@ -338,7 +338,7 @@ export default function IndicateursPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Calendar size={18} className="text-gray-400" />
@@ -349,12 +349,12 @@ export default function IndicateursPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Total RDV</p>
+            <p className="text-xs text-gray-400 mb-1">Total réservations</p>
             <p className="text-3xl font-light text-gray-900">165</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Users size={18} className="text-gray-400" />
@@ -365,12 +365,12 @@ export default function IndicateursPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Collaborateurs actifs</p>
+            <p className="text-xs text-gray-400 mb-1">Ressources actifs</p>
             <p className="text-3xl font-light text-gray-900">4</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <BarChart3 size={18} className="text-gray-400" />
@@ -381,12 +381,12 @@ export default function IndicateursPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Prestations</p>
+            <p className="text-xs text-gray-400 mb-1">Offres</p>
             <p className="text-3xl font-light text-gray-900">23</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Clock size={18} className="text-gray-400" />
@@ -407,68 +407,68 @@ export default function IndicateursPage() {
       <div className="grid grid-cols-3 gap-6 mb-6 animate-fadeIn">
         <DonutChart 
           data={rdvPrisData}
-          title="RDV pris"
+          title="réservations pris"
           subtitle="Répartition par canal"
           chartId="rdv-pris"
         />
         <DonutChart 
-          data={prestationsSalonData}
-          title="Nombre de prestations en salon par collaborateur"
+          data={offresDirectData}
+          title="Nombre de offres en direct par ressource"
           subtitle="Distribution par praticien"
-          chartId="prestations-salon"
+          chartId="offres-direct"
         />
         <DonutChart 
-          data={prestationsLigneData}
-          title="Nombre de prestations en ligne par collaborateur"
+          data={offresLigneData}
+          title="Nombre de offres en ligne par ressource"
           subtitle="Réservations en ligne"
-          chartId="prestations-ligne"
+          chartId="offres-ligne"
         />
       </div>
 
       {/* Second Row - 3 Charts */}
       <div className="grid grid-cols-3 gap-6 mb-6 animate-fadeIn">
         <DonutChart 
-          data={totalPrestationsData}
-          title="Nombre total de prestations par collaborateur"
+          data={totalOffresData}
+          title="Nombre total de offres par ressource"
           subtitle="Volume global"
-          chartId="total-prestations"
+          chartId="total-offres"
         />
         <DonutChart 
-          data={rdvSalonParPrestationData}
-          title="Nombre de RDV pris en salon par prestation"
-          subtitle="Services en salon"
-          chartId="rdv-salon-prestation"
+          data={rdvDirectParOffreData}
+          title="Nombre de réservations pris en direct par offre"
+          subtitle="Services en direct"
+          chartId="rdv-direct-offre"
         />
         <DonutChart 
-          data={rdvLigneParPrestationData}
-          title="Nombre de RDV pris en ligne par prestation"
+          data={rdvLigneParOffreData}
+          title="Nombre de réservations pris en ligne par offre"
           subtitle="Services en ligne"
-          chartId="rdv-ligne-prestation"
+          chartId="rdv-ligne-offre"
         />
       </div>
 
       {/* Third Row - 1 Chart */}
       <div className="grid grid-cols-3 gap-6 mb-6 animate-fadeIn">
         <DonutChart 
-          data={totalRdvParPrestationData}
-          title="Nombre total de RDV par prestation"
+          data={totalRdvParOffreData}
+          title="Nombre total de réservations par offre"
           subtitle="Distribution complète des services"
-          chartId="total-rdv-prestation"
+          chartId="total-rdv-offre"
         />
 
         {/* Performance Summary */}
         <div className="col-span-2 bg-white rounded-lg border border-gray-100 p-6">
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-900 mb-1">Performance par collaborateur</h3>
+            <h3 className="text-sm font-medium text-gray-900 mb-1">Performance par ressource</h3>
             <p className="text-xs text-gray-400">Classement du mois</p>
           </div>
 
           <div className="space-y-4">
             {[
-              { name: 'Yassine El Fassi', rdv: 65, prestations: 35, taux: 62, avatar: 'YE' },
-              { name: 'Samira Bouzid', rdv: 55, prestations: 25, taux: 55, avatar: 'SB' },
-              { name: 'Khalid Ait Lahcen', rdv: 45, prestations: 20, taux: 44, avatar: 'KA' },
-              { name: 'Nadia El Khatib', rdv: 35, prestations: 20, taux: 38, avatar: 'NK' },
+              { name: 'Restaurant floor', rdv: 65, offres: 35, taux: 62, avatar: 'YE' },
+              { name: 'Wellness suites', rdv: 55, offres: 25, taux: 55, avatar: 'SB' },
+              { name: 'Pool & beach', rdv: 45, offres: 20, taux: 44, avatar: 'KA' },
+              { name: 'Concierge desk', rdv: 35, offres: 20, taux: 38, avatar: 'NK' },
             ].map((collab, index) => (
               <div 
                 key={index} 
@@ -480,13 +480,13 @@ export default function IndicateursPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">{collab.name}</p>
-                    <p className="text-xs text-gray-400">{collab.prestations} prestations</p>
+                    <p className="text-xs text-gray-400">{collab.offres} offres</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-8">
                   <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-1">RDV</p>
+                    <p className="text-xs text-gray-400 mb-1">réservations</p>
                     <p className="text-lg font-medium text-gray-900">{collab.rdv}</p>
                   </div>
 

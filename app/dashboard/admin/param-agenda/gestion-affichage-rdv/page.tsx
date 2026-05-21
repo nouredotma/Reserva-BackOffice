@@ -16,8 +16,8 @@ const GestionAffichageRDV = () => {
   const [showColorInRDV, setShowColorInRDV] = useState(true);
   const [fields, setFields] = useState<DisplayField[]>([
     { id: 'hours', label: 'Horaires', visible: true, order: 1 },
-    { id: 'clientName', label: 'Nom du client', visible: true, order: 2 },
-    { id: 'services', label: 'Prestation(s)', visible: true, order: 3 },
+    { id: 'clientName', label: 'Nom de l’invité', visible: true, order: 2 },
+    { id: 'services', label: 'Offre(s)', visible: true, order: 3 },
     { id: 'notes', label: 'Titre ou note', visible: true, order: 4 },
   ]);
 
@@ -106,16 +106,16 @@ const GestionAffichageRDV = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 tracking-tight mb-2">
-              Affichage des rendez-vous
+              Affichage des réservations
             </h1>
             <p className="text-sm text-gray-500">
-              Personnalisez l'ordre et la visibilité des informations dans les rendez-vous
+              Personnalisez l’ordre et la visibilité des informations dans les réservations
             </p>
           </div>
           
           <button
             onClick={handleSave}
-            className={`px-5 py-2 text-sm font-medium rounded-full transition-all flex items-center gap-2 shadow-sm ${
+            className={`px-5 py-2 text-sm font-medium rounded-full transition-all flex items-center gap-2  ${
               saved 
                 ? 'bg-emerald-600 text-white hover:bg-emerald-700' 
                 : 'bg-primary text-primary-foreground hover:bg-gray-800'
@@ -144,11 +144,11 @@ const GestionAffichageRDV = () => {
             {/* Color Setting */}
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
               <div className="px-6 py-4 bg-gray-50 border-b border-gray-100">
-                <h3 className="text-sm font-medium text-gray-900">Couleur dans le RDV</h3>
+                <h3 className="text-sm font-medium text-gray-900">Couleur dans la réservation</h3>
               </div>
               <div className="p-6">
                 <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                  Afficher la couleur de l'agenda en arrière-plan du rendez-vous
+                  Afficher la couleur de la ressource en arrière-plan de la réservation
                 </p>
                 <div className="flex items-center gap-6">
                   <label className="flex items-center gap-2 text-gray-700 text-sm">
@@ -247,16 +247,15 @@ const GestionAffichageRDV = () => {
                   {/* AppointmentCard Preview - matches agenda style */}
                   <div
                     className={`rounded-lg p-3 border transition-all ${showColorInRDV ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
-                    style={{ boxShadow: showColorInRDV ? '0 2px 8px rgba(59,130,246,0.08)' : undefined }}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1 min-w-0">
                         {fields.filter(f => f.visible).sort((a, b) => a.order - b.order).map(field => {
                           switch (field.id) {
                             case 'clientName':
-                              return <p key={field.id} className="font-medium truncate break-words w-full">Nom du client</p>;
+                              return <p key={field.id} className="font-medium truncate break-words w-full">Nom de l’invité</p>;
                             case 'services':
-                              return <p key={field.id} className="text-xs opacity-60 truncate break-words w-full mt-0.5">Prestation(s)</p>;
+                              return <p key={field.id} className="text-xs opacity-60 truncate break-words w-full mt-0.5">Offre(s)</p>;
                             case 'notes':
                               return <p key={field.id} className="text-xs opacity-60 truncate break-words w-full mt-0.5">Titre ou note</p>;
                             case 'hours':

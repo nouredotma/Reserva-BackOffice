@@ -209,7 +209,7 @@ export default function AvisRefusesPage() {
           {filteredReviews.map((review) => (
             <div
               key={review.id}
-              className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group"
+              className="bg-white rounded-lg border border-gray-100 p-6  transition-all group"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -424,7 +424,7 @@ export default function AvisRefusesPage() {
       {/* Detail Modal */}
       {showDetailModal && selectedReview && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+          <div className="bg-white rounded-lg  max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
             <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 z-10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -501,7 +501,7 @@ export default function AvisRefusesPage() {
       {/* Restore Modal */}
       {showRestoreModal && selectedReview && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full animate-slideUp">
+          <div className="bg-white rounded-lg  max-w-md w-full animate-slideUp">
             <div className="px-8 py-6">
               <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4">
                 <RotateCcw className="text-blue-600" size={24} />
@@ -534,7 +534,7 @@ export default function AvisRefusesPage() {
       {/* Delete Modal */}
       {showDeleteModal && selectedReview && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full animate-slideUp">
+          <div className="bg-white rounded-lg  max-w-md w-full animate-slideUp">
             <div className="px-8 py-6">
               <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
                 <Trash2 className="text-red-600" size={24} />

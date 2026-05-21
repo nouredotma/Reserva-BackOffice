@@ -151,9 +151,9 @@ const RendezVousSidebar = () => {
 					<div className="flex flex-wrap gap-2">
 						{[
 							{ value: 'all', label: 'Tous', color: 'gray' },
-							{ value: 'confirmed', label: 'ConfirmÃ©', color: 'green' },
+							{ value: 'confirmed', label: 'Confirmé', color: 'green' },
 							{ value: 'pending', label: 'En attente', color: 'yellow' },
-							{ value: 'cancelled', label: 'AnnulÃ©', color: 'red' }
+							{ value: 'cancelled', label: 'Annulé', color: 'red' }
 						].map((status) => (
 							<button
 								key={status.value}
@@ -162,7 +162,7 @@ const RendezVousSidebar = () => {
 									// Dispatch event for the rendez-vous page to listen to
 									window.dispatchEvent(new CustomEvent('statusFilterChange', { detail: status.value }));
 								}}
-								className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 hover:scale-105 ${
+								className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-200 ${
 									statusFilter === status.value
 										? status.color === 'gray'
 											? 'bg-primary text-primary-foreground'
@@ -193,20 +193,20 @@ const ClientsSidebar = () => {
 
 	const menuItems = {
 		fichier: [
-			{ label: 'Gestion', path: '/dashboard/clients/fichier-client/gestion' },
-			{ label: 'Doublons', path: '/dashboard/clients/fichier-client/doublons' }
+			{ label: 'Profils invités', path: '/dashboard/clients/fichier-client/gestion' },
+			{ label: 'Doublons invités', path: '/dashboard/clients/fichier-client/doublons' }
 		],
 		avis: [
-			{ label: 'Avis Ã  modÃ©rer', path: '/dashboard/clients/mes-avis/avis-a-moderer' },
-			{ label: 'Avis modÃ©rÃ©s', path: '/dashboard/clients/mes-avis/avis-moderes' },
-			{ label: 'Avis refusÃ©s', path: '/dashboard/clients/mes-avis/avis-refuses' },
-			{ label: 'RÃ¨gles de modÃ©ration', path: '/dashboard/clients/mes-avis/regles-moderation' },
+			{ label: 'Avis à modérer', path: '/dashboard/clients/mes-avis/avis-a-moderer' },
+			{ label: 'Avis publiés', path: '/dashboard/clients/mes-avis/avis-moderes' },
+			{ label: 'Avis masqués', path: '/dashboard/clients/mes-avis/avis-refuses' },
+			{ label: 'Règles de modération', path: '/dashboard/clients/mes-avis/regles-moderation' },
 			{ label: 'Statistiques avis', path: '/dashboard/clients/mes-avis/statistiques-avis' }
 		],
 		stats: [
-			{ label: '100 meilleurs clients', path: '/dashboard/clients/statistiques/meilleurs-clients' },
-			{ label: 'Nouveaux clients', path: '/dashboard/clients/statistiques/nouveaux-clients' },
-			{ label: 'FrÃ©quences globales', path: '/dashboard/clients/statistiques/frequences-globales' }
+			{ label: 'Meilleurs invités', path: '/dashboard/clients/statistiques/meilleurs-clients' },
+			{ label: 'Nouveaux invités', path: '/dashboard/clients/statistiques/nouveaux-clients' },
+			{ label: 'Fréquences de réservation', path: '/dashboard/clients/statistiques/frequences-globales' }
 		]
 	};
 
@@ -235,7 +235,7 @@ const ClientsSidebar = () => {
 					>
 						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<FileText size={14} />
-							Fichier Client
+							Profils invités
 						</h3>
 						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showFichierClient ? 'rotate-180' : ''}`} />
 					</button>
@@ -293,7 +293,7 @@ const ClientsSidebar = () => {
 					>
 						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<TrendingUp size={14} />
-							Statistiques Clients
+							Statistiques invités
 						</h3>
 						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showStatistiquesClients ? 'rotate-180' : ''}`} />
 					</button>
@@ -330,27 +330,27 @@ const AdminSidebar = () => {
 	const pathname = usePathname();
 
 	const paramAgendaLinks = [
-	    { label: 'Gestion de prestations', path: '/dashboard/admin/param-agenda/gestion-de-prestations' },
-		{ label: 'Gestion des agendas', path: '/dashboard/admin/param-agenda/gestion-des-agendas' },
-		{ label: 'Gestion affichage RDV', path: '/dashboard/admin/param-agenda/gestion-affichage-rdv' },
+	    { label: 'Offres réservables', path: '/dashboard/admin/param-agenda/gestion-de-prestations' },
+		{ label: 'Ressources & capacités', path: '/dashboard/admin/param-agenda/gestion-des-agendas' },
+		{ label: 'Affichage réservations', path: '/dashboard/admin/param-agenda/gestion-affichage-rdv' },
 	];
 
 	const paramEtablissementLinks = [
 		{ label: 'Gestion photos', path: '/dashboard/admin/param-etablissement/gestion-photos' },
-		{ label: 'Descriptif Ã©tablissement', path: '/dashboard/admin/param-etablissement/descriptif-etablissement' },
-		{ label: 'Notifications rdv web', path: '/dashboard/admin/param-etablissement/notifications-rdv-web' },
-		{ label: 'Gestion horaires & dÃ©lais', path: '/dashboard/admin/param-etablissement/gestion-horaires-delais' },
-		{ label: 'Gestion message', path: '/dashboard/admin/param-etablissement/gestion-message' },
-		{ label: 'Gestion liste attente', path: '/dashboard/admin/param-etablissement/gestion-liste-attente' },
+		{ label: 'Descriptif établissement', path: '/dashboard/admin/param-etablissement/descriptif-etablissement' },
+		{ label: 'Notifications réservations', path: '/dashboard/admin/param-etablissement/notifications-rdv-web' },
+		{ label: 'Horaires & délais', path: '/dashboard/admin/param-etablissement/gestion-horaires-delais' },
+		{ label: 'Message établissement', path: '/dashboard/admin/param-etablissement/gestion-message' },
+		{ label: 'Liste d’attente', path: '/dashboard/admin/param-etablissement/gestion-liste-attente' },
 	];
 
 	const statistiquesRDVLinks = [
-	    { label: 'Indicateurs clÃ©s', path: '/dashboard/admin/statistiques-rdv/indicateurs-cles' },
+	    { label: 'Indicateurs clés', path: '/dashboard/admin/statistiques-rdv/indicateurs-cles' },
 	    { label: 'Autres indicateurs', path: '/dashboard/admin/statistiques-rdv/autres' },
-	    { label: 'Prestations', path: '/dashboard/admin/statistiques-rdv/Prestations' },
-	    { label: 'Collaborateurs', path: '/dashboard/admin/statistiques-rdv/collaborateurs' },
-	    { label: 'RDV', path: '/dashboard/admin/statistiques-rdv/rdv' },
-	    { label: 'RDV pas venus', path: '/dashboard/admin/statistiques-rdv/rdv-pas-venus' },
+	    { label: 'Offres', path: '/dashboard/admin/statistiques-rdv/Prestations' },
+	    { label: 'Ressources', path: '/dashboard/admin/statistiques-rdv/collaborateurs' },
+	    { label: 'Réservations', path: '/dashboard/admin/statistiques-rdv/rdv' },
+	    { label: 'No-shows', path: '/dashboard/admin/statistiques-rdv/rdv-pas-venus' },
 	];
 
 	useEffect(() => {
@@ -370,7 +370,7 @@ const AdminSidebar = () => {
 	return (
 		<div className="flex-1 overflow-y-auto p-6">
 			<div className="space-y-6">
-				{/* ParamÃ©trage Agenda */}
+				{/* Paramétrage Agenda */}
 				<div className="space-y-3">
 					<button
 						onClick={() => setShowParamAgenda(!showParamAgenda)}
@@ -378,7 +378,7 @@ const AdminSidebar = () => {
 					>
 						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<Settings2 size={14} />
-							Agenda
+							Offres & agenda
 						</h3>
 						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showParamAgenda ? 'rotate-180' : ''}`} />
 					</button>
@@ -399,7 +399,7 @@ const AdminSidebar = () => {
 					)}
 				</div>
 
-				{/* ParamÃ¨tre Ã‰tablissement */}
+				{/* Paramètre Établissement */}
 				<div className="space-y-3">
 					<button
 						onClick={() => setShowParamEtablissement(!showParamEtablissement)}
@@ -407,7 +407,7 @@ const AdminSidebar = () => {
 					>
 						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<Settings2 size={14} />
-							Ã‰tablissement
+							Établissement
 						</h3>
 						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showParamEtablissement ? 'rotate-180' : ''}`} />
 					</button>
@@ -436,7 +436,7 @@ const AdminSidebar = () => {
 					>
 						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<FileText size={14} />
-							Fiche Client
+							Fiche invité
 						</h3>
 						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showFichClient ? 'rotate-180' : ''}`} />
 					</button>
@@ -446,7 +446,7 @@ const AdminSidebar = () => {
 								href="/dashboard/admin/fiche-clients/gestion-fiche-clients"
 								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/fiche-clients/gestion-fiche-clients' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
 							>
-								Gestion fiche clients
+								Champs fiche invité
 							</Link>
 						</div>
 					)}
@@ -460,7 +460,7 @@ const AdminSidebar = () => {
                     >
                         <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
                             <BarChart3 size={14} />
-                            Statistiques RDV
+                            Statistiques réservations
                         </h3>
                         <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showStatistiquesRDV ? 'rotate-180' : ''}`} />
                     </button>
@@ -479,7 +479,7 @@ const AdminSidebar = () => {
                     )}
                 </div>
 
-                {/* Taux d'occupation Section */}
+                {/* Occupation Section */}
                 <div className="space-y-3">
                     <button
                         onClick={() => setShowTauxOccupation(!showTauxOccupation)}
@@ -487,7 +487,7 @@ const AdminSidebar = () => {
                     >
                         <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
                             <TrendingUp size={14} />
-                            Taux d'occupation
+                            Occupation
                         </h3>
                         <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showTauxOccupation ? 'rotate-180' : ''}`} />
                     </button>
@@ -503,19 +503,19 @@ const AdminSidebar = () => {
                                 href="/dashboard/admin/taux-occupation/collaborateurs"
                                 className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/collaborateurs' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
                             >
-                                Collaborateurs
+                                Ressources
                             </Link>
                             <Link
                                 href="/dashboard/admin/taux-occupation/prestations"
                                 className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/prestations' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
                             >
-                                Prestations
+                                Offres
                             </Link>
                         </div>
                     )}
                 </div>
 
-                {/* Corbeille RDV Section */}
+                {/* Annulations Section */}
                 <div className="space-y-3">
                     <button
                         onClick={() => setShowCorbeilleRDV(!showCorbeilleRDV)}
@@ -523,7 +523,7 @@ const AdminSidebar = () => {
                     >
                         <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
                             <Trash2 size={14} />
-                            Corbeille RDV
+                            Annulations
                         </h3>
                         <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showCorbeilleRDV ? 'rotate-180' : ''}`} />
                     </button>
@@ -533,13 +533,13 @@ const AdminSidebar = () => {
                                 href="/dashboard/admin/corbeille-rdv/rdv-annules"
                                 className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/corbeille-rdv/rdv-annules' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
                             >
-                                RDV annulÃ©s
+                                Réservations annulées
                             </Link>
                         </div>
                     )}
                 </div>
 
-				{/* Mes factures Section */}
+				{/* Facturation Section */}
 				<div className="space-y-3">
 					<button
 						onClick={() => setShowMesFactures && setShowMesFactures((prev: boolean) => !prev)}
@@ -547,7 +547,7 @@ const AdminSidebar = () => {
 					>
 						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<File size={14} />
-							Mes factures
+							Facturation
 						</h3>
 						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showMesFactures ? 'rotate-180' : ''}`} />
 					</button>
@@ -598,17 +598,17 @@ const CaisseSidebar = ({
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-zinc-400 mb-2">MÃ©thode</label>
+              <label className="block text-xs text-zinc-400 mb-2">Méthode</label>
               <Select value={methodFilter} onValueChange={setMethodFilter}>
                 <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
-                  <SelectValue placeholder="SÃ©lectionner la mÃ©thode" />
+                  <SelectValue placeholder="Sélectionner la méthode" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Toutes</SelectItem>
-                  <SelectItem value="EspÃ¨ces">EspÃ¨ces</SelectItem>
+                  <SelectItem value="Espèces">Espèces</SelectItem>
                   <SelectItem value="Carte">Carte</SelectItem>
                   <SelectItem value="Virement">Virement</SelectItem>
-                  <SelectItem value="ChÃ¨que">ChÃ¨que</SelectItem>
+                  <SelectItem value="Chèque">Chèque</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -616,22 +616,22 @@ const CaisseSidebar = ({
               <label className="block text-xs text-zinc-400 mb-2">Type</label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
-                  <SelectValue placeholder="SÃ©lectionner le type" />
+                  <SelectValue placeholder="Sélectionner le type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tous</SelectItem>
                   <SelectItem value="Vente">Vente</SelectItem>
                   <SelectItem value="Remboursement">Remboursement</SelectItem>
-                  <SelectItem value="DÃ©pÃ´t">DÃ©pÃ´t</SelectItem>
+                  <SelectItem value="Dépôt">Dépôt</SelectItem>
                   <SelectItem value="Retrait">Retrait</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-2">PÃ©riode</label>
+              <label className="block text-xs text-zinc-400 mb-2">Période</label>
               <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
                 <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
-                  <SelectValue placeholder="SÃ©lectionner la pÃ©riode" />
+                  <SelectValue placeholder="Sélectionner la période" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="day">Aujourd'hui</SelectItem>
@@ -808,7 +808,7 @@ function DashboardSidebar() {
 							<button
 								onClick={handleLogout}
 								className="p-2.5 rounded-full text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all ml-1"
-								title="Se dÃ©connecter"
+								title="Se déconnecter"
 							>
 								<LogOut size={20} strokeWidth={2} />
 							</button>
@@ -833,7 +833,7 @@ function DashboardSidebar() {
 		<>
 
 
-			<div ref={notificationSidebarRef} className="fixed top-0 right-0 h-screen w-[480px] bg-white shadow-lg z-50 transition-transform duration-300 animate-slideIn flex flex-col">
+			<div ref={notificationSidebarRef} className="fixed top-0 right-0 h-screen w-[480px] bg-white  z-50 transition-transform duration-300 animate-slideIn flex flex-col">
 				{/* Header - Ultra Minimalist */}
 				<div className="px-8 py-8 border-b border-gray-100">
 					<div className="flex items-start justify-between mb-6">
@@ -878,56 +878,56 @@ function DashboardSidebar() {
 								{notificationTab === 'all' && (
 									<>
 										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer">
+										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 													<Calendar size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Nouveau rendez-vous confirmÃ©</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Sarah Martin a confirmÃ© son rendez-vous pour une coupe femme demain Ã  14h30.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Nouvelle réservation confirmée</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Yasmine Alaoui a confirmé une table pour Le Jardin demain à 20h30.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 2 minutes</span>
 												</div>
 											</div>
 										</div>
 										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer">
+										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 													<UserCheck size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Nouvel avis client</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali a laissÃ© un avis 5 Ã©toiles sur votre prestation de soin visage.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Nouvel avis invité</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali a laissé un avis 5 étoiles sur votre expérience VIP.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 15 minutes</span>
 												</div>
 											</div>
 										</div>
 										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer">
+										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 													<Calendar size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Rendez-vous annulÃ©</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi a annulÃ© son rendez-vous prÃ©vu pour aujourd'hui Ã  16h00.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Réservation annulée</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi a annulé son day pass prévu aujourd’hui à 16h00.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 1 heure</span>
 												</div>
 											</div>
 										</div>
 										{/* Read Notification */}
-										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer opacity-60 hover:opacity-100">
+										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer opacity-60 hover:opacity-100">
 											<div className="flex gap-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 													<CreditCard size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Paiement reÃ§u</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Paiement de 450 DH reÃ§u pour la prestation de Fatima Zahra.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Paiement reçu</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Acompte de 450 MAD reçu pour la réservation de Fatima Zahra.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 3 heures</span>
 												</div>
 											</div>
@@ -937,41 +937,41 @@ function DashboardSidebar() {
 								{notificationTab === 'unread' && (
 									<>
 										{/* Only show unread notifications (those with blue dot) */}
-										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer">
+										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 													<Calendar size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Nouveau rendez-vous confirmÃ©</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Sarah Martin a confirmÃ© son rendez-vous pour une coupe femme demain Ã  14h30.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Nouvelle réservation confirmée</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Yasmine Alaoui a confirmé une table pour Le Jardin demain à 20h30.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 2 minutes</span>
 												</div>
 											</div>
 										</div>
-										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer">
+										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 													<UserCheck size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Nouvel avis client</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali a laissÃ© un avis 5 Ã©toiles sur votre prestation de soin visage.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Nouvel avis invité</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali a laissé un avis 5 étoiles sur votre expérience VIP.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 15 minutes</span>
 												</div>
 											</div>
 										</div>
-										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer">
+										<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 													<Calendar size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Rendez-vous annulÃ©</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi a annulÃ© son rendez-vous prÃ©vu pour aujourd'hui Ã  16h00.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Réservation annulée</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi a annulé son day pass prévu aujourd’hui à 16h00.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 1 heure</span>
 												</div>
 											</div>
@@ -986,7 +986,7 @@ function DashboardSidebar() {
 						<div className="px-8 py-6 border-t border-gray-100">
 							<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Hier</p>
 
-							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<TrendingUp size={16} className="text-gray-600" />
@@ -994,33 +994,33 @@ function DashboardSidebar() {
 									<div className="flex-1 min-w-0">
 										<p className="text-sm font-medium text-gray-900 mb-1">Rapport mensuel disponible</p>
 										<p className="text-xs text-gray-500 leading-relaxed mb-2">Votre rapport statistique du mois de novembre est maintenant disponible.</p>
-										<span className="text-xs text-gray-400 font-light">Hier Ã  18:30</span>
+										<span className="text-xs text-gray-400 font-light">Hier à 18:30</span>
 									</div>
 								</div>
 							</div>
 
-							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<Users size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Nouveau client enregistrÃ©</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Karim Alami s'est inscrit via votre plateforme de rÃ©servation en ligne.</p>
-										<span className="text-xs text-gray-400 font-light">Hier Ã  14:15</span>
+										<p className="text-sm font-medium text-gray-900 mb-1">Nouvel invité enregistré</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">Karim Alami a réservé une expérience via Reserva.</p>
+										<span className="text-xs text-gray-400 font-light">Hier à 14:15</span>
 									</div>
 								</div>
 							</div>
 
-							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<Bell size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Rappel de rendez-vous</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">5 rendez-vous prÃ©vus pour demain nÃ©cessitent une confirmation.</p>
-										<span className="text-xs text-gray-400 font-light">Hier Ã  09:00</span>
+										<p className="text-sm font-medium text-gray-900 mb-1">Demandes à confirmer</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">5 réservations demandent une validation avant demain.</p>
+										<span className="text-xs text-gray-400 font-light">Hier à 09:00</span>
 									</div>
 								</div>
 							</div>
@@ -1031,27 +1031,27 @@ function DashboardSidebar() {
 						<div className="px-8 py-6 border-t border-gray-100">
 							<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Cette semaine</p>
 
-							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<FileText size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Nouvelle facture gÃ©nÃ©rÃ©e</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Facture #2024-156 d'un montant de 1,250 DH gÃ©nÃ©rÃ©e automatiquement.</p>
+										<p className="text-sm font-medium text-gray-900 mb-1">Nouveau relevé disponible</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">Le relevé des paiements Reserva a été généré automatiquement.</p>
 										<span className="text-xs text-gray-400 font-light">Il y a 3 jours</span>
 									</div>
 								</div>
 							</div>
 
-							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200 hover:shadow-sm transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<Building size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Mise Ã  jour systÃ¨me</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Nouvelles fonctionnalitÃ©s disponibles dans la section Admin.</p>
+										<p className="text-sm font-medium text-gray-900 mb-1">Mise à jour système</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">Nouvelles options disponibles dans la section Admin.</p>
 										<span className="text-xs text-gray-400 font-light">Il y a 5 jours</span>
 									</div>
 								</div>

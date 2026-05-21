@@ -5,7 +5,7 @@ import { Calendar, Clock, User, Phone, Mail, X, ChevronLeft, ChevronRight, MoreV
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { sampleAppointments, defaultAgendas } from '@/lib/mockData';
+import { sampleAppointments, defaultAgendas, sampleBookableServices, sampleClients } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import {
@@ -49,6 +49,8 @@ type Client = {
   address?: string;
 };
 
+const legacyAppointmentPattern = /Consultation|Suivi|Thérapie|Manucure|Coiffeur|Massage|Samira|Khalid|Yassine|Nadia El Khatib|2025/;
+
 interface NewAppointmentModalProps {
   onClose: () => void;
   onCreateAppointment: (appointment: Appointment) => void;
@@ -83,7 +85,14 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
     try {
       if (typeof window === 'undefined') return [];
       const stored = localStorage.getItem('clients');
-      return stored ? (JSON.parse(stored) as Client[]) : [];
+      return stored ? (JSON.parse(stored) as Client[]) : sampleClients.map(client => ({
+        id: Number(client.id),
+        name: client.name,
+        email: client.email,
+        phone: client.phone,
+        status: client.status,
+        address: client.address
+      }));
     } catch {
       return [];
     }
@@ -120,7 +129,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
     }
 
     if (!selectedClient && !isNewClient) {
-      alert('Veuillez sélectionner ou créer un client');
+      alert('Veuillez sélectionner ou créer un invité');
       return;
     }
 
@@ -159,11 +168,11 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
   return (
   <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-    <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+    <div className="bg-white rounded-lg  max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 z-40">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-light text-gray-900">Nouveau rendez-vous</h2>
+          <h2 className="text-2xl font-light text-gray-900">Nouvelle réservation</h2>
           <button 
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
@@ -174,13 +183,13 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
       </div>
       
       <div className="px-8 py-6 space-y-8">
-        {/* Client Info */}
+        {/* Guest Info */}
         <div className="space-y-4">
-          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Client</h3>
+          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Invité</h3>
           
-          {/* Client Search/Select */}
+          {/* Guest Search/Select */}
           <div className="space-y-2">
-            <Label htmlFor="clientSearch">Rechercher un client</Label>
+            <Label htmlFor="clientSearch">Rechercher un invité</Label>
             <div className="relative">
               <Input 
                 id="clientSearch"
@@ -193,7 +202,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
               
               {/* Dropdown with filtered clients */}
               {clientSearch && !selectedClient && (
-                <div className="absolute z-30 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-30 w-full mt-1 bg-white border border-gray-200 rounded-lg  max-h-60 overflow-y-auto">
                   {filteredClients.length > 0 ? (
                     <div className="py-2">
                       {filteredClients.map((client) => (
@@ -224,14 +233,14 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                     </div>
                   ) : (
                     <div className="px-4 py-6 text-center">
-                      <p className="text-sm text-gray-500 mb-3">Aucun client trouvé</p>
+                      <p className="text-sm text-gray-500 mb-3">Aucun invité trouvé</p>
                       <button
                         type="button"
-                        onClick={() => window.location.href = '/dashboard/clients/gestion'}
+                        onClick={() => window.location.href = '/dashboard/clients/fichier-client/gestion'}
                         className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-medium rounded-full hover:bg-gray-800 transition-colors"
                       >
                         <Plus size={14} />
-                        Ajouter un nouveau client
+                        Ajouter un invité
                       </button>
                     </div>
                   )}
@@ -240,7 +249,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
             </div>
           </div>
 
-          {/* Show selected client info or manual entry */}
+          {/* Show selected guest info or manual entry */}
           {selectedClient ? (
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div className="flex items-start justify-between mb-3">
@@ -318,20 +327,15 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
           {/* Service */}
           <div className="space-y-2">
-            <Label htmlFor="service">Service</Label>
+            <Label htmlFor="service">Offre</Label>
             <Select value={service} onValueChange={setService}>
               <SelectTrigger id="service" className="rounded-full px-4 py-2 mt-2">
-                <SelectValue placeholder="Sélectionner un service" />
+                <SelectValue placeholder="Sélectionner une offre" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Coiffeur">Coiffeur</SelectItem>
-                <SelectItem value="Spa">Spa</SelectItem>
-                <SelectItem value="Massage">Massage</SelectItem>
-                <SelectItem value="Manucure">Manucure</SelectItem>
-                <SelectItem value="Soins du visage">Soins du visage</SelectItem>
-                <SelectItem value="Consultation">Consultation</SelectItem>
-                <SelectItem value="Suivi">Suivi</SelectItem>
-                <SelectItem value="Thérapie">Thérapie</SelectItem>
+                {sampleBookableServices.map((option) => (
+                  <SelectItem key={option.id} value={option.name}>{option.name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -384,18 +388,22 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                   <SelectItem value="60">60 min</SelectItem>
                   <SelectItem value="90">90 min</SelectItem>
                   <SelectItem value="120">120 min</SelectItem>
+                  <SelectItem value="150">150 min</SelectItem>
+                  <SelectItem value="180">180 min</SelectItem>
+                  <SelectItem value="240">240 min</SelectItem>
+                  <SelectItem value="360">360 min</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
         </div>
 
-        {/* Employee */}
+        {/* Resource */}
         <div className="space-y-4">
-          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Praticien</h3>
+          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Ressource</h3>
           <Select value={employee} onValueChange={setEmployee}>
             <SelectTrigger className="rounded-full px-4 py-2 border-gray-200 focus:ring-2 focus:ring-gray-900">
-              <SelectValue placeholder="Sélectionner un praticien" />
+              <SelectValue placeholder="Sélectionner une ressource" />
             </SelectTrigger>
             <SelectContent>
               {collaborators.map(collab => (
@@ -432,7 +440,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
           onClick={handleCreate}
           className="flex-1 px-6 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
         >
-          Créer
+          Créer la réservation
         </button>
       </div>
     </div>
@@ -496,7 +504,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
     <div
       draggable
       onDragStart={(e) => onDragStart && onDragStart(e, apt)}
-      className={`${getStatusBg(apt.status)} rounded-lg p-3 cursor-move hover:shadow-md transition-all border ${
+      className={`${getStatusBg(apt.status)} rounded-lg p-3 cursor-move  transition-all border ${
         isCompact ? 'text-xs' : 'text-sm'
       }`}
       style={showColorInRDV ? getLightColorStyle(color) : {}}
@@ -612,6 +620,9 @@ const RendezVousPage = () => {
       const stored = localStorage.getItem('appointments');
       if (stored) {
         try {
+          if (legacyAppointmentPattern.test(stored)) {
+            return sampleAppointments;
+          }
           const parsed = JSON.parse(stored) as Array<Omit<Appointment, 'date'> & { date: string }>;
           // Convert date strings back to Date objects
           return parsed.map(apt => ({
@@ -727,87 +738,11 @@ const RendezVousPage = () => {
   };
 
   useEffect(() => {
-    // Ensure sample appointments exist in localStorage without deleting user's data
     if (typeof window === 'undefined') return;
     const stored = localStorage.getItem('appointments');
-    if (!stored) {
-      const moroccanAppointments = [
-        {
-          id: 1,
-          clientName: 'Fatima Zahra El Amrani',
-          service: 'Consultation',
-          time: '09:00',
-          phone: '+212 6 98 76 54 32',
-          email: 'mohamed.benali@email.com',
-          date: new Date(2025, 10, 11),
-          notes: ''
-        },
-        {
-          id: 2,
-          clientName: 'Mohamed Benali',
-          service: 'Suivi',
-          time: '11:00',
-          duration: 45,
-          status: 'pending',
-          employee: 'Samira Bouzid',
-          phone: '+212 6 98 76 54 32',
-          email: 'mohamed.benali@email.com',
-          date: new Date(2025, 10, 11),
-          notes: ''
-        },
-        {
-          id: 3,
-          clientName: 'Imane El Idrissi',
-          service: 'Thérapie',
-          time: '14:00',
-          duration: 90,
-          status: 'confirmed',
-          employee: 'Khalid Ait Lahcen',
-          phone: '+212 6 11 22 33 44',
-          email: 'imane.idrissi@email.com',
-          date: new Date(2025, 10, 12),
-          notes: 'Session régulière'
-        },
-        {
-          id: 4,
-          clientName: 'Rachid El Mansouri',
-          service: 'Consultation',
-          time: '16:00',
-          duration: 60,
-          status: 'cancelled',
-          employee: 'Nadia El Khatib',
-          phone: '+212 6 55 66 77 88',
-          email: 'rachid.elmansouri@email.com',
-          date: new Date(2025, 10, 13),
-          notes: 'Annulé par le client'
-        },
-        {
-          id: 5,
-          clientName: 'Sara El Baraka',
-          service: 'Massage',
-          time: '10:00',
-          status: 'confirmed',
-          employee: 'Yassine El Fassi',
-          phone: '+212 6 77 88 99 00',
-          email: 'sara.elbaraka@email.com',
-          date: new Date(2025, 10, 14),
-          notes: 'Massage relaxant'
-        },
-        {
-          id: 6,
-          clientName: 'Omar El Haddad',
-          service: 'Manucure',
-          time: '15:00',
-          duration: 45,
-          status: 'pending',
-          employee: 'Samira Bouzid',
-          phone: '+212 6 22 33 44 55',
-          email: 'omar.elhaddad@email.com',
-          date: new Date(2025, 10, 15),
-          notes: 'Première manucure'
-        }
-      ];
-      localStorage.setItem('appointments', JSON.stringify(moroccanAppointments));
+    if (!stored || legacyAppointmentPattern.test(stored)) {
+      setAppointments(sampleAppointments);
+      localStorage.setItem('appointments', JSON.stringify(sampleAppointments));
     }
   }, []);
 
@@ -951,7 +886,7 @@ const RendezVousPage = () => {
               onClick={() => setShowNewRDV(true)}
               className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
             >
-              Nouveau
+              Nouvelle
               <Plus size={16} className="inline-block ml-2 -mt-0.5" />
             </button>
           </div>
@@ -961,7 +896,7 @@ const RendezVousPage = () => {
       {/* Calendar Views */}
       <div key={refreshKey} className=" overflow-hidden animate-fadeIn">
         {view === 'week' && (
-          <div className="overflow-x-auto bg-white rounded-lg border border-gray-100 shadow-sm">
+          <div className="overflow-x-auto bg-white rounded-lg border border-gray-100 ">
             <div className="min-w-[1000px]">
               {/* Header */}
               <div className="grid grid-cols-8 border-b border-gray-100">
@@ -1015,17 +950,6 @@ const RendezVousPage = () => {
                           const matches = aptDate.getTime() === compareDate.getTime() && 
                             apt.time === time &&
                             (filterStatus === 'all' || apt.status === filterStatus);
-                          
-                          // Debug logging for this specific time slot
-                          if (time === '09:00' && date.getDate() === 11) {
-                            console.log(`Week filter - ${time} on ${date.getDate()}:`, {
-                              aptName: apt.clientName,
-                              aptTime: apt.time,
-                              aptDate: aptDate.getTime(),
-                              compareDate: compareDate.getTime(),
-                              matches
-                            });
-                          }
                           
                           return matches;
                         })
@@ -1085,18 +1009,6 @@ const RendezVousPage = () => {
                           apt.time === time &&
                           (filterStatus === 'all' || apt.status === filterStatus);
                         
-                        // Debug logging
-                        if (time === '09:00') {
-                          console.log(`Day filter - ${time}:`, {
-                            aptName: apt.clientName,
-                            aptTime: apt.time,
-                            aptDate: aptDate.getTime(),
-                            compareDate: compareDate.getTime(),
-                            currentDate: currentDate.toString(),
-                            matches
-                          });
-                        }
-                        
                         return matches;
                       })
                       .map(apt => {
@@ -1122,7 +1034,7 @@ const RendezVousPage = () => {
         )}
 
         {view === 'month' && (
-          <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-lg border border-gray-100  overflow-hidden">
             {/* Month Header */}
             <div className="grid grid-cols-7 border-b border-gray-100">
               {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
@@ -1165,7 +1077,7 @@ const RendezVousPage = () => {
                   >
                     <button
                       onClick={() => setShowNewRDV(true)}
-                      className="absolute bottom-2 right-2 w-5 h-5 rounded-md bg-white border border-gray-200 text-gray-400 hover:bg-gray-50 hover:text-gray-600 hover:border-gray-300 flex items-center justify-center opacity-0 group-hover/date:opacity-100 transition-all z-20 shadow-sm"
+                      className="absolute bottom-2 right-2 w-5 h-5 rounded-md bg-white border border-gray-200 text-gray-400 hover:bg-gray-50 hover:text-gray-600 hover:border-gray-300 flex items-center justify-center opacity-0 group-hover/date:opacity-100 transition-all z-20 "
                     >
                       <Plus size={12} />
                     </button>
@@ -1250,27 +1162,11 @@ const RendezVousPage = () => {
         <NewAppointmentModal 
           onClose={() => setShowNewRDV(false)} 
           onCreateAppointment={(newAppointment) => {
-            console.log('=== Creating New Appointment ===');
-            console.log('Raw appointment:', newAppointment);
-            console.log('Date object:', newAppointment.date);
-            console.log('Date ISO:', newAppointment.date.toISOString());
-            console.log('Date toString:', newAppointment.date.toString());
-            console.log('Date getTime:', newAppointment.date.getTime());
-            
-            // Log all existing appointments for comparison
-            console.log('=== Existing Appointments ===');
-            appointments.forEach(apt => {
-              console.log(`${apt.clientName}: ${apt.date.toISOString()} (${apt.date.getTime()})`);
-            });
-            
             const updatedAppointments = [...appointments, newAppointment];
             setAppointments(updatedAppointments);
             
             // Force refresh
             setRefreshKey(prev => prev + 1);
-            
-            console.log('=== Updated Appointments ===');
-            console.log('Total appointments:', updatedAppointments.length);
           }}
         />
       )}

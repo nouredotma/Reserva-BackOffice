@@ -1,6 +1,20 @@
-// Centralized mock and sample data for wellbe/reserva application
+// Centralized sample data for the Reserva establishment back office.
 
-// --- Types & Interfaces ---
+const now = new Date();
+
+const daysFromNow = (days: number, hour = 10, minute = 0) => {
+  const date = new Date(now);
+  date.setDate(now.getDate() + days);
+  date.setHours(hour, minute, 0, 0);
+  return date;
+};
+
+const daysAgo = (days: number, hour = 10, minute = 0) => {
+  const date = new Date(now);
+  date.setDate(now.getDate() - days);
+  date.setHours(hour, minute, 0, 0);
+  return date;
+};
 
 export interface Transaction {
   id: string;
@@ -177,6 +191,7 @@ export interface Photo {
   dimensions: string;
   rejectionReason?: string;
 }
+
 export interface ReviewStats {
   totalReviews: number;
   pendingReviews: number;
@@ -250,736 +265,834 @@ export interface CancelledAppointment {
   cancelledByClient: boolean;
 }
 
-// --- Data Arrays ---
+export interface BookableServiceFixture {
+  id: number;
+  name: string;
+  abbreviation: string;
+  description: string;
+  color: string;
+  price: number;
+  priceType: 'fixed' | 'from' | 'range';
+  priceFrom?: number;
+  priceTo?: number;
+  onQuote: boolean;
+  duration: number;
+  category: string;
+  visibility: 'bookable' | 'visible' | 'hidden';
+  competences: string[];
+  multipleProviders: boolean;
+}
 
 export const sampleTransactions: Transaction[] = [
   {
-    id: '1',
+    id: 'TX-1001',
     type: 'Vente',
-    amount: 350,
-    method: 'Espèces',
-    client: 'Fatima Zahra El Amrani',
-    employee: 'Yassine El Fassi',
-    date: new Date('2024-06-01T10:15:00'),
-    note: 'Coupe et brushing',
-    category: 'Coiffure'
-  },
-  {
-    id: '2',
-    type: 'Vente',
-    amount: 480,
+    amount: 450,
     method: 'Carte',
-    client: 'Mohamed Benali',
-    employee: 'Samira Bouzid',
-    date: new Date('2024-06-01T11:30:00'),
-    note: 'Coloration',
-    category: 'Coloration'
+    client: 'Yasmine Alaoui',
+    employee: 'Restaurant floor',
+    date: daysAgo(0, 12, 12),
+    note: 'Acompte réservation table VIP',
+    category: 'Réservation'
   },
   {
-    id: '3',
-    type: 'Remboursement',
-    amount: -120,
-    method: 'Espèces',
-    client: 'Imane El Idrissi',
-    employee: 'Khalid Ait Lahcen',
-    date: new Date('2024-06-02T09:45:00'),
-    note: 'Annulation RDV',
-    category: 'Remboursement'
+    id: 'TX-1002',
+    type: 'Vente',
+    amount: 1650,
+    method: 'Virement',
+    client: 'Karim Alami',
+    employee: 'Rooms & stays',
+    date: daysAgo(1, 17, 40),
+    note: 'Suite deluxe, première nuit',
+    category: 'Hébergement'
   },
   {
-    id: '4',
+    id: 'TX-1003',
     type: 'Dépôt',
-    amount: 1000,
-    method: 'Virement',
-    employee: 'Nadia El Khatib',
-    date: new Date('2024-06-02T14:00:00'),
-    note: 'Dépôt caisse',
-    category: 'Dépôt'
+    amount: 900,
+    method: 'Carte',
+    client: 'Fatima Zahra',
+    employee: 'Wellness suites',
+    date: daysAgo(2, 15, 5),
+    note: 'Préautorisation rituel spa',
+    category: 'Bien-être'
   },
   {
-    id: '5',
+    id: 'TX-1004',
+    type: 'Remboursement',
+    amount: 300,
+    method: 'Carte',
+    client: 'Leila Tazi',
+    employee: 'Pool & beach',
+    date: daysAgo(3, 10, 30),
+    note: 'Annulation day pass dans le délai autorisé',
+    category: 'Day pass'
+  },
+  {
+    id: 'TX-1005',
+    type: 'Vente',
+    amount: 2400,
+    method: 'Virement',
+    client: 'Ahmed Benali',
+    employee: 'Events desk',
+    date: daysAgo(4, 18, 20),
+    note: 'Pack table événement et billets',
+    category: 'Événement'
+  },
+  {
+    id: 'TX-1006',
     type: 'Retrait',
-    amount: -500,
-    method: 'Chèque',
-    employee: 'Rachid Benjelloun',
-    date: new Date('2024-06-03T16:30:00'),
-    note: 'Retrait pour achat fournitures',
-    category: 'Fournitures'
-  },
-  {
-    id: '6',
-    type: 'Vente',
-    amount: 280,
-    method: 'Carte',
-    client: 'Laila Bennani',
-    employee: 'Yassine El Fassi',
-    date: new Date('2024-06-03T14:20:00'),
-    note: 'Coupe homme',
-    category: 'Coiffure'
-  },
-  {
-    id: '7',
-    type: 'Vente',
-    amount: 650,
+    amount: 700,
     method: 'Espèces',
-    client: 'Hassan El Khatib',
-    employee: 'Samira Bouzid',
-    date: new Date('2024-06-03T15:45:00'),
-    note: 'Soin capillaire complet',
-    category: 'Soins'
-  },
-  {
-    id: '8',
-    type: 'Vente',
-    amount: 420,
-    method: 'Carte',
-    client: 'Aisha Mansouri',
-    employee: 'Khalid Ait Lahcen',
-    date: new Date('2024-06-04T10:00:00'),
-    note: 'Brushing et coiffure',
-    category: 'Coiffure'
-  },
-  {
-    id: '9',
-    type: 'Vente',
-    amount: 180,
-    method: 'Espèces',
-    client: 'Omar Ziani',
-    employee: 'Nadia El Khatib',
-    date: new Date('2024-06-04T11:30:00'),
-    note: 'Coupe barbe',
-    category: 'Barber'
-  },
-  {
-    id: '10',
-    type: 'Vente',
-    amount: 550,
-    method: 'Virement',
-    client: 'Salma Tazi',
-    employee: 'Rachid Benjelloun',
-    date: new Date('2024-06-04T13:15:00'),
-    note: 'Coloration premium',
-    category: 'Coloration'
+    employee: 'Finance desk',
+    date: daysAgo(5, 19, 0),
+    note: 'Sortie caisse opérationnelle',
+    category: 'Caisse'
   }
 ];
 
 export const sampleAppointments: Appointment[] = [
   {
     id: 1,
-    clientName: 'Fatima Zahra El Amrani',
-    service: 'Consultation',
-    time: '09:00',
-    duration: 60,
+    clientName: 'Yasmine Alaoui',
+    service: 'Table VIP - Le Jardin',
+    time: '20:30',
+    duration: 120,
     status: 'confirmed',
-    employee: 'Yassine El Fassi',
-    phone: '+212 6 12 34 56 78',
-    email: 'fatima.zahra@email.com',
-    date: new Date(2025, 10, 10),
-    notes: 'Première consultation'
+    employee: 'Restaurant floor',
+    phone: '+212 6 11 24 83 90',
+    email: 'yasmine.alaoui@email.com',
+    date: daysFromNow(1, 20, 30),
+    notes: 'Anniversaire, préférence terrasse côté jardin.'
   },
   {
     id: 2,
-    clientName: 'Mohamed Benali',
-    service: 'Suivi',
-    time: '11:00',
-    duration: 45,
+    clientName: 'Fatima Zahra',
+    service: 'Rituel hammam & massage',
+    time: '16:00',
+    duration: 90,
     status: 'pending',
-    employee: 'Samira Bouzid',
-    phone: '+212 6 98 76 54 32',
-    email: 'mohamed.benali@email.com',
-    date: new Date(2025, 10, 11),
-    notes: ''
+    employee: 'Wellness suites',
+    phone: '+212 6 42 18 55 09',
+    email: 'fatima.zahra@email.com',
+    date: daysFromNow(0, 16, 0),
+    notes: 'Demande de cabine duo, paiement à confirmer.'
   },
   {
     id: 3,
-    clientName: 'Imane El Idrissi',
-    service: 'Thérapie',
-    time: '14:00',
-    duration: 90,
+    clientName: 'Karim Alami',
+    service: 'Suite deluxe',
+    time: '15:00',
+    duration: 60,
     status: 'confirmed',
-    employee: 'Khalid Ait Lahcen',
-    phone: '+212 6 11 22 33 44',
-    email: 'imane.idrissi@email.com',
-    date: new Date(2025, 10, 12),
-    notes: 'Session régulière'
+    employee: 'Rooms & stays',
+    phone: '+212 6 21 40 76 18',
+    email: 'karim.alami@email.com',
+    date: daysFromNow(2, 15, 0),
+    notes: 'Arrivée tardive probable, préparer check-in express.'
   },
   {
     id: 4,
-    clientName: 'Rachid El Mansouri',
-    service: 'Consultation',
-    time: '16:00',
-    duration: 60,
+    clientName: 'Leila Tazi',
+    service: 'Day pass rooftop pool',
+    time: '11:00',
+    duration: 360,
     status: 'cancelled',
-    employee: 'Nadia El Khatib',
-    phone: '+212 6 55 66 77 88',
-    email: 'rachid.elmansouri@email.com',
-    date: new Date(2025, 10, 13),
-    notes: 'Annulé par le client'
+    employee: 'Pool & beach',
+    phone: '+212 6 58 03 77 44',
+    email: 'leila.tazi@email.com',
+    date: daysFromNow(0, 11, 0),
+    notes: 'Annulée par l’invitée.'
   },
   {
     id: 5,
-    clientName: 'Sara El Baraka',
-    service: 'Massage',
-    time: '10:00',
-    duration: 60,
+    clientName: 'Ahmed Benali',
+    service: 'Table événement + billets',
+    time: '21:00',
+    duration: 180,
     status: 'confirmed',
-    employee: 'Yassine El Fassi',
-    phone: '+212 6 77 88 99 00',
-    email: 'sara.elbaraka@email.com',
-    date: new Date(2025, 10, 14),
-    notes: 'Massage relaxant'
+    employee: 'Events desk',
+    phone: '+212 6 70 92 13 64',
+    email: 'ahmed.benali@email.com',
+    date: daysFromNow(4, 21, 0),
+    notes: 'Groupe de 6, préférence scène centrale.'
   },
   {
     id: 6,
-    clientName: 'Omar El Haddad',
-    service: 'Manucure',
-    time: '15:00',
-    duration: 45,
+    clientName: 'Nadia El Fassi',
+    service: 'Transfert aéroport premium',
+    time: '09:30',
+    duration: 75,
     status: 'pending',
-    employee: 'Samira Bouzid',
-    phone: '+212 6 22 33 44 55',
-    email: 'omar.elhaddad@email.com',
-    date: new Date(2025, 10, 15),
-    notes: 'Première manucure'
+    employee: 'Concierge desk',
+    phone: '+212 6 33 29 41 88',
+    email: 'nadia.elfassi@email.com',
+    date: daysFromNow(3, 9, 30),
+    notes: 'Vol AT411, deux valises.'
   }
 ];
 
 export const sampleClients: Client[] = [
   {
     id: '1',
-    name: 'Fatima Zahra El Amrani',
-    email: 'fatima.zahra@email.com',
-    phone: '+212 6 12 34 56 78',
-    address: '12 Rue Ibn Khaldoun, Casablanca',
+    name: 'Yasmine Alaoui',
+    email: 'yasmine.alaoui@email.com',
+    phone: '+212 6 11 24 83 90',
+    address: 'Marrakech, Guéliz',
+    lastVisit: daysAgo(22, 21, 0),
+    lastVisitTime: '21:00',
+    nextAppointment: daysFromNow(1, 20, 30),
+    nextAppointmentTime: '20:30',
+    totalVisits: 8,
     status: 'Active',
-    lastVisit: new Date('2026-01-15'),
-    nextAppointment: new Date('2026-02-20'),
-    totalVisits: 14,
-    notes: 'Cliente fidèle, préfère les rendez-vous du soir'
+    notes: 'Préfère les expériences premium et les confirmations WhatsApp.'
   },
   {
     id: '2',
-    name: 'Mohamed Benali',
-    email: 'mohamed.benali@email.com',
-    phone: '+212 6 98 76 54 32',
-    address: '45 Avenue Hassan II, Rabat',
+    name: 'Karim Alami',
+    email: 'karim.alami@email.com',
+    phone: '+212 6 21 40 76 18',
+    address: 'Casablanca, Racine',
+    lastVisit: daysAgo(31, 15, 0),
+    lastVisitTime: '15:00',
+    nextAppointment: daysFromNow(2, 15, 0),
+    nextAppointmentTime: '15:00',
+    totalVisits: 5,
     status: 'Active',
-    lastVisit: new Date('2026-01-10'),
-    nextAppointment: new Date('2026-02-15'),
-    totalVisits: 9,
-    notes: ''
+    notes: 'Client corporate, demande souvent facture société.'
   },
   {
     id: '3',
-    name: 'Imane El Idrissi',
-    email: 'imane.idrissi@email.com',
-    phone: '+212 6 11 22 33 44',
-    address: '78 Boulevard Zerktouni, Marrakech',
+    name: 'Fatima Zahra',
+    email: 'fatima.zahra@email.com',
+    phone: '+212 6 42 18 55 09',
+    address: 'Rabat, Agdal',
+    lastVisit: daysAgo(14, 17, 0),
+    lastVisitTime: '17:00',
+    nextAppointment: daysFromNow(0, 16, 0),
+    nextAppointmentTime: '16:00',
+    totalVisits: 12,
+    status: 'Active',
+    notes: 'Fidèle aux offres wellness.'
+  },
+  {
+    id: '4',
+    name: 'Leila Tazi',
+    email: 'leila.tazi@email.com',
+    phone: '+212 6 58 03 77 44',
+    address: 'Tanger, Malabata',
+    lastVisit: daysAgo(48, 12, 0),
+    lastVisitTime: '12:00',
+    totalVisits: 3,
     status: 'Inactive',
-    lastVisit: new Date('2025-12-01'),
-    totalVisits: 4,
-    notes: "N'a pas répondu aux derniers appels"
+    notes: 'A annulé le dernier day pass.'
+  },
+  {
+    id: '5',
+    name: 'Ahmed Benali',
+    email: 'ahmed.benali@email.com',
+    phone: '+212 6 70 92 13 64',
+    address: 'Marrakech, Hivernage',
+    lastVisit: daysAgo(7, 22, 0),
+    lastVisitTime: '22:00',
+    nextAppointment: daysFromNow(4, 21, 0),
+    nextAppointmentTime: '21:00',
+    totalVisits: 18,
+    status: 'Active',
+    notes: 'Réservations fréquentes pour groupes.'
+  },
+  {
+    id: '6',
+    name: 'Nadia El Fassi',
+    email: 'nadia.elfassi@email.com',
+    phone: '+212 6 33 29 41 88',
+    address: 'Fès, Ville Nouvelle',
+    lastVisit: daysAgo(65, 10, 0),
+    lastVisitTime: '10:00',
+    nextAppointment: daysFromNow(3, 9, 30),
+    nextAppointmentTime: '09:30',
+    totalVisits: 2,
+    status: 'Active',
+    notes: 'A besoin de coordination transport.'
   }
 ];
 
-
 export const defaultWorkingHours: WorkingHours[] = [
-  { day: 'Lundi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Mardi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Mercredi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Jeudi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Vendredi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
-  { day: 'Samedi', isWorking: false, startTime: '09:00', endTime: '18:00', breaks: [] },
-  { day: 'Dimanche', isWorking: false, startTime: '09:00', endTime: '18:00', breaks: [] }
+  { day: 'Lundi', isWorking: true, startTime: '09:00', endTime: '20:00', breaks: [{ start: '13:00', end: '14:00' }] },
+  { day: 'Mardi', isWorking: true, startTime: '09:00', endTime: '20:00', breaks: [{ start: '13:00', end: '14:00' }] },
+  { day: 'Mercredi', isWorking: true, startTime: '09:00', endTime: '20:00', breaks: [{ start: '13:00', end: '14:00' }] },
+  { day: 'Jeudi', isWorking: true, startTime: '09:00', endTime: '21:00', breaks: [{ start: '13:00', end: '14:00' }] },
+  { day: 'Vendredi', isWorking: true, startTime: '09:00', endTime: '22:00', breaks: [{ start: '13:00', end: '14:00' }] },
+  { day: 'Samedi', isWorking: true, startTime: '10:00', endTime: '22:00', breaks: [] },
+  { day: 'Dimanche', isWorking: false, startTime: '10:00', endTime: '18:00', breaks: [] }
 ];
 
 export const defaultAgendas: EmployeeAgenda[] = [
   {
     id: 1,
-    name: 'Yassine El Fassi',
-    email: 'yassine.fassi@wellbe.com',
-    color: '#3B82F6',
-    role: 'Coiffeur Senior',
+    name: 'Restaurant floor',
+    email: 'restaurant@reserva.ma',
+    color: '#FFC900',
+    role: 'Tables & restaurants',
     workingHours: defaultWorkingHours,
     timeSlotDuration: 30,
-    bufferTime: 5,
-    maxAppointmentsPerDay: 12,
+    bufferTime: 10,
+    maxAppointmentsPerDay: 80,
     allowOnlineBooking: true,
-    services: ['Coupe Homme', 'Coupe Femme', 'Soin Capillaire Complet', 'Barbe'],
+    services: ['Table VIP - Le Jardin', 'Brunch signature', 'Dîner rooftop'],
     status: 'active'
   },
   {
     id: 2,
-    name: 'Samira Bouzid',
-    email: 'samira.bouzid@wellbe.com',
-    color: '#EC4899',
-    role: 'Styliste Visagiste',
+    name: 'Wellness suites',
+    email: 'wellness@reserva.ma',
+    color: '#10B981',
+    role: 'Spa & wellness',
     workingHours: defaultWorkingHours,
-    timeSlotDuration: 45,
-    bufferTime: 10,
-    maxAppointmentsPerDay: 10,
+    timeSlotDuration: 30,
+    bufferTime: 15,
+    maxAppointmentsPerDay: 36,
     allowOnlineBooking: true,
-    services: ['Coupe Femme', 'Coloration', 'Brushing', 'Mèches/Balayage'],
+    services: ['Rituel hammam & massage', 'Cabine duo spa', 'Fitness private session'],
     status: 'active'
   },
   {
     id: 3,
-    name: 'Khalid Ait Lahcen',
-    email: 'khalid.lahcen@wellbe.com',
-    color: '#10B981',
-    role: 'Barbier & Coiffeur',
+    name: 'Rooms & stays',
+    email: 'stays@reserva.ma',
+    color: '#3B82F6',
+    role: 'Hébergement',
     workingHours: defaultWorkingHours,
-    timeSlotDuration: 30,
+    timeSlotDuration: 60,
     bufferTime: 0,
-    maxAppointmentsPerDay: 15,
-    allowOnlineBooking: false,
-    services: ['Coupe Homme Classique', 'Coupe + Barbe', 'Rasage Traditionnel'],
+    maxAppointmentsPerDay: 24,
+    allowOnlineBooking: true,
+    services: ['Suite deluxe', 'Riad privatisé', 'Late check-out'],
     status: 'active'
   },
   {
     id: 4,
-    name: 'Nadia El Khatib',
-    email: 'nadia.khatib@wellbe.com',
-    color: '#10B981',
-    role: 'Esthéticienne',
+    name: 'Pool & beach',
+    email: 'daypass@reserva.ma',
+    color: '#06B6D4',
+    role: 'Day pass',
     workingHours: defaultWorkingHours,
     timeSlotDuration: 60,
-    bufferTime: 15,
-    maxAppointmentsPerDay: 6,
+    bufferTime: 0,
+    maxAppointmentsPerDay: 120,
     allowOnlineBooking: true,
-    services: ['Soin du Visage Complet', 'Massage Relaxant Corps Complet', 'Manucure Classique'],
+    services: ['Day pass rooftop pool', 'Cabana privée', 'Beach club access'],
+    status: 'active'
+  },
+  {
+    id: 5,
+    name: 'Concierge desk',
+    email: 'concierge@reserva.ma',
+    color: '#8B5CF6',
+    role: 'Conciergerie',
+    workingHours: defaultWorkingHours,
+    timeSlotDuration: 30,
+    bufferTime: 5,
+    maxAppointmentsPerDay: 60,
+    allowOnlineBooking: true,
+    services: ['Transfert aéroport premium', 'Assistant personnel', 'Demande sur mesure'],
+    status: 'active'
+  },
+  {
+    id: 6,
+    name: 'Events desk',
+    email: 'events@reserva.ma',
+    color: '#F97316',
+    role: 'Événements',
+    workingHours: defaultWorkingHours,
+    timeSlotDuration: 60,
+    bufferTime: 30,
+    maxAppointmentsPerDay: 20,
+    allowOnlineBooking: true,
+    services: ['Table événement + billets', 'Meeting room', 'Pack groupe'],
     status: 'active'
   }
 ];
 
 export const samplePendingReviews: PendingReview[] = [
   {
-    id: '1',
-    clientName: 'Fatima Zahra El Amrani',
-    clientEmail: 'fatima.zahra@email.com',
+    id: 'R-P-1',
+    clientName: 'Meryem Bennis',
+    clientEmail: 'meryem.bennis@email.com',
     rating: 5,
-    comment: 'Service exceptionnel ! Équipe très professionnelle et accueillante. Je recommande vivement.',
-    service: 'Coupe et brushing',
-    employeeName: 'Yassine El Fassi',
-    date: new Date('2024-02-15'),
-    status: 'pending',
+    comment: 'La réservation était fluide et l’accueil au rooftop impeccable.',
+    service: 'Day pass rooftop pool',
+    employeeName: 'Pool & beach',
+    date: daysAgo(1, 18, 0),
+    status: 'pending'
   },
   {
-    id: '2',
-    clientName: 'Mohamed Benali',
-    clientEmail: 'mohamed.benali@email.com',
+    id: 'R-P-2',
+    clientName: 'Omar Slaoui',
+    clientEmail: 'omar.slaoui@email.com',
     rating: 4,
-    comment: 'Très satisfait de ma coupe. Ambiance agréable, bon rapport qualité-prix.',
-    service: 'Coupe homme',
-    employeeName: 'Samira Bouzid',
-    date: new Date('2024-02-14'),
-    status: 'pending',
+    comment: 'Très bon dîner, seulement un petit retard à l’arrivée.',
+    service: 'Table VIP - Le Jardin',
+    employeeName: 'Restaurant floor',
+    date: daysAgo(2, 21, 10),
+    status: 'pending'
   },
   {
-    id: '3',
-    clientName: 'Imane El Idrissi',
-    clientEmail: 'imane.idrissi@email.com',
+    id: 'R-P-3',
+    clientName: 'Salma Idrissi',
+    clientEmail: 'salma.idrissi@email.com',
     rating: 5,
-    comment: "Première visite et déjà conquise ! Le personnel est à l'écoute et très compétent.",
-    service: 'Coloration',
-    employeeName: 'Khalid Ait Lahcen',
-    date: new Date('2024-02-13'),
-    status: 'pending',
-  },
-  {
-    id: '4',
-    clientName: 'Rachid El Mansouri',
-    clientEmail: 'rachid.elmansouri@email.com',
-    rating: 3,
-    comment: "Service correct mais temps d'attente un peu long. Résultat satisfaisant.",
-    service: 'Barbe',
-    employeeName: 'Nadia El Khatib',
-    date: new Date('2024-02-12'),
-    status: 'pending',
+    comment: 'Le spa était calme, propre et parfaitement préparé.',
+    service: 'Rituel hammam & massage',
+    employeeName: 'Wellness suites',
+    date: daysAgo(3, 16, 30),
+    status: 'pending'
   }
 ];
 
 export const sampleApprovedReviews: ApprovedReview[] = [
   {
-    id: 'a1',
-    clientName: 'Fatima Zahra El Amrani',
+    id: 'R-A-1',
+    clientName: 'Ahmed Benali',
+    clientEmail: 'ahmed.benali@email.com',
+    rating: 5,
+    comment: 'Excellent suivi pour notre table événement, tout était prêt avant notre arrivée.',
+    service: 'Table événement + billets',
+    date: daysAgo(4, 23, 0),
+    status: 'approved',
+    isPublic: true,
+    views: 184,
+    reply: 'Merci Ahmed, heureux que votre soirée ait été réussie.',
+    replyDate: daysAgo(3, 12, 0),
+    employeeName: 'Events desk'
+  },
+  {
+    id: 'R-A-2',
+    clientName: 'Yasmine Alaoui',
+    clientEmail: 'yasmine.alaoui@email.com',
+    rating: 5,
+    comment: 'Reserva m’a trouvé une table parfaite en dernière minute.',
+    service: 'Table VIP - Le Jardin',
+    date: daysAgo(8, 22, 0),
+    status: 'approved',
+    isPublic: true,
+    views: 265,
+    employeeName: 'Restaurant floor'
+  },
+  {
+    id: 'R-A-3',
+    clientName: 'Fatima Zahra',
     clientEmail: 'fatima.zahra@email.com',
-    rating: 5,
-    comment: 'Service exceptionnel ! Équipe très professionnelle et accueillante. Je recommande vivement.',
-    service: 'Coupe et brushing',
-    date: new Date('2024-02-15'),
-    status: 'approved',
-    isPublic: true,
-    views: 124,
-    reply: 'Merci beaucoup pour votre retour ! Nous sommes ravis de vous avoir satisfaite. À bientôt !',
-    replyDate: new Date('2024-02-16'),
-    employeeName: 'Yassine El Fassi',
-  },
-  {
-    id: 'a2',
-    clientName: 'Mohamed Benali',
-    clientEmail: 'mohamed.benali@email.com',
     rating: 4,
-    comment: 'Très satisfait de ma coupe. Ambiance agréable, bon rapport qualité-prix.',
-    service: 'Coupe homme',
-    date: new Date('2024-02-14'),
+    comment: 'Très belle expérience wellness, confirmation rapide et équipe attentive.',
+    service: 'Rituel hammam & massage',
+    date: daysAgo(11, 17, 0),
     status: 'approved',
     isPublic: true,
-    views: 89,
-    employeeName: 'Samira Bouzid',
-  },
-  {
-    id: 'a3',
-    clientName: 'Imane El Idrissi',
-    clientEmail: 'imane.idrissi@email.com',
-    rating: 5,
-    comment: "Première visite et déjà conquise ! Le personnel est à l'écoute et très compétent.",
-    service: 'Coloration',
-    date: new Date('2024-02-13'),
-    status: 'approved',
-    isPublic: true,
-    views: 156,
-    reply: 'Nous sommes très heureux de vous compter parmi nos clients ! Merci pour votre confiance.',
-    replyDate: new Date('2024-02-14'),
-    employeeName: 'Khalid Ait Lahcen',
-  },
-  {
-    id: 'a4',
-    clientName: 'Rachid El Mansouri',
-    clientEmail: 'rachid.elmansouri@email.com',
-    rating: 5,
-    comment: 'Excellent service, personnel sympathique et professionnel. Je reviendrai certainement.',
-    service: 'Barbe et coupe',
-    date: new Date('2024-02-10'),
-    status: 'approved',
-    isPublic: false,
-    views: 45,
-    employeeName: 'Nadia El Khatib',
+    views: 143,
+    employeeName: 'Wellness suites'
   }
 ];
 
 export const sampleRejectedReviews: RejectedReview[] = [
   {
-    id: 'r1',
-    clientName: 'Rachid El Mansouri',
-    clientEmail: 'rachid.elmansouri@email.com',
-    rating: 3,
-    comment: "Service correct mais temps d'attente un peu long. Résultat satisfaisant.",
-    service: 'Barbe',
-    employeeName: 'Nadia El Khatib',
-    date: new Date('2024-02-12'),
-    status: 'rejected',
-    rejectReason: "Commentaire négatif sur le temps d'attente",
-    rejectedDate: new Date('2024-02-13'),
-  },
-  {
-    id: 'r2',
-    clientName: 'Samira Bouzid',
-    clientEmail: 'samira.bouzid@email.com',
-    rating: 2,
-    comment: "Déçue par la prestation. Le résultat ne correspond pas à ce qui était demandé.",
-    service: 'Coupe femme',
-    employeeName: 'Yassine El Fassi',
-    date: new Date('2024-02-10'),
-    status: 'rejected',
-    rejectReason: 'Avis trop négatif sans détails constructifs',
-    rejectedDate: new Date('2024-02-11'),
-  },
-  {
-    id: 'r3',
-    clientName: 'Khalid Ait Lahcen',
-    clientEmail: 'khalid.aitlahcen@email.com',
+    id: 'R-R-1',
+    clientName: 'Compte test',
+    clientEmail: 'test@example.com',
     rating: 1,
-    comment: 'Très mauvaise expérience, prix exorbitants pour une qualité moyenne.',
-    service: 'Coloration',
-    employeeName: 'Imane El Idrissi',
-    date: new Date('2024-02-08'),
+    comment: 'Message publicitaire sans lien avec l’établissement.',
+    service: 'Demande sur mesure',
+    employeeName: 'Concierge desk',
+    date: daysAgo(6, 9, 0),
     status: 'rejected',
-    rejectReason: 'Langage inapproprié et accusations non fondées',
-    rejectedDate: new Date('2024-02-09'),
+    rejectReason: 'Spam promotionnel',
+    rejectedDate: daysAgo(6, 10, 0)
+  },
+  {
+    id: 'R-R-2',
+    clientName: 'Invité anonyme',
+    clientEmail: 'anonymous@example.com',
+    rating: 2,
+    comment: 'Contenu incomplet et impossible à vérifier.',
+    service: 'Suite deluxe',
+    employeeName: 'Rooms & stays',
+    date: daysAgo(12, 11, 0),
+    status: 'rejected',
+    rejectReason: 'Avis non exploitable',
+    rejectedDate: daysAgo(11, 14, 0)
   }
 ];
 
 export const sampleModerationRules: ModerationRule[] = [
   {
-    id: '1',
-    name: 'Langage inapproprié',
-    description: 'Bloque automatiquement les avis contenant des insultes ou propos offensants',
+    id: 'MR-1',
+    name: 'Bloquer les contenus promotionnels',
+    description: 'Refuse automatiquement les avis qui contiennent des liens ou offres externes.',
     type: 'keyword',
-    condition: 'nul, horrible, arnaque',
+    condition: 'http, promo, coupon, lien externe',
     action: 'auto-reject',
     isActive: true,
-    createdDate: new Date('2024-01-15'),
-    appliedCount: 12,
+    createdDate: daysAgo(45, 10, 0),
+    appliedCount: 18
   },
   {
-    id: '2',
-    name: 'Notes faibles',
-    description: 'Signale les avis avec moins de 3 étoiles pour révision manuelle',
-    type: 'rating',
-    condition: '< 3 étoiles',
+    id: 'MR-2',
+    name: 'Signaler les avis courts',
+    description: 'Place en attente les avis de moins de 12 caractères.',
+    type: 'length',
+    condition: '< 12 caractères',
     action: 'flag',
     isActive: true,
-    createdDate: new Date('2024-01-10'),
-    appliedCount: 28,
+    createdDate: daysAgo(38, 15, 0),
+    appliedCount: 9
   },
   {
-    id: '3',
-    name: 'Avis trop courts',
-    description: 'Rejette les commentaires de moins de 10 caractères',
-    type: 'length',
-    condition: '< 10 caractères',
-    action: 'auto-reject',
-    isActive: true,
-    createdDate: new Date('2024-01-05'),
-    appliedCount: 5,
-  },
-  {
-    id: '4',
-    name: 'Validation 5 étoiles',
-    description: 'Approuve automatiquement les excellents avis détaillés',
+    id: 'MR-3',
+    name: 'Publier les avis 5 étoiles vérifiés',
+    description: 'Approuve les avis 5 étoiles liés à une réservation confirmée.',
     type: 'auto-approve',
-    condition: '5 étoiles + > 50 caractères',
+    condition: 'rating = 5 et réservation confirmée',
     action: 'auto-approve',
     isActive: false,
-    createdDate: new Date('2024-01-20'),
-    appliedCount: 0,
+    createdDate: daysAgo(20, 16, 0),
+    appliedCount: 31
   }
 ];
 
 export const sampleDuplicates: DuplicateClient[] = [
   {
-    id: '1',
-    name: 'Fatima Zahra El Amrani',
-    email: 'fatima.zahra@email.com',
-    phone: '+212 6 12 34 56 78',
-    address: '12 Rue Ibn Khaldoun, Casablanca',
+    id: 'D-1',
+    name: 'Yasmine Alaoui',
+    email: 'yasmine.alaoui@email.com',
+    phone: '+212 6 11 24 83 90',
+    address: 'Marrakech, Guéliz',
     status: 'Active',
-    notes: 'Cliente régulière',
+    notes: 'Compte principal',
     duplicates: [
       {
-        id: '4',
-        name: 'F. Z. El Amrani',
-        email: 'fatima.zahra@email.com',
-        phone: '+212 6 12 34 56 78',
-        address: '12 Rue Ibn Khaldoun, Casablanca',
+        id: 'D-1B',
+        name: 'Yasmine A.',
+        email: 'yasmine.a@email.com',
+        phone: '+212 6 11 24 83 90',
+        address: 'Marrakech',
         status: 'Active',
-        notes: 'Doublon détecté par email et téléphone',
+        notes: 'Créé depuis une réservation mobile'
       }
     ]
   },
   {
-    id: '2',
-    name: 'Mohamed Benali',
-    email: 'mohamed.benali@email.com',
-    phone: '+212 6 98 76 54 32',
-    address: '45 Avenue Hassan II, Rabat',
+    id: 'D-2',
+    name: 'Karim Alami',
+    email: 'karim.alami@email.com',
+    phone: '+212 6 21 40 76 18',
+    address: 'Casablanca, Racine',
     status: 'Active',
-    notes: '',
     duplicates: [
       {
-        id: '5',
-        name: 'M. Benali',
-        email: 'mohamed.benali@email.com',
-        phone: '+212 6 98 76 54 32',
-        address: '45 Avenue Hassan II, Rabat',
-        status: 'Active',
-        notes: 'Doublon détecté par nom et email',
-      }
-    ]
-  },
-  {
-    id: '3',
-    name: 'Imane El Idrissi',
-    email: 'imane.idrissi@email.com',
-    phone: '+212 6 11 22 33 44',
-    address: '78 Boulevard Zerktouni, Marrakech',
-    status: 'Inactive',
-    notes: "N'a pas répondu aux derniers appels",
-    duplicates: [
-      {
-        id: '6',
-        name: 'I. El Idrissi',
-        email: 'imane.idrissi@email.com',
-        phone: '+212 6 11 22 33 44',
-        address: '78 Boulevard Zerktouni, Marrakech',
+        id: 'D-2B',
+        name: 'Karim A',
+        email: 'k.alami@company.ma',
+        phone: '+212 6 21 40 76 18',
+        address: 'Casablanca',
         status: 'Inactive',
-        notes: 'Doublon détecté par téléphone',
+        notes: 'Ancienne adresse corporate'
       }
     ]
   }
 ];
 
 export const moroccanNames = [
-  'Yassine', 'Fatima', 'Mohamed', 'Khadija', 'Omar', 'Sara', 'Hassan', 'Imane', 'Soufiane', 'Nadia',
-  'Abdelkader', 'Amina', 'Rachid', 'Samira', 'Mehdi', 'Meryem', 'Hamza', 'Salma', 'Ayoub', 'Zineb',
-  'Mustapha', 'Laila', 'Reda', 'Siham', 'Anas', 'Hajar', 'Karim', 'Asmaa', 'Adil', 'Ilham',
-  'Abdelilah', 'Rania', 'Youssef', 'Sofia', 'Abderrahim', 'Nawal', 'Tarik', 'Houda', 'Othmane', 'Ikram',
-  'Abdellah', 'Latifa', 'Walid', 'Aicha', 'Saad', 'Rim', 'Ismail', 'Malika', 'Zakaria', 'Bouchra'
+  'Yasmine', 'Karim', 'Fatima', 'Ahmed', 'Leila', 'Nadia', 'Omar', 'Meryem', 'Salma', 'Mehdi',
+  'Hajar', 'Reda', 'Imane', 'Soufiane', 'Sara', 'Hassan', 'Zineb', 'Amina', 'Rachid', 'Rim',
+  'Ismail', 'Malika', 'Zakaria', 'Bouchra', 'Walid', 'Aicha', 'Saad', 'Aya', 'Anas', 'Hind'
 ];
 
 export const servicesList = [
-  'Coiffure Homme',
-  'Coiffure Femme',
-  'Spa & Bien-être',
-  'Massage Thérapeutique',
-  'Manucure & Pédicure',
-  'Soins du Visage',
-  'Épilation',
-  'Coloration',
-  'Maquillage',
-  'Consultation Beauté',
-  'Soins Capillaires',
-  'Barbier'
+  'Table restaurant',
+  'Hébergement',
+  'Day pass',
+  'Spa & wellness',
+  'Événement',
+  'Conciergerie',
+  'Corporate',
+  'Expérience sur mesure'
+];
+
+export const sampleBookableCategories = [
+  'RESTAURANTS',
+  'HÉBERGEMENTS',
+  'DAY PASSES',
+  'WELLNESS',
+  'ÉVÉNEMENTS',
+  'CONCIERGERIE',
+  'CORPORATE',
+  'SUR MESURE'
+];
+
+export const sampleBookableServices: BookableServiceFixture[] = [
+  {
+    id: 1,
+    name: 'Table VIP - Le Jardin',
+    abbreviation: 'Table VIP',
+    description: 'Réservation de table avec placement premium et acompte configurable.',
+    color: '#FFC900',
+    price: 450,
+    priceType: 'from',
+    priceFrom: 450,
+    onQuote: false,
+    duration: 120,
+    category: 'RESTAURANTS',
+    visibility: 'bookable',
+    competences: ['Restaurant floor'],
+    multipleProviders: true
+  },
+  {
+    id: 2,
+    name: 'Brunch signature',
+    abbreviation: 'Brunch',
+    description: 'Créneau brunch avec capacité par service et options enfants.',
+    color: '#F59E0B',
+    price: 380,
+    priceType: 'fixed',
+    onQuote: false,
+    duration: 150,
+    category: 'RESTAURANTS',
+    visibility: 'bookable',
+    competences: ['Restaurant floor'],
+    multipleProviders: true
+  },
+  {
+    id: 3,
+    name: 'Suite deluxe',
+    abbreviation: 'Suite',
+    description: 'Demande de séjour avec heure d’arrivée et règles d’acompte.',
+    color: '#3B82F6',
+    price: 1650,
+    priceType: 'from',
+    priceFrom: 1650,
+    onQuote: false,
+    duration: 60,
+    category: 'HÉBERGEMENTS',
+    visibility: 'bookable',
+    competences: ['Rooms & stays'],
+    multipleProviders: false
+  },
+  {
+    id: 4,
+    name: 'Day pass rooftop pool',
+    abbreviation: 'Day pass',
+    description: 'Accès journée avec capacité, transats et conditions d’annulation.',
+    color: '#06B6D4',
+    price: 300,
+    priceType: 'fixed',
+    onQuote: false,
+    duration: 360,
+    category: 'DAY PASSES',
+    visibility: 'bookable',
+    competences: ['Pool & beach'],
+    multipleProviders: true
+  },
+  {
+    id: 5,
+    name: 'Rituel hammam & massage',
+    abbreviation: 'Spa',
+    description: 'Expérience bien-être avec cabine, durée et ressources assignées.',
+    color: '#10B981',
+    price: 900,
+    priceType: 'range',
+    priceFrom: 900,
+    priceTo: 1400,
+    onQuote: false,
+    duration: 90,
+    category: 'WELLNESS',
+    visibility: 'bookable',
+    competences: ['Wellness suites'],
+    multipleProviders: false
+  },
+  {
+    id: 6,
+    name: 'Table événement + billets',
+    abbreviation: 'Event',
+    description: 'Pack groupe avec table, tickets, minimum spend et confirmation manuelle.',
+    color: '#F97316',
+    price: 2400,
+    priceType: 'from',
+    priceFrom: 2400,
+    onQuote: true,
+    duration: 180,
+    category: 'ÉVÉNEMENTS',
+    visibility: 'bookable',
+    competences: ['Events desk', 'Concierge desk'],
+    multipleProviders: true
+  },
+  {
+    id: 7,
+    name: 'Transfert aéroport premium',
+    abbreviation: 'Transfer',
+    description: 'Service concierge avec numéro de vol, heure de pickup et chauffeur.',
+    color: '#8B5CF6',
+    price: 650,
+    priceType: 'from',
+    priceFrom: 650,
+    onQuote: false,
+    duration: 75,
+    category: 'CONCIERGERIE',
+    visibility: 'bookable',
+    competences: ['Concierge desk'],
+    multipleProviders: false
+  },
+  {
+    id: 8,
+    name: 'Meeting room',
+    abbreviation: 'Meeting',
+    description: 'Réservation corporate avec configuration salle, équipements et pause café.',
+    color: '#64748B',
+    price: 1200,
+    priceType: 'from',
+    priceFrom: 1200,
+    onQuote: true,
+    duration: 240,
+    category: 'CORPORATE',
+    visibility: 'visible',
+    competences: ['Events desk'],
+    multipleProviders: true
+  }
 ];
 
 export const sampleOccupancyData = {
-  'LUN': {
-    '10:00 - 11:00': 0, '11:00 - 12:00': 0, '12:00 - 13:00': 0, '13:00 - 14:00': 0,
-    '14:00 - 15:00': 0, '15:00 - 16:00': 0, '16:00 - 17:00': 0, '17:00 - 18:00': 0,
-    '18:00 - 19:00': 0, '19:00 - 20:00': 0
+  LUN: {
+    '10:00 - 11:00': 35, '11:00 - 12:00': 42, '12:00 - 13:00': 58, '13:00 - 14:00': 76,
+    '14:00 - 15:00': 64, '15:00 - 16:00': 48, '16:00 - 17:00': 52, '17:00 - 18:00': 67,
+    '18:00 - 19:00': 81, '19:00 - 20:00': 88
   },
-  'MAR': {
-    '10:00 - 11:00': 20, '11:00 - 12:00': 20, '12:00 - 13:00': 40, '13:00 - 14:00': 38,
-    '14:00 - 15:00': 40, '15:00 - 16:00': 40, '16:00 - 17:00': 27, '17:00 - 18:00': 30,
-    '18:00 - 19:00': 40, '19:00 - 20:00': 40
+  MAR: {
+    '10:00 - 11:00': 28, '11:00 - 12:00': 36, '12:00 - 13:00': 49, '13:00 - 14:00': 62,
+    '14:00 - 15:00': 55, '15:00 - 16:00': 44, '16:00 - 17:00': 51, '17:00 - 18:00': 70,
+    '18:00 - 19:00': 79, '19:00 - 20:00': 84
   },
-  'MER': {
-    '10:00 - 11:00': 63, '11:00 - 12:00': 75, '12:00 - 13:00': 63, '13:00 - 14:00': 50,
-    '14:00 - 15:00': 50, '15:00 - 16:00': 63, '16:00 - 17:00': 50, '17:00 - 18:00': 25,
-    '18:00 - 19:00': 25, '19:00 - 20:00': 25
+  MER: {
+    '10:00 - 11:00': 31, '11:00 - 12:00': 39, '12:00 - 13:00': 57, '13:00 - 14:00': 69,
+    '14:00 - 15:00': 60, '15:00 - 16:00': 46, '16:00 - 17:00': 54, '17:00 - 18:00': 73,
+    '18:00 - 19:00': 86, '19:00 - 20:00': 92
   },
-  'JEU': {
-    '10:00 - 11:00': 50, '11:00 - 12:00': 50, '12:00 - 13:00': 38, '13:00 - 14:00': 50,
-    '14:00 - 15:00': 46, '15:00 - 16:00': 50, '16:00 - 17:00': 50, '17:00 - 18:00': 38,
-    '18:00 - 19:00': 25, '19:00 - 20:00': 25
+  JEU: {
+    '10:00 - 11:00': 40, '11:00 - 12:00': 48, '12:00 - 13:00': 61, '13:00 - 14:00': 72,
+    '14:00 - 15:00': 66, '15:00 - 16:00': 57, '16:00 - 17:00': 63, '17:00 - 18:00': 78,
+    '18:00 - 19:00': 91, '19:00 - 20:00': 96
   },
-  'VEN': {
-    '10:00 - 11:00': 0, '11:00 - 12:00': 13, '12:00 - 13:00': 25, '13:00 - 14:00': 25,
-    '14:00 - 15:00': 25, '15:00 - 16:00': 25, '16:00 - 17:00': 63, '17:00 - 18:00': 69,
-    '18:00 - 19:00': 88, '19:00 - 20:00': 58
+  VEN: {
+    '10:00 - 11:00': 45, '11:00 - 12:00': 53, '12:00 - 13:00': 69, '13:00 - 14:00': 80,
+    '14:00 - 15:00': 74, '15:00 - 16:00': 62, '16:00 - 17:00': 71, '17:00 - 18:00': 85,
+    '18:00 - 19:00': 94, '19:00 - 20:00': 98
   },
-  'SAM': {
-    '10:00 - 11:00': 25, '11:00 - 12:00': 75, '12:00 - 13:00': 75, '13:00 - 14:00': 48,
-    '14:00 - 15:00': 63, '15:00 - 16:00': 75, '16:00 - 17:00': 56, '17:00 - 18:00': 75,
-    '18:00 - 19:00': 75, '19:00 - 20:00': 33
+  SAM: {
+    '10:00 - 11:00': 68, '11:00 - 12:00': 74, '12:00 - 13:00': 82, '13:00 - 14:00': 89,
+    '14:00 - 15:00': 84, '15:00 - 16:00': 77, '16:00 - 17:00': 83, '17:00 - 18:00': 91,
+    '18:00 - 19:00': 97, '19:00 - 20:00': 99
   },
-  'DIM': {
-    '10:00 - 11:00': 70, '11:00 - 12:00': 70, '12:00 - 13:00': 50, '13:00 - 14:00': 60,
-    '14:00 - 15:00': 45, '15:00 - 16:00': 60, '16:00 - 17:00': 100, '17:00 - 18:00': 90,
-    '18:00 - 19:00': 45, '19:00 - 20:00': 35
+  DIM: {
+    '10:00 - 11:00': 52, '11:00 - 12:00': 60, '12:00 - 13:00': 72, '13:00 - 14:00': 78,
+    '14:00 - 15:00': 70, '15:00 - 16:00': 64, '16:00 - 17:00': 68, '17:00 - 18:00': 75,
+    '18:00 - 19:00': 82, '19:00 - 20:00': 86
   }
 };
 
 export const sampleCollaborators: CollaboratorStats[] = [
-  {
-    id: 1,
-    name: 'Yassine El Fassi',
-    color: '#3B82F6',
-    totalServices: 52,
-    inSalon: 8,
-    online: 44,
-    onlineRate: 84.6,
-    revenue: 2847.50,
-    occupationRate: 92.3,
-    workedHours: 128
-  },
-  {
-    id: 2,
-    name: 'Samira Bouzid',
-    color: '#EC4899',
-    totalServices: 48,
-    inSalon: 12,
-    online: 36,
-    onlineRate: 75.0,
-    revenue: 2615.00,
-    occupationRate: 88.7,
-    workedHours: 120
-  },
-  {
-    id: 3,
-    name: 'Khalid Ait Lahcen',
-    color: '#10B981',
-    totalServices: 41,
-    inSalon: 6,
-    online: 35,
-    onlineRate: 85.4,
-    revenue: 2234.80,
-    occupationRate: 95.1,
-    workedHours: 110
-  },
-  {
-    id: 4,
-    name: 'Nadia El Khatib',
-    color: '#F59E0B',
-    totalServices: 38,
-    inSalon: 10,
-    online: 28,
-    onlineRate: 73.7,
-    revenue: 2068.40,
-    occupationRate: 90.2,
-    workedHours: 105
-  }
+  { id: 1, name: 'Restaurant floor', color: '#FFC900', totalServices: 320, inSalon: 126, online: 194, onlineRate: 61, revenue: 148600, occupationRate: 82, workedHours: 214 },
+  { id: 2, name: 'Wellness suites', color: '#10B981', totalServices: 146, inSalon: 44, online: 102, onlineRate: 70, revenue: 132400, occupationRate: 74, workedHours: 172 },
+  { id: 3, name: 'Rooms & stays', color: '#3B82F6', totalServices: 82, inSalon: 21, online: 61, onlineRate: 74, revenue: 231800, occupationRate: 69, workedHours: 190 },
+  { id: 4, name: 'Pool & beach', color: '#06B6D4', totalServices: 410, inSalon: 90, online: 320, onlineRate: 78, revenue: 123000, occupationRate: 88, workedHours: 205 },
+  { id: 5, name: 'Concierge desk', color: '#8B5CF6', totalServices: 118, inSalon: 38, online: 80, onlineRate: 68, revenue: 95600, occupationRate: 63, workedHours: 168 },
+  { id: 6, name: 'Events desk', color: '#F97316', totalServices: 54, inSalon: 13, online: 41, onlineRate: 76, revenue: 178200, occupationRate: 71, workedHours: 142 }
 ];
 
 export const samplePhotos: Photo[] = [
   {
     id: 1,
-    url: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400',
-    title: 'Manucure élégante',
-    status: 'validated',
-    date: new Date('2025-11-08'),
-    category: 'Manucure',
-    tags: ['rouge', 'élégant'],
-    size: '2.4 MB',
-    dimensions: '1920x1080'
+    url: '/tile.webp',
+    title: 'Terrasse principale',
+    status: 'approved',
+    date: daysAgo(12),
+    category: 'Établissement',
+    tags: ['terrasse', 'restaurant', 'ambiance'],
+    size: '428 KB',
+    dimensions: '1200 x 800'
   },
   {
     id: 2,
-    url: 'https://images.unsplash.com/photo-1610992015732-2449b76344bc?w=400',
-    title: 'Manucure pastel',
-    status: 'validated',
-    date: new Date('2025-11-07'),
-    category: 'Manucure',
-    tags: ['bleu', 'pastel'],
-    size: '1.8 MB',
-    dimensions: '1920x1080'
+    url: '/logo.png',
+    title: 'Identité établissement',
+    status: 'approved',
+    date: daysAgo(18),
+    category: 'Branding',
+    tags: ['logo', 'fiche', 'reserva'],
+    size: '81 KB',
+    dimensions: '512 x 512'
   },
   {
     id: 3,
-    url: 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=400',
-    title: 'Coiffure moderne',
-    status: 'validated',
-    date: new Date('2025-11-06'),
-    category: 'Coiffure',
-    tags: ['moderne', 'professionnel'],
-    size: '3.2 MB',
-    dimensions: '1920x1080'
+    url: '/tile.webp',
+    title: 'Suite deluxe',
+    status: 'pending',
+    date: daysAgo(4),
+    category: 'Hébergement',
+    tags: ['suite', 'séjour', 'premium'],
+    size: '512 KB',
+    dimensions: '1600 x 1067'
   },
   {
     id: 4,
-    url: 'https://images.unsplash.com/photo-1522337094846-8a818192de1f?w=400',
-    title: 'Spa relaxant',
-    status: 'validated',
-    date: new Date('2025-11-05'),
-    category: 'Spa',
-    tags: ['relaxation', 'bien-être'],
-    size: '2.9 MB',
-    dimensions: '1920x1080'
+    url: '/tile.webp',
+    title: 'Cabine spa duo',
+    status: 'approved',
+    date: daysAgo(9),
+    category: 'Wellness',
+    tags: ['spa', 'hammam', 'duo'],
+    size: '474 KB',
+    dimensions: '1400 x 933'
   },
   {
     id: 5,
-    url: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-    title: 'Massage thérapeutique',
+    url: '/tile.webp',
+    title: 'Photo trop sombre',
     status: 'rejected',
-    date: new Date('2025-11-04'),
-    category: 'Massage',
-    tags: ['thérapie'],
-    size: '2.1 MB',
-    dimensions: '1920x1080',
-    rejectionReason: 'Qualité insuffisante'
+    date: daysAgo(15),
+    category: 'Événement',
+    tags: ['soirée'],
+    size: '390 KB',
+    dimensions: '1200 x 800',
+    rejectionReason: 'Image trop sombre pour la fiche publique.'
   }
 ];
+
+const makeStats = (
+  totalReviews: number,
+  pendingReviews: number,
+  approvedReviews: number,
+  rejectedReviews: number,
+  averageRating: number,
+  totalViews: number
+): ReviewStats => ({
+  totalReviews,
+  pendingReviews,
+  approvedReviews,
+  rejectedReviews,
+  averageRating,
+  totalViews,
+  ratingDistribution: [
+    { rating: 5, count: Math.round(totalReviews * 0.58) },
+    { rating: 4, count: Math.round(totalReviews * 0.25) },
+    { rating: 3, count: Math.round(totalReviews * 0.1) },
+    { rating: 2, count: Math.round(totalReviews * 0.04) },
+    { rating: 1, count: Math.max(1, Math.round(totalReviews * 0.03)) }
+  ],
+  trendsLastMonth: {
+    total: 12,
+    approved: 9,
+    rejected: 2,
+    averageRating: 0.2
+  }
+});
 
 export const sampleReviewPeriodStats: Record<'week' | 'month' | 'year', {
   trendData: { name: string; avis: number; vues: number }[];
@@ -988,291 +1101,190 @@ export const sampleReviewPeriodStats: Record<'week' | 'month' | 'year', {
 }> = {
   week: {
     trendData: [
-      { name: 'Lun', avis: 12, vues: 340 },
-      { name: 'Mar', avis: 19, vues: 520 },
-      { name: 'Mer', avis: 15, vues: 480 },
-      { name: 'Jeu', avis: 22, vues: 650 },
-      { name: 'Ven', avis: 18, vues: 590 },
-      { name: 'Sam', avis: 25, vues: 720 },
-      { name: 'Dim', avis: 20, vues: 610 },
+      { name: 'Lun', avis: 4, vues: 120 },
+      { name: 'Mar', avis: 3, vues: 98 },
+      { name: 'Mer', avis: 6, vues: 180 },
+      { name: 'Jeu', avis: 5, vues: 160 },
+      { name: 'Ven', avis: 8, vues: 240 },
+      { name: 'Sam', avis: 12, vues: 360 },
+      { name: 'Dim', avis: 9, vues: 310 }
     ],
     ratingTrendData: [
-      { month: 'Jan', rating: 4.2 },
-      { month: 'Fév', rating: 4.3 },
-      { month: 'Mar', rating: 4.1 },
-      { month: 'Avr', rating: 4.4 },
-      { month: 'Mai', rating: 4.6 },
-      { month: 'Jun', rating: 4.5 },
+      { month: 'Lun', rating: 4.5 },
+      { month: 'Mar', rating: 4.4 },
+      { month: 'Mer', rating: 4.7 },
+      { month: 'Jeu', rating: 4.6 },
+      { month: 'Ven', rating: 4.8 },
+      { month: 'Sam', rating: 4.9 },
+      { month: 'Dim', rating: 4.7 }
     ],
-    stats: {
-      totalReviews: 50,
-      pendingReviews: 10,
-      approvedReviews: 35,
-      rejectedReviews: 5,
-      averageRating: 4.3,
-      totalViews: 3200,
-      ratingDistribution: [
-        { rating: 5, count: 20 },
-        { rating: 4, count: 15 },
-        { rating: 3, count: 10 },
-        { rating: 2, count: 3 },
-        { rating: 1, count: 2 },
-      ],
-      trendsLastMonth: {
-        total: 12,
-        approved: 8,
-        rejected: 2,
-        averageRating: 4.5,
-      },
-    },
+    stats: makeStats(47, 6, 38, 3, 4.7, 1468)
   },
   month: {
     trendData: [
-      { name: 'S1', avis: 60, vues: 1200 },
-      { name: 'S2', avis: 75, vues: 1500 },
-      { name: 'S3', avis: 80, vues: 1700 },
-      { name: 'S4', avis: 90, vues: 2000 },
+      { name: 'S1', avis: 32, vues: 920 },
+      { name: 'S2', avis: 41, vues: 1120 },
+      { name: 'S3', avis: 48, vues: 1380 },
+      { name: 'S4', avis: 55, vues: 1640 }
     ],
     ratingTrendData: [
-      { month: 'Jan', rating: 4.1 },
-      { month: 'Fév', rating: 4.2 },
-      { month: 'Mar', rating: 4.3 },
-      { month: 'Avr', rating: 4.4 },
-      { month: 'Mai', rating: 4.5 },
-      { month: 'Jun', rating: 4.6 },
+      { month: 'S1', rating: 4.5 },
+      { month: 'S2', rating: 4.6 },
+      { month: 'S3', rating: 4.7 },
+      { month: 'S4', rating: 4.8 }
     ],
-    stats: {
-      totalReviews: 305,
-      pendingReviews: 40,
-      approvedReviews: 240,
-      rejectedReviews: 25,
-      averageRating: 4.4,
-      totalViews: 6400,
-      ratingDistribution: [
-        { rating: 5, count: 120 },
-        { rating: 4, count: 80 },
-        { rating: 3, count: 60 },
-        { rating: 2, count: 30 },
-        { rating: 1, count: 15 },
-      ],
-      trendsLastMonth: {
-        total: 90,
-        approved: 70,
-        rejected: 10,
-        averageRating: 4.4,
-      },
-    },
+    stats: makeStats(176, 18, 148, 10, 4.7, 5060)
   },
   year: {
     trendData: [
-      { name: 'Jan', avis: 120, vues: 2400 },
-      { name: 'Fév', avis: 150, vues: 3000 },
-      { name: 'Mar', avis: 170, vues: 3400 },
-      { name: 'Avr', avis: 180, vues: 3600 },
-      { name: 'Mai', avis: 200, vues: 4000 },
-      { name: 'Jun', avis: 210, vues: 4200 },
-      { name: 'Jul', avis: 220, vues: 4400 },
-      { name: 'Aoû', avis: 230, vues: 4600 },
-      { name: 'Sep', avis: 240, vues: 4800 },
-      { name: 'Oct', avis: 250, vues: 5000 },
-      { name: 'Nov', avis: 260, vues: 5200 },
-      { name: 'Déc', avis: 270, vues: 5400 },
+      { name: 'Jan', avis: 96, vues: 2400 },
+      { name: 'Fév', avis: 104, vues: 2680 },
+      { name: 'Mar', avis: 118, vues: 2940 },
+      { name: 'Avr', avis: 132, vues: 3300 },
+      { name: 'Mai', avis: 151, vues: 3880 },
+      { name: 'Juin', avis: 164, vues: 4210 }
     ],
     ratingTrendData: [
-      { month: 'Jan', rating: 4.0 },
-      { month: 'Fév', rating: 4.1 },
-      { month: 'Mar', rating: 4.2 },
-      { month: 'Avr', rating: 4.3 },
-      { month: 'Mai', rating: 4.4 },
-      { month: 'Jun', rating: 4.5 },
+      { month: 'Jan', rating: 4.4 },
+      { month: 'Fév', rating: 4.5 },
+      { month: 'Mar', rating: 4.6 },
+      { month: 'Avr', rating: 4.6 },
+      { month: 'Mai', rating: 4.7 },
+      { month: 'Juin', rating: 4.8 }
     ],
-    stats: {
-      totalReviews: 2500,
-      pendingReviews: 300,
-      approvedReviews: 2000,
-      rejectedReviews: 200,
-      averageRating: 4.2,
-      totalViews: 48000,
-      ratingDistribution: [
-        { rating: 5, count: 900 },
-        { rating: 4, count: 700 },
-        { rating: 3, count: 500 },
-        { rating: 2, count: 250 },
-        { rating: 1, count: 150 },
-      ],
-      trendsLastMonth: {
-        total: 270,
-        approved: 220,
-        rejected: 30,
-        averageRating: 4.3,
-      },
-    },
-  },
+    stats: makeStats(765, 42, 681, 42, 4.7, 19410)
+  }
 };
 
 export const sampleEmployeeReviewStats: EmployeeReviewStats[] = [
-  { name: 'Yassine El Fassi', role: 'Coiffeur', reviews: 45, avgRating: 4.8, stars5: 35, stars4: 8, stars3: 2, responses: 42, trend: '+12%' },
-  { name: 'Samira Bouzid', role: 'Manager', reviews: 38, avgRating: 4.6, stars5: 28, stars4: 7, stars3: 3, responses: 35, trend: '+8%' },
-  { name: 'Khalid Ait Lahcen', role: 'Coiffeur', reviews: 52, avgRating: 4.9, stars5: 48, stars4: 3, stars3: 1, responses: 50, trend: '+15%' },
-  { name: 'Nadia El Khatib', role: 'Esthéticienne', reviews: 31, avgRating: 4.5, stars5: 22, stars4: 6, stars3: 3, responses: 28, trend: '+5%' },
-  { name: 'Rachid Benjelloun', role: 'Responsable', reviews: 29, avgRating: 4.7, stars5: 23, stars4: 5, stars3: 1, responses: 27, trend: '+10%' },
+  { name: 'Restaurant floor', role: 'Tables & restaurants', reviews: 210, avgRating: 4.8, stars5: 152, stars4: 46, stars3: 12, responses: 198, trend: '+14%' },
+  { name: 'Wellness suites', role: 'Spa & wellness', reviews: 138, avgRating: 4.7, stars5: 92, stars4: 34, stars3: 12, responses: 122, trend: '+9%' },
+  { name: 'Pool & beach', role: 'Day pass', reviews: 184, avgRating: 4.6, stars5: 118, stars4: 48, stars3: 18, responses: 165, trend: '+11%' },
+  { name: 'Concierge desk', role: 'Conciergerie', reviews: 93, avgRating: 4.9, stars5: 78, stars4: 12, stars3: 3, responses: 90, trend: '+18%' }
 ];
 
 export function generateSampleNewClients(length: number = 50): NewClient[] {
-  const now = Date.now();
   return Array.from({ length }, (_, i) => {
-    const name = moroccanNames[i % moroccanNames.length] + ' ' + ['El', 'Ben', 'Ait', 'Bou', 'Al'][Math.floor(Math.random() * 5)] + ' ' + moroccanNames[(i * 3) % moroccanNames.length];
-    const visits = Math.floor(Math.random() * 5) + 1;
-    const firstVisit = new Date(now - Math.random() * 30 * 24 * 60 * 60 * 1000);
-    const lastVisitOffset = Math.random() * (now - firstVisit.getTime());
-    const lastVisit = new Date(firstVisit.getTime() + lastVisitOffset);
+    const name = `${moroccanNames[i % moroccanNames.length]} ${['Alaoui', 'Alami', 'Tazi', 'Benali', 'Bennis'][i % 5]}`;
+    const visits = (i % 6) + 1;
+    const firstVisit = daysAgo((i % 28) + 1, 12, 0);
+    const lastVisit = visits > 1 ? daysAgo(i % 12, 18, 0) : undefined;
     return {
       id: i + 1,
       name,
-      email: `${name.replace(/\s/g, '').toLowerCase()}@email.com`,
-      phone: `+212 6 ${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
-      joinedDate: new Date(now - Math.random() * 30 * 24 * 60 * 60 * 1000),
+      email: `${name.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+      phone: `+212 6 ${String(10000000 + i * 73921).slice(0, 8)}`,
+      joinedDate: firstVisit,
       visits,
-      totalSpent: Math.floor(Math.random() * 2000) + 100,
-      rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-      growth: Math.floor(Math.random() * 40) - 10,
+      totalSpent: 350 + visits * 420 + (i % 4) * 180,
+      rating: 4 + ((i % 10) / 10),
+      growth: (i % 9) + 2,
       firstVisit,
-      lastVisit,
+      lastVisit
     };
   });
 }
 
 export function generateSampleServiceCategories(): ServiceCategory[] {
   return servicesList.map((name, i) => {
-    let malePercentage: number;
-    let femalePercentage: number;
-    if (name === 'Coiffure Homme' || name === 'Barbier') {
-      malePercentage = 100;
-      femalePercentage = 0;
-    } else if (
-      name === 'Coiffure Femme' ||
-      name === 'Manucure & Pédicure' ||
-      name === 'Maquillage'
-    ) {
-      malePercentage = 0;
-      femalePercentage = 100;
-    } else {
-      malePercentage = Math.floor(Math.random() * 60) + 20;
-      femalePercentage = 100 - malePercentage;
-    }
-    const totalVisits = Math.floor(Math.random() * 300) + 50;
-    const maleVisits = Math.floor((totalVisits * malePercentage) / 100);
-    const femaleVisits = totalVisits - maleVisits;
-    
+    const totalVisits = 80 + i * 34;
+    const malePercentage = [48, 52, 44, 38, 55, 50, 62, 46][i] ?? 50;
+    const femalePercentage = 100 - malePercentage;
     return {
       id: i + 1,
       name,
       totalVisits,
-      maleVisits,
-      femaleVisits,
+      maleVisits: Math.round(totalVisits * (malePercentage / 100)),
+      femaleVisits: Math.round(totalVisits * (femalePercentage / 100)),
       malePercentage,
       femalePercentage,
-      avgDuration: Math.floor(Math.random() * 90) + 30,
-      revenue: Math.floor(Math.random() * 50000) + 10000,
-      growth: Math.floor(Math.random() * 50) - 10,
+      avgDuration: [120, 60, 360, 90, 180, 75, 240, 150][i] ?? 90,
+      revenue: 32000 + i * 18500,
+      growth: [12, 8, 19, 14, 10, 7, 6, 11][i] ?? 8
     };
   });
 }
 
 export function enrichAndRankClients(parsedClients: any[]): ClientRanking[] {
-  const enrichedClients: ClientRanking[] = parsedClients.map((client: any, index: number) => {
-    const totalSpent = client.totalSpent || Math.floor(Math.random() * 19500) + 500;
-    const totalVisits = client.totalVisits || Math.floor(Math.random() * 50) + 5;
-    const averageRating = client.averageRating ? parseFloat(String(client.averageRating)) : parseFloat((Math.random() * 2 + 3).toFixed(1));
-    const lastVisit = client.lastVisit ? new Date(client.lastVisit) : new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000);
-    const growth = client.growth !== undefined ? client.growth : Math.floor(Math.random() * 60) - 20;
-    const loyaltyScore = client.loyaltyScore !== undefined ? client.loyaltyScore : Math.floor(Math.random() * 40) + 60;
-    const favoriteService = client.favoriteService || ['Coiffeur', 'Spa', 'Massage', 'Manucure'][Math.floor(Math.random() * 4)];
-
-    return {
-      ...client,
-      rank: index + 1,
-      totalSpent,
-      totalVisits,
-      averageRating,
-      lastVisit,
-      growth,
-      loyaltyScore,
-      favoriteService,
-    };
-  });
-
-  enrichedClients.sort((a, b) => (b.totalSpent || 0) - (a.totalSpent || 0));
-  
-  enrichedClients.forEach((client, index) => {
-    client.rank = index + 1;
-  });
-
-  return enrichedClients;
+  return parsedClients
+    .map((client, index) => {
+      const totalVisits = Number(client.totalVisits ?? client.visits ?? ((index % 8) + 1));
+      const totalSpent = Number(client.totalSpent ?? totalVisits * (420 + (index % 5) * 160));
+      const averageRating = Number(client.averageRating ?? client.rating ?? (4 + ((index % 8) / 10)));
+      const loyaltyScore = Math.min(100, Math.round(totalVisits * 7 + averageRating * 10 + totalSpent / 500));
+      return {
+        id: Number(client.id ?? index + 1),
+        name: client.name ?? `Invité ${index + 1}`,
+        email: client.email ?? `invite${index + 1}@email.com`,
+        phone: client.phone ?? `+212 6 ${String(20000000 + index * 54321).slice(0, 8)}`,
+        status: client.status ?? 'Active',
+        address: client.address,
+        totalSpent,
+        totalVisits,
+        averageRating,
+        lastVisit: client.lastVisit ? new Date(client.lastVisit) : undefined,
+        lifetimeValue: totalSpent + totalVisits * 180,
+        favoriteService: servicesList[index % servicesList.length],
+        rank: 0,
+        growth: (index % 12) + 1,
+        loyaltyScore
+      };
+    })
+    .sort((a, b) => b.loyaltyScore - a.loyaltyScore)
+    .map((client, index) => ({ ...client, rank: index + 1 }));
 }
 
 export function generateSampleRankedClients(length: number = 100): ClientRanking[] {
-  const generatedClients: ClientRanking[] = Array.from({ length }, (_, i) => {
-    const nameIdx = i % moroccanNames.length;
-    const name = `${moroccanNames[nameIdx]} ${moroccanNames[(nameIdx + 5) % moroccanNames.length]}`;
+  const generatedClients = Array.from({ length }, (_, i) => {
+    const name = `${moroccanNames[i % moroccanNames.length]} ${['Alaoui', 'Alami', 'Tazi', 'Benali', 'Bennis'][i % 5]}`;
+    const totalVisits = 3 + (i % 22);
+    const totalSpent = 900 + totalVisits * (280 + (i % 6) * 90);
+    const averageRating = 4 + ((i % 10) / 10);
     return {
       id: i + 1,
       name,
-      email: `${moroccanNames[nameIdx].toLowerCase()}@email.com`,
-      phone: `+212 6 ${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
+      email: `${name.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+      phone: `+212 6 ${String(30000000 + i * 61813).slice(0, 8)}`,
       status: 'Active',
+      totalSpent,
+      totalVisits,
+      averageRating,
+      lastVisit: daysAgo(i % 45, 18, 0),
+      lifetimeValue: totalSpent + totalVisits * 240,
+      favoriteService: servicesList[i % servicesList.length],
       rank: i + 1,
-      totalSpent: Math.floor(Math.random() * 5500) + 500, // MAD realistic, max 6000
-      totalVisits: Math.floor(Math.random() * 50) + 5,
-      averageRating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-      lastVisit: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
-      growth: Math.floor(Math.random() * 60) - 20,
-      loyaltyScore: Math.floor(Math.random() * 40) + 60,
-      favoriteService: ['Coiffeur', 'Spa', 'Massage', 'Manucure'][Math.floor(Math.random() * 4)],
+      growth: (i % 15) + 1,
+      loyaltyScore: Math.min(100, Math.round(totalVisits * 4 + averageRating * 9 + totalSpent / 900))
     };
   });
 
-  generatedClients.sort((a, b) => (b.totalSpent || 0) - (a.totalSpent || 0));
-  generatedClients.forEach((client, index) => {
-    client.rank = index + 1;
-  });
-
-  return generatedClients;
+  return generatedClients
+    .sort((a, b) => b.loyaltyScore - a.loyaltyScore)
+    .map((client, index) => ({ ...client, rank: index + 1 }));
 }
 
 export function generateSampleCancelledAppointments(length: number = 10): CancelledAppointment[] {
-  const collaboratorNames = defaultAgendas.map(a => a.name);
-  const actualClients = Array.from({ length: 10 }, (_, i) => {
-    const nameIdx = i % moroccanNames.length;
-    return `${moroccanNames[nameIdx]} ${['El', 'Ben', 'Ait', 'Bou', 'Al'][i % 5]} ${moroccanNames[(nameIdx + 5) % moroccanNames.length]}`;
-  });
+  const resources = defaultAgendas.map(agenda => agenda.name);
+  const clients = sampleClients.map(client => client.name);
 
-  function formatDate(date: Date) {
-    return date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-  }
+  const formatDate = (date: Date) => date.toLocaleDateString('fr-FR');
+  const formatTime = (date: Date) => date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-  const baseDate = new Date('2025-11-12T10:00:00');
-  return Array.from({ length }).map((_, i) => {
-    const daysAgo = 29 - i * 3;
-    const rdvDate = new Date(baseDate);
-    rdvDate.setDate(baseDate.getDate() - daysAgo);
-    rdvDate.setHours(9 + (i % 8), 0);
-    const creationDate = new Date(rdvDate);
-    creationDate.setDate(rdvDate.getDate() - 1);
-    creationDate.setHours(rdvDate.getHours() - 1, 30);
-    const cancellationDate = new Date(rdvDate);
-    cancellationDate.setHours(rdvDate.getHours() - 1, 45);
+  return Array.from({ length }, (_, i) => {
+    const appointmentDate = daysAgo((i % 18) + 1, 10 + (i % 10), i % 2 === 0 ? 0 : 30);
+    const creationDate = daysAgo((i % 18) + 5, 9, 15);
+    const cancellationDate = daysAgo(i % 7, 11, 20);
     return {
       id: i + 1,
-      collaborator: collaboratorNames[i % collaboratorNames.length],
-      date: formatDate(rdvDate),
-      client: actualClients[i % actualClients.length],
-      takenOnline: i % 2 === 0,
-      creationDate: creationDate.toLocaleDateString('fr-FR'),
-      creationTime: creationDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      cancellationDate: cancellationDate.toLocaleDateString('fr-FR'),
-      cancellationTime: cancellationDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-      cancelledByClient: i % 2 === 1
+      collaborator: resources[i % resources.length],
+      date: formatDate(appointmentDate),
+      client: clients[i % clients.length],
+      takenOnline: i % 3 !== 0,
+      creationDate: formatDate(creationDate),
+      creationTime: formatTime(creationDate),
+      cancellationDate: formatDate(cancellationDate),
+      cancellationTime: formatTime(cancellationDate),
+      cancelledByClient: i % 2 === 0
     };
   });
 }

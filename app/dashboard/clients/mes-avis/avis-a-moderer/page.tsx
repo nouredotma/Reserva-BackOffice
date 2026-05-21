@@ -167,7 +167,7 @@ export default function AvisAModererPage() {
           {filteredReviews.map((review) => (
             <div
               key={review.id}
-              className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group"
+              className="bg-white rounded-lg border border-gray-100 p-6  transition-all group"
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -346,7 +346,7 @@ export default function AvisAModererPage() {
       {/* Action Modal */}
       {showActionModal && selectedReview && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+          <div className="bg-white rounded-lg  max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
             {/* Header */}
             <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 z-10">
               <div className="flex items-center justify-between">

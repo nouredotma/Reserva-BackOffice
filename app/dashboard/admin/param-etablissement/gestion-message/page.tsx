@@ -14,7 +14,7 @@ const GestionMessages = () => {
               Gestion Message
             </h1>
             <p className="text-sm text-gray-500">
-              Vous pouvez afficher un message personnalisé à vos clients qui prennent rendez-vous en ligne. Ce message apparait juste après le choix de l&apos;horaire du rendez-vous.
+              Vous pouvez afficher un message personnalisé à vos invités qui réservent en ligne. Ce message apparait juste après le choix de l&apos;horaire de la réservation.
             </p>
           </div>
         </div>

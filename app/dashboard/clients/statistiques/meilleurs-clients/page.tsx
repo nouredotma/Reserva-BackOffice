@@ -235,7 +235,7 @@ export default function MeilleursClientsPage() {
             </div>
           </div>
           <p className="text-3xl font-light text-gray-900">{totalVisits}</p>
-          <p className="text-xs text-gray-400 mt-1">Rendez-vous cumulés</p>
+          <p className="text-xs text-gray-400 mt-1">Réservations cumulés</p>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-100 p-6">
@@ -354,7 +354,7 @@ export default function MeilleursClientsPage() {
         {filteredClients.map((client) => (
           <div
             key={client.id}
-            className={`rounded-lg border p-5 hover:shadow-lg transition-all ${getRankStyle(client.rank)} ${client.rank === 1 ? 'bg-primary border-primary' : ''}`}
+            className={`rounded-lg border p-5  transition-all ${getRankStyle(client.rank)} ${client.rank === 1 ? 'bg-primary border-primary' : ''}`}
           >
             <div className="flex items-center gap-6">
               {/* Rank */}

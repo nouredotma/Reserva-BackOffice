@@ -196,7 +196,7 @@ export default function ReglesModerationPage() {
         {rules.map((rule) => (
           <div
             key={rule.id}
-            className="bg-white rounded-lg border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all group"
+            className="bg-white rounded-lg border border-gray-100  hover:border-gray-200 transition-all group"
           >
             <div className="p-6">
               <div className="flex items-start justify-between">
@@ -338,7 +338,7 @@ export default function ReglesModerationPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+          <div className="bg-white rounded-lg  max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
             <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-light text-black">

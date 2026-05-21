@@ -75,7 +75,7 @@ export default function CaissePage({
 
   // Export CSV
   const exportToCSV = () => {
-    const headers = ['Type', 'Montant', 'Méthode', 'Client', 'Collaborateur', 'Date', 'Note'];
+    const headers = ['Type', 'Montant', 'Méthode', 'Invité', 'Ressource', 'Date', 'Note'];
     const rows = filteredTransactions.map(tx => [
       tx.type,
       tx.amount,
@@ -363,8 +363,8 @@ export default function CaissePage({
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Méthode</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collaborateur</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invité</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ressource</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
               </tr>
@@ -411,7 +411,7 @@ export default function CaissePage({
       {/* Modal Add Transaction */}
       {showModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+          <div className="bg-white rounded-lg  max-w-lg w-full max-h-[90vh] overflow-y-auto animate-slideUp">
             <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 flex items-center justify-between">
               <h2 className="text-2xl font-light text-gray-900">Nouvelle transaction</h2>
               <button onClick={() => setShowModal(false)} className="p-2 text-gray-400 hover:text-gray-900 transition-colors">
@@ -480,12 +480,12 @@ export default function CaissePage({
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
-                    <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Nom du client" />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Invité</label>
+                    <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Nom de l’invité" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Collaborateur</label>
-                    <input type="text" value={formData.employee} onChange={e => setFormData({ ...formData, employee: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Nom du collaborateur" />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ressource</label>
+                    <input type="text" value={formData.employee} onChange={e => setFormData({ ...formData, employee: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Nom de la ressource" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>

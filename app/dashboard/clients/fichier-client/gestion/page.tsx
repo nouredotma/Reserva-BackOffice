@@ -165,7 +165,7 @@ export default function ClientsGestionPage() {
   };
 
   const handleDeleteClient = (id: string) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce client ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cet invité ?')) {
       const updatedClients = clients.filter(c => c.id !== id);
       saveClients(updatedClients);
     }
@@ -238,9 +238,9 @@ export default function ClientsGestionPage() {
       <div className="mb-8 pt-20 animate-slideUp">
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-4">
-            <h1 className="text-5xl font-light text-gray-900 tracking-tight">Gestion des Clients</h1>
+            <h1 className="text-5xl font-light text-gray-900 tracking-tight">Profils invités</h1>
             <span className="text-sm text-gray-400 mt-4">
-              {filteredClients.length} {filteredClients.length === 1 ? 'client' : 'clients'}
+              {filteredClients.length} {filteredClients.length === 1 ? 'invité' : 'invités'}
             </span>
           </div>
 
@@ -287,7 +287,7 @@ export default function ClientsGestionPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
-              placeholder="Rechercher un client..."
+              placeholder="Rechercher un invité..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 rounded-full bg-white border border-gray-200 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
@@ -330,7 +330,7 @@ export default function ClientsGestionPage() {
           {filteredClients.map((client) => (
             <div
               key={client.id}
-              className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-lg hover:border-gray-200 transition-all group"
+              className="bg-white rounded-lg border border-gray-100 p-6  hover:border-gray-200 transition-all group"
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -388,8 +388,8 @@ export default function ClientsGestionPage() {
               {/* Stats */}
               <div className="pt-4 border-t border-gray-100">
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="text-gray-400">Prochain RDV</span>
-                  <span className="text-gray-400">{client.totalVisits || 0} visites</span>
+                  <span className="text-gray-400">Prochaine réservation</span>
+                  <span className="text-gray-400">{client.totalVisits || 0} réservations</span>
                 </div>
                 {editingAppointment === client.id ? (
                   <div className="flex items-center gap-2">
@@ -440,7 +440,7 @@ export default function ClientsGestionPage() {
                     <button
                       onClick={() => setEditingAppointment(client.id)}
                       className="p-1 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
-                      title="Modifier RDV"
+                      title="Modifier la réservation"
                     >
                       <Pencil size={12} />
                     </button>
@@ -454,15 +454,15 @@ export default function ClientsGestionPage() {
 
       {/* List View */}
       {viewMode === 'list' && (
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden animate-fadeIn">
+        <div className="bg-white rounded-lg border border-gray-100  overflow-hidden animate-fadeIn">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
-                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Client</th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Invité</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Contact</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap hidden xl:table-cell">Adresse</th>
-                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap hidden lg:table-cell">Prochain RDV</th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap hidden lg:table-cell">Prochaine réservation</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap hidden md:table-cell">Visites</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Statut</th>
                   <th className="px-4 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Actions</th>
@@ -541,7 +541,7 @@ export default function ClientsGestionPage() {
                           <button
                             onClick={() => setEditingAppointment(client.id)}
                             className="p-1 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
-                            title="Modifier RDV"
+                            title="Modifier la réservation"
                           >
                             <Pencil size={12} />
                           </button>
@@ -592,9 +592,9 @@ export default function ClientsGestionPage() {
           <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
             <UserIcon size={32} className="text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun client trouvé</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun invité trouvé</h3>
           <p className="text-gray-500 text-sm mb-6">
-            {searchTerm ? 'Essayez de modifier votre recherche' : 'Commencez par ajouter votre premier client'}
+            {searchTerm ? 'Essayez de modifier votre recherche' : 'Commencez par ajouter votre premier invité'}
           </p>
           {!searchTerm && (
             <button
@@ -602,7 +602,7 @@ export default function ClientsGestionPage() {
               className="px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
             >
               <Plus size={16} />
-              Ajouter un client
+              Ajouter un invité
             </button>
           )}
         </div>
@@ -611,12 +611,12 @@ export default function ClientsGestionPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+          <div className="bg-white rounded-lg  max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
             {/* Header */}
             <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-light text-gray-900">
-                  {editingClient ? 'Modifier le client' : 'Nouveau client'}
+                  {editingClient ? 'Modifier l’invité' : 'Nouvel invité'}
                 </h2>
                 <button 
                   onClick={() => setShowModal(false)}
@@ -728,7 +728,7 @@ export default function ClientsGestionPage() {
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     rows={4}
-                    placeholder="Ajouter des notes sur ce client..."
+                    placeholder="Ajouter des notes sur cet invité..."
                     className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all resize-none"
                   />
                 </div>

@@ -32,15 +32,15 @@ export default function SMEDashboard() {
       totalAppointments: 38,
       onlineRate: 94.7,
       newOnlineClients: 3,
-      newSalonClients: 0,
+      newDirectClients: 0,
       appointmentsTrend: [
-        { day: '01', salon: 1, online: 2 },
-        { day: '02', salon: 0, online: 0 },
-        { day: '03', salon: 0, online: 0 },
-        { day: '04', salon: 0, online: 1 },
-        { day: '05', salon: 0, online: 0 },
-        { day: '06', salon: 0, online: 2 },
-        { day: '07', salon: 0, online: 2 },
+        { day: '01', direct: 1, online: 2 },
+        { day: '02', direct: 0, online: 0 },
+        { day: '03', direct: 0, online: 0 },
+        { day: '04', direct: 0, online: 1 },
+        { day: '05', direct: 0, online: 0 },
+        { day: '06', direct: 0, online: 2 },
+        { day: '07', direct: 0, online: 2 },
       ],
       revenueData: [
         { name: 'Lun', value: 2400 },
@@ -60,38 +60,38 @@ export default function SMEDashboard() {
       totalAppointments: 165,
       onlineRate: 94.5,
       newOnlineClients: 28,
-      newSalonClients: 4,
+      newDirectClients: 4,
       appointmentsTrend: [
-        { day: '01', salon: 1, online: 2 },
-        { day: '02', salon: 0, online: 0 },
-        { day: '03', salon: 0, online: 0 },
-        { day: '04', salon: 0, online: 1 },
-        { day: '05', salon: 0, online: 0 },
-        { day: '06', salon: 0, online: 2 },
-        { day: '07', salon: 0, online: 2 },
-        { day: '08', salon: 0, online: 2 },
-        { day: '09', salon: 0, online: 0 },
-        { day: '10', salon: 0, online: 0 },
-        { day: '11', salon: 0, online: 1 },
-        { day: '12', salon: 0, online: 1 },
-        { day: '13', salon: 0, online: 1 },
-        { day: '14', salon: 1, online: 3 },
-        { day: '15', salon: 0, online: 4 },
-        { day: '16', salon: 0, online: 0 },
-        { day: '17', salon: 0, online: 3 },
-        { day: '18', salon: 0, online: 0 },
-        { day: '19', salon: 1, online: 1 },
-        { day: '20', salon: 0, online: 4 },
-        { day: '21', salon: 0, online: 3 },
-        { day: '22', salon: 0, online: 3 },
-        { day: '23', salon: 0, online: 0 },
-        { day: '24', salon: 0, online: 0 },
-        { day: '25', salon: 0, online: 1 },
-        { day: '26', salon: 0, online: 1 },
-        { day: '27', salon: 0, online: 1 },
-        { day: '28', salon: 0, online: 1 },
-        { day: '29', salon: 1, online: 1 },
-        { day: '30', salon: 0, online: 1 },
+        { day: '01', direct: 1, online: 2 },
+        { day: '02', direct: 0, online: 0 },
+        { day: '03', direct: 0, online: 0 },
+        { day: '04', direct: 0, online: 1 },
+        { day: '05', direct: 0, online: 0 },
+        { day: '06', direct: 0, online: 2 },
+        { day: '07', direct: 0, online: 2 },
+        { day: '08', direct: 0, online: 2 },
+        { day: '09', direct: 0, online: 0 },
+        { day: '10', direct: 0, online: 0 },
+        { day: '11', direct: 0, online: 1 },
+        { day: '12', direct: 0, online: 1 },
+        { day: '13', direct: 0, online: 1 },
+        { day: '14', direct: 1, online: 3 },
+        { day: '15', direct: 0, online: 4 },
+        { day: '16', direct: 0, online: 0 },
+        { day: '17', direct: 0, online: 3 },
+        { day: '18', direct: 0, online: 0 },
+        { day: '19', direct: 1, online: 1 },
+        { day: '20', direct: 0, online: 4 },
+        { day: '21', direct: 0, online: 3 },
+        { day: '22', direct: 0, online: 3 },
+        { day: '23', direct: 0, online: 0 },
+        { day: '24', direct: 0, online: 0 },
+        { day: '25', direct: 0, online: 1 },
+        { day: '26', direct: 0, online: 1 },
+        { day: '27', direct: 0, online: 1 },
+        { day: '28', direct: 0, online: 1 },
+        { day: '29', direct: 1, online: 1 },
+        { day: '30', direct: 0, online: 1 },
       ],
       revenueData: [
         { name: 'S1', value: 12400 },
@@ -108,20 +108,20 @@ export default function SMEDashboard() {
       totalAppointments: 1950,
       onlineRate: 94.5,
       newOnlineClients: 285,
-      newSalonClients: 42,
+      newDirectClients: 42,
       appointmentsTrend: [
-        { day: 'Jan', salon: 8, online: 145 },
-        { day: 'Fév', salon: 6, online: 152 },
-        { day: 'Mar', salon: 9, online: 148 },
-        { day: 'Avr', salon: 7, online: 156 },
-        { day: 'Mai', salon: 5, online: 162 },
-        { day: 'Jun', salon: 4, online: 158 },
-        { day: 'Jul', salon: 3, online: 168 },
-        { day: 'Aoû', salon: 2, online: 172 },
-        { day: 'Sep', salon: 4, online: 165 },
-        { day: 'Oct', salon: 5, online: 159 },
-        { day: 'Nov', salon: 3, online: 155 },
-        { day: 'Déc', salon: 4, online: 156 },
+        { day: 'Jan', direct: 8, online: 145 },
+        { day: 'Fév', direct: 6, online: 152 },
+        { day: 'Mar', direct: 9, online: 148 },
+        { day: 'Avr', direct: 7, online: 156 },
+        { day: 'Mai', direct: 5, online: 162 },
+        { day: 'Jun', direct: 4, online: 158 },
+        { day: 'Jul', direct: 3, online: 168 },
+        { day: 'Août', direct: 2, online: 172 },
+        { day: 'Sep', direct: 4, online: 165 },
+        { day: 'Oct', direct: 5, online: 159 },
+        { day: 'Nov', direct: 3, online: 155 },
+        { day: 'Déc', direct: 4, online: 156 },
       ],
       revenueData: [
         { name: 'Jan', value: 45200 },
@@ -147,21 +147,19 @@ export default function SMEDashboard() {
 
   // Service distribution data
   const serviceData = [
-    { name: 'Coiffure', value: 420, color: '#FFC900' },
-    { name: 'Spa', value: 280, color: '#3B82F6' },
-    { name: 'Massage', value: 190, color: '#60A5FA' },
-    { name: 'Manucure', value: 150, color: '#93C5FD' },
-    { name: 'Soins', value: 110, color: '#DBEAFE' },
+    { name: 'Restaurants', value: 420, color: '#FFC900' },
+    { name: 'Hébergements', value: 280, color: '#3B82F6' },
+    { name: 'Day passes', value: 190, color: '#60A5FA' },
+    { name: 'Wellness', value: 150, color: '#93C5FD' },
+    { name: 'Conciergerie', value: 110, color: '#DBEAFE' },
   ];
-
   // Employee performance data
   const employeeData = [
-    { name: 'Yassine El Fassi', appointments: 45, revenue: 15600, rating: 4.8, growth: '+12%' },
-    { name: 'Samira Bouzid', appointments: 38, revenue: 13200, rating: 4.6, growth: '+8%' },
-    { name: 'Khalid Ait Lahcen', appointments: 52, revenue: 18900, rating: 4.9, growth: '+15%' },
-    { name: 'Nadia El Khatib', appointments: 31, revenue: 10800, rating: 4.5, growth: '+5%' },
+    { name: 'Restaurant floor', appointments: 82, revenue: 38400, rating: 4.8, growth: '+12%' },
+    { name: 'Wellness suites', appointments: 38, revenue: 31500, rating: 4.7, growth: '+8%' },
+    { name: 'Pool & beach', appointments: 96, revenue: 28800, rating: 4.6, growth: '+15%' },
+    { name: 'Concierge desk', appointments: 31, revenue: 30250, rating: 4.9, growth: '+5%' },
   ];
-
   // Time slot popularity
   const timeSlotData = [
     { slot: '09:00', count: 12 },
@@ -178,7 +176,7 @@ export default function SMEDashboard() {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-100">
+        <div className="bg-white px-3 py-2 rounded-lg  border border-gray-100">
           <p className="text-sm font-medium text-gray-900">{payload[0].value}</p>
         </div>
       );
@@ -277,7 +275,7 @@ export default function SMEDashboard() {
       {/* Main KPI Cards */}
       <div className="grid grid-cols-5 gap-4 mb-8 animate-fadeIn">
         {/* Online Appointments */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Calendar size={18} className="text-gray-400" />
@@ -288,13 +286,13 @@ export default function SMEDashboard() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Nombre de RDV en ligne</p>
+            <p className="text-xs text-gray-400 mb-1">Nombre de réservations en ligne</p>
             <p className="text-3xl font-light text-gray-900">{currentData.onlineAppointments}</p>
           </div>
         </div>
 
         {/* Total Appointments */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Users size={18} className="text-gray-400" />
@@ -305,13 +303,13 @@ export default function SMEDashboard() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Nombre de RDV</p>
+            <p className="text-xs text-gray-400 mb-1">Nombre de réservations</p>
             <p className="text-3xl font-light text-gray-900">{currentData.totalAppointments}</p>
           </div>
         </div>
 
         {/* Online Rate */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <BarChart3 size={18} className="text-gray-400" />
@@ -327,8 +325,8 @@ export default function SMEDashboard() {
           </div>
         </div>
 
-        {/* New Online Clients */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        {/* New Online Guests */}
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Download size={18} className="text-gray-400" />
@@ -339,13 +337,13 @@ export default function SMEDashboard() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Nouveaux clients en ligne</p>
+            <p className="text-xs text-gray-400 mb-1">Nouveaux invités en ligne</p>
             <p className="text-3xl font-light text-gray-900">{currentData.newOnlineClients}</p>
           </div>
         </div>
 
-        {/* New Salon Clients */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        {/* New Direct Guests */}
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Clock size={18} className="text-gray-400" />
@@ -356,8 +354,8 @@ export default function SMEDashboard() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Nouveaux clients en salon</p>
-            <p className="text-3xl font-light text-gray-900">{currentData.newSalonClients}</p>
+            <p className="text-xs text-gray-400 mb-1">Nouveaux invités en direct</p>
+            <p className="text-3xl font-light text-gray-900">{currentData.newDirectClients}</p>
           </div>
         </div>
       </div>
@@ -365,7 +363,7 @@ export default function SMEDashboard() {
       {/* Main Chart - Appointments Taken */}
       <div className="bg-white rounded-lg border border-gray-100 p-6 mb-8 animate-fadeIn">
         <div className="mb-6">
-          <h2 className="text-xl font-light text-gray-900 mb-1">Rendez-vous pris</h2>
+          <h2 className="text-xl font-light text-gray-900 mb-1">Réservations pris</h2>
           <p className="text-xs text-gray-400">Évolution quotidienne</p>
         </div>
         <ResponsiveContainer width="100%" height={320}>
@@ -385,11 +383,11 @@ export default function SMEDashboard() {
             <Tooltip content={<CustomTooltip />} />
             <Line 
               type="monotone" 
-              dataKey="salon" 
+              dataKey="direct" 
               stroke="#1f2937" 
               strokeWidth={2}
               dot={{ fill: '#1f2937', strokeWidth: 0, r: 3 }}
-              name="Pris en salon"
+              name="Pris en direct"
             />
             <Line 
               type="monotone" 
@@ -404,7 +402,7 @@ export default function SMEDashboard() {
         <div className="flex items-center justify-center gap-8 mt-4 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-gray-900"></div>
-            <span className="text-xs text-gray-600">Pris en salon</span>
+            <span className="text-xs text-gray-600">Pris en direct</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
@@ -575,7 +573,7 @@ export default function SMEDashboard() {
                   <Star size={18} className="text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">Satisfaction client</p>
+                  <p className="text-xs text-gray-400">Satisfaction invité</p>
                   <p className="text-lg font-medium text-gray-900">4.7/5</p>
                 </div>
               </div>
@@ -607,13 +605,13 @@ export default function SMEDashboard() {
       {/* Employee Performance */}
       <div className="animate-fadeIn">
         <div className="mb-6">
-          <h2 className="text-2xl font-light text-gray-900 mb-1">Performance des collaborateurs</h2>
+          <h2 className="text-2xl font-light text-gray-900 mb-1">Performance des ressources</h2>
           <p className="text-xs text-gray-400">Statistiques individuelles du mois</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
           {employeeData.map((employee, index) => (
-            <div key={index} className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all">
+            <div key={index} className="bg-white rounded-lg border border-gray-100 p-6  transition-all">
               <div className="flex items-center justify-between">
                 {/* Employee Info */}
                 <div className="flex items-center gap-4">
@@ -631,7 +629,7 @@ export default function SMEDashboard() {
                 {/* Stats */}
                 <div className="flex items-center gap-12">
                   <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-1">Rendez-vous</p>
+                    <p className="text-xs text-gray-400 mb-1">Réservations</p>
                     <p className="text-lg font-medium text-gray-900">{employee.appointments}</p>
                   </div>
 
@@ -710,12 +708,12 @@ export default function SMEDashboard() {
             </div>
           </div>
           <p className="text-2xl font-light text-gray-900 mb-1">385 MAD</p>
-          <p className="text-xs text-gray-500">Par rendez-vous</p>
+          <p className="text-xs text-gray-500">Par réservations</p>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-xs text-gray-400">Clients fidèles</p>
+            <p className="text-xs text-gray-400">Invités fidèles</p>
             <div className="flex items-center gap-1 text-emerald-600">
               <ArrowUpRight size={12} />
               <span className="text-[10px] font-medium">+12%</span>
@@ -760,7 +758,7 @@ export default function SMEDashboard() {
         <div className="bg-white rounded-lg border border-gray-100 p-6">
           <div className="mb-6">
             <h3 className="text-sm font-medium text-gray-900 mb-1">Canaux de réservation</h3>
-            <p className="text-xs text-gray-400">Origine des rendez-vous</p>
+            <p className="text-xs text-gray-400">Origine des réservations</p>
           </div>
           <div className="space-y-4">
             {[
@@ -793,10 +791,10 @@ export default function SMEDashboard() {
         </div>
       </div>
 
-      {/* Client Demographics */}
+      {/* Guest Demographics */}
       <div className="mt-8 animate-fadeIn">
         <div className="mb-6">
-          <h2 className="text-2xl font-light text-gray-900 mb-1">Analyse clientèle</h2>
+          <h2 className="text-2xl font-light text-gray-900 mb-1">Analyse invités</h2>
           <p className="text-xs text-gray-400">Démographie et comportement</p>
         </div>
 
@@ -804,7 +802,7 @@ export default function SMEDashboard() {
           <div className="bg-white rounded-lg border border-gray-100 p-6">
             <div className="mb-6">
               <h3 className="text-sm font-medium text-gray-900 mb-1">Répartition par âge</h3>
-              <p className="text-xs text-gray-400">Distribution des clients</p>
+              <p className="text-xs text-gray-400">Distribution des invités</p>
             </div>
             <div className="space-y-3">
               {[
@@ -833,7 +831,7 @@ export default function SMEDashboard() {
           <div className="bg-white rounded-lg border border-gray-100 p-6">
             <div className="mb-6">
               <h3 className="text-sm font-medium text-gray-900 mb-1">Fréquence de visite</h3>
-              <p className="text-xs text-gray-400">Comportement client</p>
+              <p className="text-xs text-gray-400">Comportement invité</p>
             </div>
             <div className="space-y-4">
               {[

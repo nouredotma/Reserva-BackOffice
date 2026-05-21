@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Download, ChevronLeft, ChevronRight, Calendar, TrendingUp } from 'lucide-react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
-export default function PrestationsPage() {
+export default function OffresPage() {
   const [mounted, setMounted] = useState(false);
   const [currentMonth, setCurrentMonth] = useState('Décembre 2024');
   const [compareMode, setCompareMode] = useState(false);
@@ -17,58 +17,44 @@ export default function PrestationsPage() {
     setMounted(true);
   }, []);
 
-  const prestationsData = [
+  const offresData = [
     {
-      category: 'COIFFURE FEMME',
+      category: 'RESTAURANTS',
       items: [
-        { name: 'Coupe Femme + Brushing', total: 22, salon: 4, ligne: 18, taux: 81.8, revenue: '3 300 MAD' },
-        { name: 'Coloration Complète', total: 10, salon: 2, ligne: 8, taux: 80, revenue: '3 500 MAD' },
-        { name: 'Mèches Balayage', total: 7, salon: 1, ligne: 6, taux: 85.7, revenue: '3 150 MAD' },
-        { name: 'Lissage Brésilien', total: 3, salon: 0, ligne: 3, taux: 100, revenue: '2 400 MAD' },
+        { name: 'Table VIP - Le Jardin', total: 32, salon: 6, ligne: 26, taux: 81.3, revenue: '14 400 MAD' },
+        { name: 'Brunch signature', total: 24, salon: 4, ligne: 20, taux: 83.3, revenue: '9 120 MAD' },
+        { name: 'Dîner rooftop', total: 18, salon: 3, ligne: 15, taux: 83.3, revenue: '11 700 MAD' },
       ]
     },
     {
-      category: 'COIFFURE HOMME',
+      category: 'HÉBERGEMENTS',
       items: [
-        { name: 'Coupe Homme Classique', total: 15, salon: 3, ligne: 12, taux: 80, revenue: '1 200 MAD' },
-        { name: 'Coupe + Barbe', total: 8, salon: 2, ligne: 6, taux: 75, revenue: '960 MAD' },
-        { name: 'Rasage Traditionnel', total: 5, salon: 1, ligne: 4, taux: 80, revenue: '500 MAD' },
+        { name: 'Suite deluxe', total: 14, salon: 2, ligne: 12, taux: 85.7, revenue: '23 100 MAD' },
+        { name: 'Riad privatisé', total: 5, salon: 1, ligne: 4, taux: 80, revenue: '31 000 MAD' },
       ]
     },
     {
-      category: 'SOINS DU VISAGE',
+      category: 'DAY PASSES',
       items: [
-        { name: 'Soin du Visage Complet', total: 6, salon: 1, ligne: 5, taux: 83.3, revenue: '1 500 MAD' },
-        { name: 'Soin Anti-Âge', total: 4, salon: 0, ligne: 4, taux: 100, revenue: '1 400 MAD' },
-        { name: 'Nettoyage de Peau Profond', total: 3, salon: 0, ligne: 3, taux: 100, revenue: '600 MAD' },
+        { name: 'Day pass rooftop pool', total: 46, salon: 8, ligne: 38, taux: 82.6, revenue: '13 800 MAD' },
+        { name: 'Cabana privée', total: 12, salon: 2, ligne: 10, taux: 83.3, revenue: '8 400 MAD' },
       ]
     },
     {
-      category: 'MANUCURE & PÉDICURE',
+      category: 'WELLNESS',
       items: [
-        { name: 'Manucure Classique', total: 7, salon: 1, ligne: 6, taux: 85.7, revenue: '560 MAD' },
-        { name: 'Pose Vernis Semi-Permanent', total: 5, salon: 0, ligne: 5, taux: 100, revenue: '750 MAD' },
-        { name: 'Pédicure Spa', total: 4, salon: 0, ligne: 4, taux: 100, revenue: '480 MAD' },
+        { name: 'Rituel hammam & massage', total: 21, salon: 3, ligne: 18, taux: 85.7, revenue: '18 900 MAD' },
+        { name: 'Cabine duo spa', total: 9, salon: 1, ligne: 8, taux: 88.9, revenue: '12 600 MAD' },
       ]
     },
     {
-      category: 'MASSAGE & BIEN-ÊTRE',
+      category: 'CONCIERGERIE',
       items: [
-        { name: 'Massage Relaxant Corps Complet', total: 4, salon: 0, ligne: 4, taux: 100, revenue: '1 200 MAD' },
-        { name: 'Massage Dos et Épaules', total: 3, salon: 0, ligne: 3, taux: 100, revenue: '540 MAD' },
-        { name: 'Hammam + Gommage', total: 2, salon: 0, ligne: 2, taux: 100, revenue: '500 MAD' },
-      ]
-    },
-    {
-      category: 'ÉPILATION',
-      items: [
-        { name: 'Épilation Sourcils', total: 6, salon: 0, ligne: 6, taux: 100, revenue: '300 MAD' },
-        { name: 'Épilation Jambes Complètes', total: 3, salon: 0, ligne: 3, taux: 100, revenue: '450 MAD' },
-        { name: 'Épilation Maillot Brésilien', total: 2, salon: 0, ligne: 2, taux: 100, revenue: '240 MAD' },
+        { name: 'Transfert aéroport premium', total: 17, salon: 2, ligne: 15, taux: 88.2, revenue: '11 050 MAD' },
+        { name: 'Demande sur mesure', total: 8, salon: 3, ligne: 5, taux: 62.5, revenue: '19 200 MAD' },
       ]
     },
   ];
-
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
@@ -101,8 +87,8 @@ export default function PrestationsPage() {
       <div className="mb-12 pt-20 animate-slideUp">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-5xl font-light text-gray-900 tracking-tight mb-2">Prestations</h1>
-            <p className="text-sm text-gray-400">Analyse détaillée des prestations par service</p>
+            <h1 className="text-5xl font-light text-gray-900 tracking-tight mb-2">Offres</h1>
+            <p className="text-sm text-gray-400">Analyse détaillée des offres réservables</p>
           </div>
           <div className="flex items-center gap-6">
             {/* Date Navigation - same design as vue-ensemble */}
@@ -160,7 +146,7 @@ export default function PrestationsPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
               <Calendar size={18} className="text-gray-400" />
@@ -171,12 +157,12 @@ export default function PrestationsPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Total Prestations</p>
+            <p className="text-xs text-gray-400 mb-1">Total offres</p>
             <p className="text-3xl font-light text-gray-900">39</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
               <Calendar size={18} className="text-gray-400" />
@@ -187,12 +173,12 @@ export default function PrestationsPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Pris en Salon</p>
+            <p className="text-xs text-gray-400 mb-1">Pris en direct</p>
             <p className="text-3xl font-light text-gray-900">2</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
               <Calendar size={18} className="text-gray-400" />
@@ -203,12 +189,12 @@ export default function PrestationsPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Pris en Ligne</p>
+            <p className="text-xs text-gray-400 mb-1">Pris en ligne</p>
             <p className="text-3xl font-light text-gray-900">37</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
               <Calendar size={18} className="text-gray-400" />
@@ -219,7 +205,7 @@ export default function PrestationsPage() {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-400 mb-1">Taux en Ligne</p>
+            <p className="text-xs text-gray-400 mb-1">Taux en ligne</p>
             <p className="text-3xl font-light text-gray-900">94.9%</p>
           </div>
         </div>
@@ -232,27 +218,27 @@ export default function PrestationsPage() {
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Prestation
+                  Offre
                 </th>
                 <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total Prestations
+                  Total offres
                 </th>
                 <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Pris en Salon
+                  Pris en direct
                 </th>
                 <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Pris en Ligne
+                  Pris en ligne
                 </th>
                 <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Taux en Ligne
+                  Taux en ligne
                 </th>
                 <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total des RDV*
+                  Total des réservations*
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {prestationsData.map((category, catIndex) => (
+              {offresData.map((category, catIndex) => (
                 <React.Fragment key={catIndex}>
                   {category.items.map((item, itemIndex) => {
                     const isCategory = itemIndex === 0;
@@ -313,7 +299,7 @@ export default function PrestationsPage() {
 
       {/* Footer Note */}
       <div className="mt-6 text-xs text-gray-400">
-        * Le total des RDV représente le chiffre d'affaires généré par les prestations
+        * Le total des réservations représente le chiffre d'affaires généré par les offres
       </div>
     </div>
   );

@@ -64,7 +64,7 @@ const ExceptionalEditModal: React.FC<{ schedule: ExceptionalSchedule, onClose: (
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-      <div className="bg-white rounded-lg shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+      <div className="bg-white rounded-lg  max-w-md w-full max-h-[90vh] overflow-y-auto animate-slideUp">
         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 z-40 flex items-center justify-between">
           <h2 className="text-lg font-light text-gray-900">Modifier horaire exceptionnel</h2>
           <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-900 transition-colors">
@@ -322,7 +322,7 @@ const GestionHoraires = () => {
                 : 'text-gray-500 hover:text-gray-900'
             }`}
           >
-            Délais RDV en ligne
+            Délais réservations en ligne
             {activeTab === 'delays' && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
             )}
@@ -338,14 +338,14 @@ const GestionHoraires = () => {
             {/* Info Banner */}
             <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
               <p className="text-sm text-gray-600">
-                Gérez ici les horaires d'ouverture de votre établissement et la prise de RDV en ligne
+                Gérez ici les horaires d'ouverture de votre établissement et la prise de réservation en ligne
               </p>
             </div>
 
             {/* Online Booking Status */}
             <div className="p-0">
               <div className="flex items-center gap-6 mb-12 pt-4">
-                <Label className="text-base font-medium text-gray-900">Prise de RDV en ligne</Label>
+                <Label className="text-base font-medium text-gray-900">Prise de réservation en ligne</Label>
                 <div className="flex items-center gap-3">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -481,7 +481,7 @@ const GestionHoraires = () => {
             {/* Exceptional Schedules List */}
             <div className="space-y-3">
               {exceptionalSchedules.map((schedule) => (
-                <div key={schedule.id} className="bg-white rounded-lg border border-gray-100 p-6 flex items-center justify-between hover:shadow-md transition-shadow">
+                <div key={schedule.id} className="bg-white rounded-lg border border-gray-100 p-6 flex items-center justify-between  transition-shadow">
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Calendar size={16} className="text-gray-400" />
@@ -539,7 +539,7 @@ const GestionHoraires = () => {
             {/* Info Banner */}
             <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
               <p className="text-sm text-gray-600">
-                Définissez ici les horaires d'affichage de votre agenda Pro. Ces horaires n'apparaissent pas sur le portail et n'ont pas d'incidence sur la prise de RDV en ligne. Par défaut, ils vont du plus tôt au plus tard des horaires de l'établissement.
+                Définissez ici les horaires d'affichage de votre agenda Pro. Ces horaires n'apparaissent pas sur le portail et n'ont pas d'incidence sur la prise de réservation en ligne. Par défaut, ils vont du plus tôt au plus tard des horaires de l'établissement.
               </p>
             </div>
             {/* Time Selection */}
@@ -575,14 +575,14 @@ const GestionHoraires = () => {
             {/* Info Banner */}
             <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
               <p className="text-sm text-gray-600 font-medium mb-2">
-                Délais de prise de RDV en ligne
+                Délais de prise de réservation en ligne
               </p>
             </div>
 
             {/* Booking Delay */}
             <div className="bg-white rounded-lg border border-gray-100 p-6">
               <Label className="text-base font-medium text-gray-900 mb-4 block">
-                Un client peut prendre RDV en ligne:
+                Un invité peut réserver en ligne:
               </Label>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -596,7 +596,7 @@ const GestionHoraires = () => {
                       className="w-4 h-4 accent-primary"
                     />
                     <Label htmlFor="last-moment" className="text-sm text-gray-700 cursor-pointer">
-                      Jusqu'au dernier moment avant son RDV
+                      Jusqu'au dernier moment avant sa réservation
                     </Label>
                   </label>
                 </div>
@@ -633,18 +633,18 @@ const GestionHoraires = () => {
                         <SelectItem value="semaines">semaines</SelectItem>
                       </SelectContent>
                     </Select>
-                    <span className="text-sm text-gray-700">avant le rendez-vous</span>
+                    <span className="text-sm text-gray-700">avant la réservation</span>
                   </label>
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-4 pl-7">
-                Exemple: un client peut prendre RDV pour le 09 janvier jusqu'au 08 janvier à 20:00
+                Exemple: un invité peut réserver pour le 09 janvier jusqu'au 08 janvier à 20:00
               </p>
             </div>
             {/* Cancellation Delay */}
             <div className="bg-white rounded-lg border border-gray-100 p-6">
               <Label className="text-base font-medium text-gray-900 mb-4 block">
-                Un client peut annuler son RDV en ligne:
+                Un invité peut annuler sa réservation en ligne:
               </Label>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -658,7 +658,7 @@ const GestionHoraires = () => {
                       className="w-4 h-4 accent-primary"
                     />
                     <Label htmlFor="cancel-last-moment" className="text-sm text-gray-700 cursor-pointer">
-                      Jusqu'au dernier moment avant son RDV
+                      Jusqu'au dernier moment avant sa réservation
                     </Label>
                   </label>
                 </div>
@@ -695,18 +695,18 @@ const GestionHoraires = () => {
                         <SelectItem value="semaines">semaines</SelectItem>
                       </SelectContent>
                     </Select>
-                    <span className="text-sm text-gray-700">avant le rendez-vous</span>
+                    <span className="text-sm text-gray-700">avant la réservation</span>
                   </label>
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-4 pl-7">
-                Exemple: un client peut annuler son RDV pour le 09 janvier jusqu'au 08 janvier à 20:00
+                Exemple: un invité peut annuler sa réservation pour le 09 janvier jusqu'au 08 janvier à 20:00
               </p>
             </div>
             {/* Advance Booking */}
             <div className="bg-white rounded-lg border border-gray-100 p-6">
               <Label className="text-base font-medium text-gray-900 mb-4 block">
-                Un client peut prendre RDV en ligne:
+                Un invité peut réserver en ligne:
               </Label>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -742,12 +742,12 @@ const GestionHoraires = () => {
                         <SelectItem value="jours">jours</SelectItem>
                       </SelectContent>
                     </Select>
-                    <span className="text-sm text-gray-700">avant le rendez-vous</span>
+                    <span className="text-sm text-gray-700">avant la réservation</span>
                   </label>
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-4 pl-7">
-                Exemple: un client peut prendre RDV pour le 09 janvier à partir du 10 décembre à 20:00
+                Exemple: un invité peut réserver pour le 09 janvier à partir du 10 décembre à 20:00
               </p>
             </div>
 

@@ -160,7 +160,7 @@ export default function DoublonsPage() {
           {filteredDuplicates.map((dup) => (
             <div
               key={dup.id}
-              className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-lg hover:border-gray-200 transition-all group"
+              className="bg-white rounded-lg border border-gray-100 p-6  hover:border-gray-200 transition-all group"
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -237,12 +237,12 @@ export default function DoublonsPage() {
 
       {/* List View */}
       {viewMode === 'list' && (
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden animate-fadeIn">
+        <div className="bg-white rounded-lg border border-gray-100  overflow-hidden animate-fadeIn">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
-                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Client</th>
+                  <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Invité</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Contact</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap hidden xl:table-cell">Adresse</th>
                   <th className="px-4 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Doublons</th>
@@ -339,7 +339,7 @@ export default function DoublonsPage() {
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun doublon détecté</h3>
           <p className="text-gray-500 text-sm mb-6">
-            {searchTerm ? 'Essayez de modifier votre recherche' : 'Tous vos clients sont uniques !'}
+            {searchTerm ? 'Essayez de modifier votre recherche' : 'Tous vos invités sont uniques !'}
           </p>
         </div>
       )}
@@ -347,7 +347,7 @@ export default function DoublonsPage() {
       {/* Merge Modal */}
       {showMergeModal && selectedDuplicate && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+          <div className="bg-white rounded-lg  max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
             {/* Header */}
             <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6">
               <div className="flex items-center justify-between">
@@ -364,7 +364,7 @@ export default function DoublonsPage() {
             </div>
             {/* Merge Details */}
             <div className="px-8 py-6">
-              <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Clients à fusionner</h3>
+              <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Invités à fusionner</h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-1 bg-gray-50 rounded-lg p-4">
@@ -385,7 +385,7 @@ export default function DoublonsPage() {
                   ))}
                 </div>
                 <div className="mt-6 text-sm text-gray-700">
-                  <strong>Fusionner ces clients ?</strong> Les informations seront regroupées et les doublons supprimés.
+                  <strong>Fusionner ces invités ?</strong> Les informations seront regroupées et les doublons supprimés.
                 </div>
               </div>
               {/* Actions */}

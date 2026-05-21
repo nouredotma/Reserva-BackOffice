@@ -590,11 +590,11 @@ const CaissePDFDocument: React.FC<CaissePrintDocumentProps> = ({
           <View style={styles.performanceGrid}>
             {/* Top Clients */}
             <View style={styles.performanceCard}>
-              <Text style={styles.performanceTitle}>Top 5 Clients</Text>
+              <Text style={styles.performanceTitle}>Top 5 Invités</Text>
               <View style={styles.performanceTable}>
                 <View style={styles.performanceTableHeader}>
                   <Text style={styles.performanceCol1}>#</Text>
-                  <Text style={styles.performanceCol2}>Client</Text>
+                  <Text style={styles.performanceCol2}>Invité</Text>
                   <Text style={styles.performanceCol3}>Ventes</Text>
                   <Text style={styles.performanceCol4}>Montant</Text>
                 </View>
@@ -615,11 +615,11 @@ const CaissePDFDocument: React.FC<CaissePrintDocumentProps> = ({
 
             {/* Top Employees */}
             <View style={styles.performanceCard}>
-              <Text style={styles.performanceTitle}>Top 5 Collaborateurs</Text>
+              <Text style={styles.performanceTitle}>Top 5 Ressources</Text>
               <View style={styles.performanceTable}>
                 <View style={styles.performanceTableHeader}>
                   <Text style={styles.performanceCol1}>#</Text>
-                  <Text style={styles.performanceCol2}>Collaborateur</Text>
+                  <Text style={styles.performanceCol2}>Ressource</Text>
                   <Text style={styles.performanceCol3}>Ventes</Text>
                   <Text style={styles.performanceCol4}>Montant</Text>
                 </View>
@@ -682,8 +682,8 @@ const CaissePDFDocument: React.FC<CaissePrintDocumentProps> = ({
             <Text style={styles.col2}>Type</Text>
             <Text style={styles.col3}>Montant</Text>
             <Text style={styles.col4}>Méthode</Text>
-            <Text style={styles.col5}>Client</Text>
-            <Text style={styles.col6}>Collaborateur</Text>
+            <Text style={styles.col5}>Invité</Text>
+            <Text style={styles.col6}>Ressource</Text>
             <Text style={styles.col7}>Note</Text>
           </View>
           {transactions.map((tx, index) => (

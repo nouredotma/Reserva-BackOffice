@@ -39,7 +39,7 @@ const AProposPage = () => {
 
       {/* Success Notification */}
       {showSuccess && (
-        <div className="fixed top-6 right-6 bg-green-400 text-white px-6 py-3 rounded shadow-lg z-50 flex items-center gap-3 animate-fadeIn">
+        <div className="fixed top-6 right-6 bg-green-400 text-white px-6 py-3 rounded  z-50 flex items-center gap-3 animate-fadeIn">
           <Check size={20} />
           <span className="font-medium">Modifications enregistrées avec succès</span>
         </div>

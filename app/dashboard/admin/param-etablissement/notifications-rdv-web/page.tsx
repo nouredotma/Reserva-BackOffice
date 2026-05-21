@@ -45,7 +45,7 @@ const NotificationRDVPage = () => {
 
       {/* Success Notification */}
       {showSuccess && (
-        <div className="fixed top-6 right-6 bg-green-400 text-white px-6 py-3 rounded shadow-lg z-50 flex items-center gap-3 animate-fadeIn">
+        <div className="fixed top-6 right-6 bg-green-400 text-white px-6 py-3 rounded  z-50 flex items-center gap-3 animate-fadeIn">
           <Check size={20} />
           <span className="font-medium">Modifications enregistrées avec succès</span>
         </div>
@@ -56,10 +56,10 @@ const NotificationRDVPage = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 tracking-tight mb-2">
-              Notifications RDV
+              Notifications réservations
             </h1>
             <p className="text-sm text-gray-500">
-              Recevez un email dès qu'un rendez-vous est pris ou annulé en ligne
+              Recevez un email dès qu’une réservation est prise, modifiée ou annulée en ligne
             </p>
           </div>
         </div>

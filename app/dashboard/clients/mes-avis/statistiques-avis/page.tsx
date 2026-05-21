@@ -81,7 +81,7 @@ export default function StatistiquesAvisPage() {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-100">
+        <div className="bg-white px-3 py-2 rounded-lg  border border-gray-100">
           <p className="text-sm font-medium text-gray-900">{payload[0].value}</p>
         </div>
       );
@@ -133,7 +133,7 @@ export default function StatistiquesAvisPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8 animate-fadeIn">
         {/* Total Reviews */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <MessageSquare size={18} className="text-gray-400" />
@@ -150,7 +150,7 @@ export default function StatistiquesAvisPage() {
         </div>
 
         {/* Average Rating */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Star size={18} className="text-gray-400" />
@@ -167,7 +167,7 @@ export default function StatistiquesAvisPage() {
         </div>
 
         {/* Approval Rate */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <TrendingUp size={18} className="text-gray-400" />
@@ -186,7 +186,7 @@ export default function StatistiquesAvisPage() {
         </div>
 
         {/* Total Views */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all group">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-8">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
               <Eye size={18} className="text-gray-400" />
@@ -418,7 +418,7 @@ export default function StatistiquesAvisPage() {
 
         <div className="grid grid-cols-1 gap-4">
           {sampleEmployeeReviewStats.map((employee, index) => (
-            <div key={index} className="bg-white rounded-lg border border-gray-100 p-6 hover:shadow-md transition-all">
+            <div key={index} className="bg-white rounded-lg border border-gray-100 p-6  transition-all">
               <div className="flex items-center justify-between">
                 {/* Employee Info */}
                 <div className="flex items-center gap-4">

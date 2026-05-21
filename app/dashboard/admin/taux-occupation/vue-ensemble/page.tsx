@@ -279,7 +279,7 @@ const StatistiquesPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <TrendingUp size={20} className="text-gray-400" />
@@ -295,7 +295,7 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <Activity size={20} className="text-gray-400" />
@@ -311,7 +311,7 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <Calendar size={20} className="text-gray-400" />
@@ -327,7 +327,7 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <BarChart3 size={20} className="text-gray-400" />
@@ -345,7 +345,7 @@ const StatistiquesPage = () => {
       </div>
 
       {/* Heatmap */}
-      <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden animate-slideUp">
+      <div className="bg-white rounded-lg border border-gray-100  overflow-hidden animate-slideUp">
         {/* Title Bar */}
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="text-sm font-medium text-gray-900">
@@ -387,7 +387,7 @@ const StatistiquesPage = () => {
                         className={`
                           ${getColorClass(value)}
                           rounded-lg p-4 text-center font-medium text-sm
-                          cursor-move hover:scale-105 hover:shadow-md
+                          cursor-move  
                           transition-all duration-200
                           flex items-center justify-center
                           min-h-[56px]

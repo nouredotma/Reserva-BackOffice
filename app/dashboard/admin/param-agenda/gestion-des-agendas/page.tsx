@@ -31,7 +31,7 @@ type EmployeeAgenda = {
   status: 'active' | 'inactive' | 'vacation';
 };
 
-
+const legacyAgendaPattern = /Samira|Yassine|Khalid|Nadia El Khatib|Coiffeur|Barbier|Esthéticienne|Massage|Manucure/i;
 
 const GestionDesAgendas = () => {
   const [mounted, setMounted] = useState(false);
@@ -47,7 +47,12 @@ const GestionDesAgendas = () => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('employeeAgendas');
       if (stored) {
-        setAgendas(JSON.parse(stored));
+        if (legacyAgendaPattern.test(stored)) {
+          setAgendas(defaultAgendas);
+          localStorage.setItem('employeeAgendas', JSON.stringify(defaultAgendas));
+        } else {
+          setAgendas(JSON.parse(stored));
+        }
       } else {
         setAgendas(defaultAgendas);
         localStorage.setItem('employeeAgendas', JSON.stringify(defaultAgendas));
@@ -62,7 +67,7 @@ const GestionDesAgendas = () => {
   }, [agendas, mounted]);
 
   const handleDeleteAgenda = (id: number) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet agenda ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette ressource ?')) {
       setAgendas(agendas.filter(a => a.id !== id));
     }
   };
@@ -118,10 +123,10 @@ const GestionDesAgendas = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 tracking-tight mb-2">
-              Gestion des Agendas
+              Ressources & capacités
             </h1>
             <p className="text-sm text-gray-500">
-              Gérez les horaires, disponibilités et paramètres des collaborateurs
+              Gérez les ressources, capacités, disponibilités et règles de réservation
             </p>
           </div>
           
@@ -130,10 +135,10 @@ const GestionDesAgendas = () => {
               setEditingAgenda(null);
               setShowModal(true);
             }}
-            className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-gray-800 transition-colors shadow-sm"
+            className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-gray-800 transition-colors "
           >
             <Plus size={16} className="inline-block mr-2 -mt-0.5" />
-            Nouvel Agenda
+            Nouvelle ressource
           </button>
         </div>
 
@@ -143,7 +148,7 @@ const GestionDesAgendas = () => {
             <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Rechercher un collaborateur..."
+              placeholder="Rechercher une ressource..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white pl-12 pr-4 py-2.5 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
@@ -182,7 +187,7 @@ const GestionDesAgendas = () => {
 
       {filteredAgendas.length === 0 && (
         <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-          <p className="text-gray-400 mb-4">Aucun agenda trouvé</p>
+          <p className="text-gray-400 mb-4">Aucune ressource trouvée</p>
           <button
             onClick={() => {
               setSearchQuery('');
@@ -256,7 +261,7 @@ const AgendaCard = ({ agenda, onEdit, onDelete, onDuplicate }: {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-all group">
+    <div className="bg-white rounded-2xl border border-gray-100 p-6  transition-all group">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -326,7 +331,7 @@ const AgendaCard = ({ agenda, onEdit, onDelete, onDuplicate }: {
           <p className="text-sm font-medium text-gray-900">{agenda.timeSlotDuration} min</p>
         </div>
         <div className="space-y-1">
-          <p className="text-xs text-gray-500">RDV max/jour</p>
+          <p className="text-xs text-gray-500">Réservations max/jour</p>
           <p className="text-sm font-medium text-gray-900">{agenda.maxAppointmentsPerDay}</p>
         </div>
       </div>
@@ -353,7 +358,7 @@ const AgendaCard = ({ agenda, onEdit, onDelete, onDuplicate }: {
       {/* Services */}
       {agenda.services.length > 0 && (
         <div>
-          <p className="text-xs text-gray-500 mb-2">{agenda.services.length} prestations</p>
+          <p className="text-xs text-gray-500 mb-2">{agenda.services.length} offres</p>
           <div className="flex flex-wrap gap-1">
             {agenda.services.slice(0, 3).map((service, idx) => (
               <span
@@ -430,12 +435,12 @@ const AgendaModal = ({ agenda, onClose, onSave }: {
           -moz-appearance: textfield;
         }
       `}</style>
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full my-8">
+      <div className="bg-white rounded-2xl  max-w-4xl w-full my-8">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 rounded-t-2xl z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-light text-gray-900">
-              {agenda ? 'Modifier l\'agenda' : 'Nouvel agenda'}
+              {agenda ? 'Modifier la ressource' : 'Nouvelle ressource'}
             </h2>
             <button
               onClick={onClose}
@@ -535,7 +540,7 @@ const AgendaModal = ({ agenda, onClose, onSave }: {
                       className="flex items-center gap-3 px-3 py-2.5 border border-gray-200 rounded-full hover:border-gray-300 transition-colors"
                     >
                       <div 
-                        className="w-6 h-6 rounded-full border-2 border-gray-200 shadow-sm" 
+                        className="w-6 h-6 rounded-full border-2 border-gray-200 " 
                         style={{ backgroundColor: formData.color }}
                       />
                       <span className="text-sm text-gray-700 font-mono">{formData.color}</span>
@@ -546,13 +551,12 @@ const AgendaModal = ({ agenda, onClose, onSave }: {
                           className="fixed inset-0 z-10" 
                           onClick={() => setShowColorPicker(false)}
                         />
-                        <div className="absolute top-full mt-2 z-20 bg-white rounded-lg shadow-xl border border-gray-200 p-4">
+                        <div className="absolute top-full mt-2 z-20 bg-white rounded-lg  border border-gray-200 p-4">
                           <Sketch
                             color={formData.color}
                             onChange={(color) => {
                               setFormData({ ...formData, color: color.hex });
                             }}
-                            style={{ boxShadow: 'none' }}
                           />
                         </div>
                       </>
@@ -655,7 +659,7 @@ const AgendaModal = ({ agenda, onClose, onSave }: {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    RDV max/jour
+                    Réservations max/jour
                   </label>
                   <input
                     type="number"

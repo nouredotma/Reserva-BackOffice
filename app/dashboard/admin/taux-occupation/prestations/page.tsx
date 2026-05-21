@@ -33,42 +33,42 @@ const StatistiquesPage = () => {
   // Service performance data
   const [servicesData] = useState<ServiceData[]>([
     {
-      category: 'MAINS | ONGLES NATURELS',
+      category: 'RESTAURANTS',
       services: [
-        { name: 'Manucure complète', occupancyRate: 5.21, hoursWorked: '67h 45', totalRevenue: 1700.00 },
-        { name: 'Dépose + Gainage avec vernis semi-permanent (couleur)', occupancyRate: 17.12, hoursWorked: '44h 30', totalRevenue: 1080.00 },
-        { name: 'Dépose + Gainage (nude)', occupancyRate: 3.85, hoursWorked: '10h', totalRevenue: 275.00 },
-        { name: 'Gainage (nude)', occupancyRate: 2.02, hoursWorked: '5h 15', totalRevenue: 150.00 },
-        { name: 'Gainage avec vernis semi-permanent', occupancyRate: 2.69, hoursWorked: '7h', totalRevenue: 165.00 },
-        { name: 'Dépose + Manucure ukrainienne | Sans vernis', occupancyRate: 0.38, hoursWorked: '1h', totalRevenue: 30.00 },
+        { name: 'Table VIP - Le Jardin', occupancyRate: 82.4, hoursWorked: '64h', totalRevenue: 14400 },
+        { name: 'Brunch signature', occupancyRate: 68.5, hoursWorked: '42h 30', totalRevenue: 9120 },
+        { name: 'Dîner rooftop', occupancyRate: 74.2, hoursWorked: '48h', totalRevenue: 11700 },
       ]
     },
     {
-      category: 'MAINS | RALLONGEMENTS',
+      category: 'HÉBERGEMENTS',
       services: [
-        { name: 'Pose complète rallongements', occupancyRate: 1.63, hoursWorked: '12h 45', totalRevenue: 305.00 },
-        { name: 'Extensions d\'ongle | Gel + vernis semi-permanent', occupancyRate: 2.31, hoursWorked: '6h', totalRevenue: 140.00 },
-        { name: 'Remplissage', occupancyRate: 1.54, hoursWorked: '4h', totalRevenue: 100.00 },
-        { name: 'Extensions d\'ongle | Gel', occupancyRate: 1.06, hoursWorked: '2h 45', totalRevenue: 65.00 },
+        { name: 'Suite deluxe', occupancyRate: 69.1, hoursWorked: '38h', totalRevenue: 23100 },
+        { name: 'Riad privatisé', occupancyRate: 58.4, hoursWorked: '26h', totalRevenue: 31000 },
       ]
     },
     {
-      category: 'BEAUTÉ DES PIEDS RUSSE',
+      category: 'DAY PASSES',
       services: [
-        { name: 'Pédicure russe complète', occupancyRate: 0.91, hoursWorked: '4h 45', totalRevenue: 150.00 },
-        { name: 'Beauté des pieds russe - Vernis semi-permanent renforcé', occupancyRate: 1.35, hoursWorked: '3h 30', totalRevenue: 110.00 },
-        { name: 'Beauté des pieds russe | Sans vernis', occupancyRate: 0.48, hoursWorked: '1h 15', totalRevenue: 40.00 },
+        { name: 'Day pass rooftop pool', occupancyRate: 88.6, hoursWorked: '92h', totalRevenue: 13800 },
+        { name: 'Cabana privée', occupancyRate: 71.3, hoursWorked: '36h', totalRevenue: 8400 },
       ]
     },
     {
-      category: 'DÉPOSE',
+      category: 'WELLNESS',
       services: [
-        { name: 'Dépose simple', occupancyRate: 0.06, hoursWorked: '10m', totalRevenue: 5.00 },
-        { name: 'Dépose suivie d\'une prestation', occupancyRate: 0.06, hoursWorked: '10m', totalRevenue: 5.00 },
+        { name: 'Rituel hammam & massage', occupancyRate: 76.5, hoursWorked: '48h 30', totalRevenue: 18900 },
+        { name: 'Cabine duo spa', occupancyRate: 63.2, hoursWorked: '22h 30', totalRevenue: 12600 },
+      ]
+    },
+    {
+      category: 'CONCIERGERIE',
+      services: [
+        { name: 'Transfert aéroport premium', occupancyRate: 54.8, hoursWorked: '21h 15', totalRevenue: 11050 },
+        { name: 'Demande sur mesure', occupancyRate: 47.6, hoursWorked: '18h', totalRevenue: 19200 },
       ]
     }
   ]);
-
   useEffect(() => {
     setMounted(true);
     if (typeof window !== 'undefined') {
@@ -132,10 +132,10 @@ const StatistiquesPage = () => {
   const exportData = () => {
     if (viewMode === 'services') {
       const csvContent = [
-        ['Prestation', 'Taux d\'occupation', 'Heures travaillées', 'Total des RDV'].join(','),
+        ['Offre', 'Taux d\'occupation', 'Heures travaillées', 'Total des réservations'].join(','),
         ...servicesData.flatMap(category => 
           category.services.map(service => 
-            [service.name, `${service.occupancyRate}%`, service.hoursWorked, `${service.totalRevenue}€`].join(',')
+            [service.name, `${service.occupancyRate}%`, service.hoursWorked, `${service.totalRevenue}MAD`].join(',')
           )
         )
       ].join('\n');
@@ -144,7 +144,7 @@ const StatistiquesPage = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `prestations-${currentDate.toISOString().split('T')[0]}.csv`;
+      a.download = `offres-${currentDate.toISOString().split('T')[0]}.csv`;
       a.click();
     }
   };
@@ -254,10 +254,10 @@ const StatistiquesPage = () => {
           <div className="flex items-center gap-6 no-print">
             <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
               <SelectTrigger className="w-[200px] rounded-full border-gray-200 text-sm">
-                <SelectValue placeholder="Tous les collaborateurs" />
+                <SelectValue placeholder="Tous les ressources" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les collaborateurs</SelectItem>
+                <SelectItem value="all">Tous les ressources</SelectItem>
                 {collaborators.map(collab => (
                   <SelectItem key={collab} value={collab.toLowerCase().split(' ')[0]}>
                     {collab}
@@ -271,7 +271,7 @@ const StatistiquesPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <Percent size={20} className="text-gray-400" />
@@ -287,7 +287,7 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <Clock size={20} className="text-gray-400" />
@@ -303,7 +303,7 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <DollarSign size={20} className="text-gray-400" />
@@ -314,21 +314,21 @@ const StatistiquesPage = () => {
             </div>
           </div>
           <div>
-            <p className="text-xs text-gray-500 mb-1 font-medium">Total des rendez-vous</p>
-            <p className="text-3xl font-light text-gray-900">{stats.totalRevenue.toFixed(2)}€</p>
+            <p className="text-xs text-gray-500 mb-1 font-medium">Total des réservations</p>
+            <p className="text-3xl font-light text-gray-900">{stats.totalRevenue.toFixed(2)}MAD</p>
           </div>
         </div>
       </div>
 
       {/* Only Services Table view remains */}
-      <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden animate-slideUp">
+      <div className="bg-white rounded-lg border border-gray-100  overflow-hidden animate-slideUp">
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* Header */}
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Prestation
+                  Offre
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Taux d'occupation*
@@ -337,7 +337,7 @@ const StatistiquesPage = () => {
                   Heures travaillées*
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total des RDV*
+                  Total des réservations*
                 </th>
               </tr>
             </thead>
@@ -374,7 +374,7 @@ const StatistiquesPage = () => {
                         <span className="text-sm text-gray-600">{service.hoursWorked}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-sm font-medium text-gray-900">{service.totalRevenue.toFixed(2)} €</span>
+                        <span className="text-sm font-medium text-gray-900">{service.totalRevenue.toFixed(2)} MAD</span>
                       </td>
                     </tr>
                   ))}

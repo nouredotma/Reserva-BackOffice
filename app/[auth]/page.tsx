@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/mock-auth';
 const AnimatedText = ({ className = "" }: { className?: string }) => {
   const messages = [
     { title: "Gestion simplifiée de votre établissement", subtitle: "Pilotez votre activité en toute sérénité et gagnez du temps chaque jour et à long terme." },
-    { title: "Gerez vos rdv de manière efficace", subtitle: "Planifiez, suivez et optimisez vos rendez-vous sans effort en un clin d'œil." },
+    { title: "Gérez vos réservations efficacement", subtitle: "Planifiez, suivez et optimisez vos réservations sans effort en un clin d'œil." },
     { title: "Optimisez votre temps et vos ressources", subtitle: "Automatisez les tâches répétitives et concentrez-vous sur ce qui compte vraiment." },
     { title: "Restez organisé à tout moment", subtitle: "Accédez à vos outils où que vous soyez, sur tous vos appareils en toute simplicité." }
   ];
@@ -338,7 +338,7 @@ export default function AuthPage({ params }: { params: Params }) {
 
                     <button
                       onClick={closeForgotPasswordModal}
-                      className="w-full bg-[#000000] text-white py-2.5 lg:py-3.5 rounded-full font-medium text-xs lg:text-base hover:bg-[#000000] transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer"
+                      className="w-full bg-[#000000] text-white py-2.5 lg:py-3.5 rounded-full font-medium text-xs lg:text-base hover:bg-[#000000] transition-colors duration-200   cursor-pointer"
                     >
                       Retour à la connexion
                     </button>

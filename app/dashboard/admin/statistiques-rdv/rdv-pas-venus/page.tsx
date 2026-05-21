@@ -132,7 +132,7 @@ export default function RdvPasVenusPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <Calendar size={20} className="text-gray-400" />
@@ -147,7 +147,7 @@ export default function RdvPasVenusPage() {
             <p className="text-3xl font-light text-gray-900">{totals.totalRdv}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <Users size={20} className="text-gray-400" />
@@ -162,7 +162,7 @@ export default function RdvPasVenusPage() {
             <p className="text-3xl font-light text-gray-900">{totals.pasVenus}</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <DollarSign size={20} className="text-gray-400" />

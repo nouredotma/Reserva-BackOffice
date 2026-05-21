@@ -380,7 +380,7 @@ const PhotoManagement = () => {
                 Filtrer
               </button>
               {filterOpen && (
-                <div className="absolute top-full mt-2 right-0 w-64 bg-white rounded-lg shadow-xl border border-gray-200 p-4 z-30 animate-slideDown">
+                <div className="absolute top-full mt-2 right-0 w-64 bg-white rounded-lg  border border-gray-200 p-4 z-30 animate-slideDown">
                   <h3 className="font-medium text-sm text-gray-900 mb-3">Filtres</h3>
                   <div className="space-y-3">
                     <div>
@@ -391,10 +391,11 @@ const PhotoManagement = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">Toutes les catégories</SelectItem>
-                          <SelectItem value="Manucure">Manucure</SelectItem>
-                          <SelectItem value="Coiffure">Coiffure</SelectItem>
-                          <SelectItem value="Spa">Spa</SelectItem>
-                          <SelectItem value="Massage">Massage</SelectItem>
+                          <SelectItem value="Restaurants">Restaurants</SelectItem>
+                          <SelectItem value="Hébergements">Hébergements</SelectItem>
+                          <SelectItem value="Day passes">Day passes</SelectItem>
+                          <SelectItem value="Wellness">Wellness</SelectItem>
+                          <SelectItem value="Événements">Événements</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -916,7 +917,7 @@ const PhotoManagement = () => {
                   top: `${cropArea.y}%`,
                   width: `${cropArea.width}%`,
                   height: `${cropArea.height}%`,
-                  boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
+                  outline: '9999px solid rgba(0, 0, 0, 0.5)'
                 }}
                 onMouseDown={handleCropMouseDown}
               >

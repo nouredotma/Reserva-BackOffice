@@ -5,7 +5,7 @@ import { Plus, Search, Edit2, Trash2, Copy, Eye, EyeOff, ChevronDown, X, Check, 
 import { Sketch } from '@uiw/react-color';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Checkbox } from "@/components/ui/checkbox";
-import { defaultAgendas } from '@/lib/mockData';
+import { defaultAgendas, sampleBookableCategories, sampleBookableServices } from '@/lib/mockData';
 
 type Service = {
   id: number;
@@ -24,6 +24,8 @@ type Service = {
   competences: string[];
   multipleProviders: boolean;
 };
+
+const legacyServicePattern = /COIFFURE|Coupe|Brushing|Coloration|Balayage|Manucure|Massage|Barbier|Soin du Visage/i;
 
 const GestionPrestations = () => {
   const [mounted, setMounted] = useState(false);
@@ -60,323 +62,30 @@ const GestionPrestations = () => {
         setCollaborators(defaultAgendas.map(a => a.name));
       }
       
-      if (storedServices) {
-        setServices(JSON.parse(storedServices));
-      } else {
-        // Default services - Realistic beauty/wellness services
-        const defaultServices: Service[] = [
-          // COIFFURE FEMME
-          {
-            id: 1,
-            name: 'Coupe Femme + Brushing',
-            abbreviation: 'Coupe F',
-            description: 'Coupe personnalisée selon votre style et brushing professionnel pour une finition parfaite.',
-            color: '#EC4899',
-            price: 150,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 60,
-            category: 'COIFFURE FEMME',
-            visibility: 'bookable',
-            competences: ['Yassine El Fassi', 'Samira Bouzid'],
-            multipleProviders: true
-          },
-          {
-            id: 2,
-            name: 'Coloration Complète',
-            abbreviation: 'Coloration',
-            description: 'Coloration permanente de toute la chevelure avec produits professionnels de qualité.',
-            color: '#EC4899',
-            price: 350,
-            priceType: 'from',
-            priceFrom: 350,
-            onQuote: false,
-            duration: 120,
-            category: 'COIFFURE FEMME',
-            visibility: 'bookable',
-            competences: ['Samira Bouzid'],
-            multipleProviders: false
-          },
-          {
-            id: 3,
-            name: 'Mèches Balayage',
-            abbreviation: 'Balayage',
-            description: 'Technique de mèches naturelles pour un effet soleil et lumineux.',
-            color: '#EC4899',
-            price: 450,
-            priceType: 'from',
-            priceFrom: 450,
-            onQuote: false,
-            duration: 150,
-            category: 'COIFFURE FEMME',
-            visibility: 'bookable',
-            competences: ['Samira Bouzid', 'Yassine El Fassi'],
-            multipleProviders: true
-          },
-          {
-            id: 4,
-            name: 'Lissage Brésilien',
-            abbreviation: 'Lissage',
-            description: 'Traitement de lissage longue durée pour des cheveux lisses et brillants.',
-            color: '#EC4899',
-            price: 800,
-            priceType: 'from',
-            priceFrom: 800,
-            onQuote: true,
-            duration: 180,
-            category: 'COIFFURE FEMME',
-            visibility: 'bookable',
-            competences: ['Samira Bouzid'],
-            multipleProviders: false
-          },
-          // COIFFURE HOMME
-          {
-            id: 5,
-            name: 'Coupe Homme Classique',
-            abbreviation: 'Coupe H',
-            description: 'Coupe masculine classique avec finitions aux ciseaux ou tondeuse.',
-            color: '#3B82F6',
-            price: 80,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 30,
-            category: 'COIFFURE HOMME',
-            visibility: 'bookable',
-            competences: ['Yassine El Fassi', 'Khalid Ait Lahcen'],
-            multipleProviders: true
-          },
-          {
-            id: 6,
-            name: 'Coupe + Barbe',
-            abbreviation: 'Coupe Barbe',
-            description: 'Coupe complète avec taille et entretien de la barbe.',
-            color: '#3B82F6',
-            price: 120,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 45,
-            category: 'COIFFURE HOMME',
-            visibility: 'bookable',
-            competences: ['Khalid Ait Lahcen'],
-            multipleProviders: false
-          },
-          {
-            id: 7,
-            name: 'Rasage Traditionnel',
-            abbreviation: 'Rasage',
-            description: 'Rasage à l\'ancienne au coupe-chou avec serviettes chaudes.',
-            color: '#3B82F6',
-            price: 100,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 40,
-            category: 'COIFFURE HOMME',
-            visibility: 'bookable',
-            competences: ['Khalid Ait Lahcen'],
-            multipleProviders: false
-          },
-          // SOINS DU VISAGE
-          {
-            id: 8,
-            name: 'Soin du Visage Complet',
-            abbreviation: 'Soin Visage',
-            description: 'Nettoyage, gommage, masque et hydratation en profondeur pour un visage rayonnant.',
-            color: '#10B981',
-            price: 250,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 60,
-            category: 'SOINS DU VISAGE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          {
-            id: 9,
-            name: 'Soin Anti-Âge',
-            abbreviation: 'Anti-Âge',
-            description: 'Soin spécialisé pour réduire les rides et raffermir la peau.',
-            color: '#10B981',
-            price: 350,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 75,
-            category: 'SOINS DU VISAGE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          {
-            id: 10,
-            name: 'Nettoyage de Peau Profond',
-            abbreviation: 'Nettoyage',
-            description: 'Extraction des impuretés et nettoyage en profondeur des pores.',
-            color: '#10B981',
-            price: 200,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 45,
-            category: 'SOINS DU VISAGE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          // MANUCURE & PÉDICURE
-          {
-            id: 11,
-            name: 'Manucure Classique',
-            abbreviation: 'Manucure',
-            description: 'Soin complet des mains avec pose de vernis classique.',
-            color: '#F59E0B',
-            price: 80,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 45,
-            category: 'MANUCURE & PÉDICURE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          {
-            id: 12,
-            name: 'Pose Vernis Semi-Permanent',
-            abbreviation: 'Semi-Permanent',
-            description: 'Manucure avec pose de vernis semi-permanent longue tenue (3 semaines).',
-            color: '#F59E0B',
-            price: 150,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 60,
-            category: 'MANUCURE & PÉDICURE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          {
-            id: 13,
-            name: 'Pédicure Spa',
-            abbreviation: 'Pédicure',
-            description: 'Soin complet des pieds avec bain relaxant, gommage et massage.',
-            color: '#F59E0B',
-            price: 120,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 60,
-            category: 'MANUCURE & PÉDICURE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          // MASSAGE & BIEN-ÊTRE
-          {
-            id: 14,
-            name: 'Massage Relaxant Corps Complet',
-            abbreviation: 'Massage Relax',
-            description: 'Massage aux huiles essentielles pour une détente totale du corps.',
-            color: '#8B5CF6',
-            price: 300,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 60,
-            category: 'MASSAGE & BIEN-ÊTRE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          {
-            id: 15,
-            name: 'Massage Dos et Épaules',
-            abbreviation: 'Massage Dos',
-            description: 'Massage ciblé pour soulager les tensions du dos et des épaules.',
-            color: '#8B5CF6',
-            price: 180,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 30,
-            category: 'MASSAGE & BIEN-ÊTRE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          {
-            id: 16,
-            name: 'Hammam + Gommage',
-            abbreviation: 'Hammam',
-            description: 'Séance de hammam traditionnel avec gommage au savon noir.',
-            color: '#8B5CF6',
-            price: 250,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 90,
-            category: 'MASSAGE & BIEN-ÊTRE',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          // ÉPILATION
-          {
-            id: 17,
-            name: 'Épilation Sourcils',
-            abbreviation: 'Sourcils',
-            description: 'Épilation et restructuration des sourcils.',
-            color: '#EF4444',
-            price: 50,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 15,
-            category: 'ÉPILATION',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          {
-            id: 18,
-            name: 'Épilation Jambes Complètes',
-            abbreviation: 'Jambes',
-            description: 'Épilation complète des jambes à la cire.',
-            color: '#EF4444',
-            price: 150,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 45,
-            category: 'ÉPILATION',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
-          },
-          {
-            id: 19,
-            name: 'Épilation Maillot Brésilien',
-            abbreviation: 'Maillot',
-            description: 'Épilation intégrale du maillot.',
-            color: '#EF4444',
-            price: 120,
-            priceType: 'fixed',
-            onQuote: false,
-            duration: 30,
-            category: 'ÉPILATION',
-            visibility: 'bookable',
-            competences: ['Nadia El Khatib'],
-            multipleProviders: false
+      const loadReservaCatalog = () => {
+        setServices(sampleBookableServices);
+        setCategories(sampleBookableCategories);
+        localStorage.setItem('services', JSON.stringify(sampleBookableServices));
+        localStorage.setItem('serviceCategories', JSON.stringify(sampleBookableCategories));
+      };
+
+      if (storedServices && storedCategories) {
+        try {
+          const parsedServices = JSON.parse(storedServices);
+          const parsedCategories = JSON.parse(storedCategories);
+          const storedCatalog = storedServices + ' ' + storedCategories;
+
+          if (legacyServicePattern.test(storedCatalog)) {
+            loadReservaCatalog();
+          } else {
+            setServices(parsedServices);
+            setCategories(parsedCategories);
           }
-        ];
-        setServices(defaultServices);
-        localStorage.setItem('services', JSON.stringify(defaultServices));
-      }
-      
-      if (storedCategories) {
-        setCategories(JSON.parse(storedCategories));
+        } catch {
+          loadReservaCatalog();
+        }
       } else {
-        const defaultCategories = [
-          'COIFFURE FEMME',
-          'COIFFURE HOMME',
-          'SOINS DU VISAGE',
-          'MANUCURE & PÉDICURE',
-          'MASSAGE & BIEN-ÊTRE',
-          'ÉPILATION'
-        ];
-        setCategories(defaultCategories);
-        localStorage.setItem('serviceCategories', JSON.stringify(defaultCategories));
+        loadReservaCatalog();
       }
     }
   }, []);
@@ -411,7 +120,7 @@ const GestionPrestations = () => {
   };
 
   const handleDeleteService = (id: number) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette prestation ?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette offre ?')) {
       setServices(services.filter(s => s.id !== id));
     }
   };
@@ -498,10 +207,10 @@ const GestionPrestations = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-light text-gray-900 tracking-tight mb-2">
-              Gestion des Prestations
+              Offres réservables
             </h1>
             <p className="text-sm text-gray-500">
-              Gérez vos services, catégories et tarifs
+              Gérez les offres Reserva, capacités, tarifs et règles de réservation
             </p>
           </div>
           
@@ -518,7 +227,7 @@ const GestionPrestations = () => {
                 setEditingService(null);
                 setShowModal(true);
               }}
-              className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-gray-800 transition-colors shadow-sm"
+              className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-gray-800 transition-colors "
             >
               <Plus size={16} className="inline-block mr-2 -mt-0.5" />
               Nouvelle Prestation
@@ -533,7 +242,7 @@ const GestionPrestations = () => {
               <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Rechercher une prestation..."
+                placeholder="Rechercher une offre..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-white pl-12 pr-4 py-2.5 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm"
@@ -579,7 +288,7 @@ const GestionPrestations = () => {
                 <div className="flex items-center gap-3">
                   <h2 className="text-lg font-semibold text-gray-900">{category}</h2>
                   <span className="px-2.5 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
-                    {categoryServices.length} {categoryServices.length === 1 ? 'prestation' : 'prestations'}
+                    {categoryServices.length} {categoryServices.length === 1 ? 'offre' : 'offres'}
                   </span>
                 </div>
                 <button
@@ -595,7 +304,7 @@ const GestionPrestations = () => {
                 <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                   {categoryServices.length === 0 ? (
                     <div className="p-8 text-center text-gray-400">
-                      Aucune prestation dans cette catégorie
+                      Aucune offre dans cette catégorie
                     </div>
                   ) : (
                     categoryServices.map((service, idx) => (
@@ -621,7 +330,7 @@ const GestionPrestations = () => {
 
         {filteredServices.length === 0 && (
           <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-            <p className="text-gray-400 mb-4">Aucune prestation trouvée</p>
+            <p className="text-gray-400 mb-4">Aucune offre trouvée</p>
             <button
               onClick={() => {
                 setSearchQuery('');
@@ -659,7 +368,7 @@ const GestionPrestations = () => {
       {/* Category Modal */}
       {showCategoryModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+          <div className="bg-white rounded-2xl  max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-semibold text-gray-900">Nouvelle catégorie</h3>
               <button 
@@ -799,7 +508,7 @@ const ServiceCard = ({ service, onEdit, onDelete, onDuplicate }: {
   onDuplicate: () => void;
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-all group">
+    <div className="bg-white rounded-2xl border border-gray-100 p-5  transition-all group">
       <div className="flex items-start justify-between mb-4">
         <div className="w-4 h-4 rounded-full" style={{ backgroundColor: service.color }}></div>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -907,12 +616,12 @@ const ServiceModal = ({ service, categories, onClose, onSave }: {
           -moz-appearance: textfield;
         }
       `}</style>
-      <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full my-8">
+      <div className="bg-white rounded-2xl  max-w-3xl w-full my-8">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 rounded-t-2xl z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-light text-gray-900">
-              {service ? 'Modifier une prestation' : 'Nouvelle prestation'}
+              {service ? 'Modifier une offre' : 'Nouvelle offre'}
             </h2>
             <button
               onClick={onClose}
@@ -977,7 +686,7 @@ const ServiceModal = ({ service, categories, onClose, onSave }: {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={3}
                   className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
-                  placeholder="Décrivez la prestation..."
+                  placeholder="Décrivez l’offre..."
                 />
               </div>
 
@@ -992,7 +701,7 @@ const ServiceModal = ({ service, categories, onClose, onSave }: {
                     className="flex items-center gap-3 px-4 py-2.5 border border-gray-200 rounded-full hover:border-gray-300 transition-colors"
                   >
                     <div 
-                      className="w-8 h-8 rounded-full border-2 border-gray-200 shadow-sm" 
+                      className="w-8 h-8 rounded-full border-2 border-gray-200 " 
                       style={{ backgroundColor: formData.color }}
                     />
                     <span className="text-sm text-gray-700 font-mono">{formData.color}</span>
@@ -1004,13 +713,12 @@ const ServiceModal = ({ service, categories, onClose, onSave }: {
                         className="fixed inset-0 z-10" 
                         onClick={() => setShowColorPicker(false)}
                       />
-                      <div className="absolute top-full mt-2 z-20 bg-white rounded-lg shadow-xl border border-gray-200 p-4">
+                      <div className="absolute top-full mt-2 z-20 bg-white rounded-lg  border border-gray-200 p-4">
                         <Sketch
                           color={formData.color}
                           onChange={(color) => {
                             setFormData({ ...formData, color: color.hex });
                           }}
-                          style={{ boxShadow: 'none' }}
                         />
                       </div>
                     </>
@@ -1273,14 +981,14 @@ const ServiceModal = ({ service, categories, onClose, onSave }: {
             </div>
           </div>
 
-          {/* Collaborateurs */}
+          {/* Ressources */}
           {showAdvanced && (
             <div className="space-y-4">
               <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">
-                Collaborateurs
+                Ressources
               </h3>
               <p className="text-xs text-gray-500">
-                Sélectionnez les collaborateurs qui peuvent effectuer cette prestation
+                Sélectionnez les ressources qui peuvent gérer cette offre
               </p>
 
               <div className="space-y-3">
@@ -1317,7 +1025,7 @@ const ServiceModal = ({ service, categories, onClose, onSave }: {
                     className="w-4 h-4 rounded-full text-foreground border-gray-300 focus:ring-gray-900"
                   />
                   <label htmlFor="multipleProviders" className="text-sm text-gray-700">
-                    Plusieurs collaborateurs peuvent effectuer cette prestation simultanément
+                    Plusieurs ressources peuvent gérer cette offre simultanément
                   </label>
                 </div>
               </div>

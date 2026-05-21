@@ -408,7 +408,7 @@ export default function PaymentMethodsPage() {
                   <div className="card-3d w-full aspect-[1.586/1] max-w-md mx-auto lg:sticky lg:top-8">
                     <div className={`card-inner ${showCardBack ? 'flipped' : ''}`}>
                       {/* Front of Card */}
-                      <div className="card-face rounded-2xl shadow-2xl overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+                      <div className="card-face rounded-2xl  overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
                         {/* Background Pattern */}
                         <div className="absolute inset-0 opacity-10">
                           <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full blur-3xl"></div>
@@ -431,7 +431,7 @@ export default function PaymentMethodsPage() {
 
                           {/* Middle: Card Number */}
                           <div className="my-4">
-                            <div className="text-white text-xl md:text-2xl font-mono tracking-wider drop-shadow-lg">
+                            <div className="text-white text-xl md:text-2xl font-mono tracking-wider drop-">
                               {cardNumber || '•••• •••• •••• ••••'}
                             </div>
                           </div>
@@ -442,7 +442,7 @@ export default function PaymentMethodsPage() {
                               <div className="text-white/50 text-[9px] mb-1 uppercase tracking-widest font-medium">
                                 Card Holder
                               </div>
-                              <div className="text-white text-sm font-medium tracking-wider uppercase truncate drop-shadow">
+                              <div className="text-white text-sm font-medium tracking-wider uppercase truncate ">
                                 {cardName || 'YOUR NAME'}
                               </div>
                             </div>
@@ -450,7 +450,7 @@ export default function PaymentMethodsPage() {
                               <div className="text-white/50 text-[9px] mb-1 uppercase tracking-widest font-medium text-right">
                                 Expires
                               </div>
-                              <div className="text-white text-sm font-medium tracking-wider tabular-nums drop-shadow">
+                              <div className="text-white text-sm font-medium tracking-wider tabular-nums ">
                                 {cardExpiry || 'MM/YY'}
                               </div>
                             </div>
@@ -463,7 +463,7 @@ export default function PaymentMethodsPage() {
                       </div>
 
                       {/* Back of Card */}
-                      <div className="card-face card-back rounded-2xl shadow-2xl overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+                      <div className="card-face card-back rounded-2xl  overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
                         {/* Magnetic Stripe */}
                         <div className="w-full h-12 bg-black mt-6"></div>
                         
@@ -545,7 +545,7 @@ export default function PaymentMethodsPage() {
         /* Payment Methods List */
         <div className="space-y-3 mb-6">
           {paymentMethods.map((method) => (
-            <div key={method.id} className="rounded-xl border border-gray-100 p-6 hover:shadow-sm transition-all animate-fadeIn group">
+            <div key={method.id} className="rounded-xl border border-gray-100 p-6  transition-all animate-fadeIn group">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 rounded-lg flex items-center justify-center">
