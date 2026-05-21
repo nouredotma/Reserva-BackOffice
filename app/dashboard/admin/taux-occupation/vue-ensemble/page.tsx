@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { sampleOccupancyData } from '@/lib/mockData';
+import { sampleOccupancyData, defaultAgendas } from '@/lib/mockData';
 
 type OccupancyData = {
   [key: string]: { [key: string]: number };
@@ -22,6 +22,7 @@ const StatistiquesPage = () => {
   const [selectedEmployee, setSelectedEmployee] = useState('all');
   const [timeRange, setTimeRange] = useState('all'); // all, morning, afternoon, evening
   const [draggedCell, setDraggedCell] = useState<{day: string, time: string} | null>(null);
+  const [collaborators, setCollaborators] = useState<string[]>([]);
 
   const daysOfWeek = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
   const timeSlots = [
@@ -39,6 +40,19 @@ const StatistiquesPage = () => {
   const [occupancyData, setOccupancyData] = useState<OccupancyData>(sampleOccupancyData);
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+      const storedAgendas = localStorage.getItem('employeeAgendas');
+      if (storedAgendas) {
+        try {
+          const agendas = JSON.parse(storedAgendas);
+          setCollaborators(agendas.map((a: any) => a.name));
+        } catch {
+          setCollaborators(defaultAgendas.map(a => a.name));
+        }
+      } else {
+        setCollaborators(defaultAgendas.map(a => a.name));
+      }
+    }
   }, []);
 
   const getColorClass = (value: number) => {
@@ -239,10 +253,11 @@ const StatistiquesPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Tous les collaborateurs</SelectItem>
-                  <SelectItem value="yassine">Yassine El Fassi</SelectItem>
-                  <SelectItem value="samira">Samira Bouzid</SelectItem>
-                  <SelectItem value="khalid">Khalid Ait Lahcen</SelectItem>
-                  <SelectItem value="nadia">Nadia El Khatib</SelectItem>
+                  {collaborators.map(collab => (
+                    <SelectItem key={collab} value={collab.toLowerCase().split(' ')[0]}>
+                      {collab}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

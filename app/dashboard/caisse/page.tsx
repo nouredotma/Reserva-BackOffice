@@ -75,7 +75,7 @@ export default function CaissePage({
 
   // Export CSV
   const exportToCSV = () => {
-    const headers = ['Type', 'Montant', 'Méthode', 'Client', 'Employé', 'Date', 'Note'];
+    const headers = ['Type', 'Montant', 'Méthode', 'Client', 'Collaborateur', 'Date', 'Note'];
     const rows = filteredTransactions.map(tx => [
       tx.type,
       tx.amount,
@@ -364,7 +364,7 @@ export default function CaissePage({
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Méthode</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employé</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collaborateur</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
               </tr>
@@ -484,8 +484,8 @@ export default function CaissePage({
                     <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Nom du client" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Employé</label>
-                    <input type="text" value={formData.employee} onChange={e => setFormData({ ...formData, employee: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Nom de l'employé" />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Collaborateur</label>
+                    <input type="text" value={formData.employee} onChange={e => setFormData({ ...formData, employee: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Nom du collaborateur" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>

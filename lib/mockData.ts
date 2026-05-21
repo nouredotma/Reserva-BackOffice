@@ -482,12 +482,6 @@ export const sampleClients: Client[] = [
   }
 ];
 
-export const employees = [
-  'Yassine El Fassi',
-  'Samira Bouzid',
-  'Khalid Ait Lahcen',
-  'Nadia El Khatib'
-];
 
 export const defaultWorkingHours: WorkingHours[] = [
   { day: 'Lundi', isWorking: true, startTime: '09:00', endTime: '18:00', breaks: [{ start: '12:00', end: '13:00' }] },
@@ -1247,7 +1241,7 @@ export function generateSampleRankedClients(length: number = 100): ClientRanking
 }
 
 export function generateSampleCancelledAppointments(length: number = 10): CancelledAppointment[] {
-  const collaboratorNames = employees;
+  const collaboratorNames = defaultAgendas.map(a => a.name);
   const actualClients = Array.from({ length: 10 }, (_, i) => {
     const nameIdx = i % moroccanNames.length;
     return `${moroccanNames[nameIdx]} ${['El', 'Ben', 'Ait', 'Bou', 'Al'][i % 5]} ${moroccanNames[(nameIdx + 5) % moroccanNames.length]}`;

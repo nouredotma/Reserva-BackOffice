@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { defaultAgendas } from '@/lib/mockData';
 
 type ServiceData = {
   category: string;
@@ -27,6 +28,7 @@ const StatistiquesPage = () => {
   const [selectedEmployee, setSelectedEmployee] = useState('all');
   const [timeRange, setTimeRange] = useState('all');
   const [compareMode, setCompareMode] = useState(false);
+  const [collaborators, setCollaborators] = useState<string[]>([]);
 
   // Service performance data
   const [servicesData] = useState<ServiceData[]>([
@@ -69,6 +71,19 @@ const StatistiquesPage = () => {
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+      const storedAgendas = localStorage.getItem('employeeAgendas');
+      if (storedAgendas) {
+        try {
+          const agendas = JSON.parse(storedAgendas);
+          setCollaborators(agendas.map((a: any) => a.name));
+        } catch {
+          setCollaborators(defaultAgendas.map(a => a.name));
+        }
+      } else {
+        setCollaborators(defaultAgendas.map(a => a.name));
+      }
+    }
   }, []);
 
   const getColorClass = (value: number) => {
@@ -243,10 +258,11 @@ const StatistiquesPage = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Tous les collaborateurs</SelectItem>
-                <SelectItem value="yassine">Yassine El Fassi</SelectItem>
-                <SelectItem value="samira">Samira Bouzid</SelectItem>
-                <SelectItem value="khalid">Khalid Ait Lahcen</SelectItem>
-                <SelectItem value="nadia">Nadia El Khatib</SelectItem>
+                {collaborators.map(collab => (
+                  <SelectItem key={collab} value={collab.toLowerCase().split(' ')[0]}>
+                    {collab}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

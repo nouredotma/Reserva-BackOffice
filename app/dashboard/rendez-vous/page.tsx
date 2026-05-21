@@ -5,7 +5,7 @@ import { Calendar, Clock, User, Phone, Mail, X, ChevronLeft, ChevronRight, MoreV
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { sampleAppointments } from '@/lib/mockData';
+import { sampleAppointments, defaultAgendas } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import {
@@ -61,6 +61,24 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
   const [duration, setDuration] = useState('');
   const [employee, setEmployee] = useState('');
   const [notes, setNotes] = useState('');
+  const [collaborators, setCollaborators] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedAgendas = localStorage.getItem('employeeAgendas');
+      if (storedAgendas) {
+        try {
+          const agendas = JSON.parse(storedAgendas);
+          setCollaborators(agendas.map((a: any) => a.name));
+        } catch {
+          setCollaborators(defaultAgendas.map(a => a.name));
+        }
+      } else {
+        setCollaborators(defaultAgendas.map(a => a.name));
+      }
+    }
+  }, []);
+
   const [clients] = useState<Client[]>(() => {
     try {
       if (typeof window === 'undefined') return [];
@@ -380,10 +398,11 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
               <SelectValue placeholder="Sélectionner un praticien" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Yassine El Fassi">Yassine El Fassi</SelectItem>
-              <SelectItem value="Samira Bouzid">Samira Bouzid</SelectItem>
-              <SelectItem value="Khalid Ait Lahcen">Khalid Ait Lahcen</SelectItem>
-              <SelectItem value="Nadia El Khatib">Nadia El Khatib</SelectItem>
+              {collaborators.map(collab => (
+                <SelectItem key={collab} value={collab}>
+                  {collab}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -521,7 +540,6 @@ const RendezVousPage = () => {
   const [showNewRDV, setShowNewRDV] = useState(false);
   const [draggedEvent, setDraggedEvent] = useState<Appointment | null>(null);
   const [filterStatus, setFilterStatus] = useState('all');
-  const [selectedEmployee, setSelectedEmployee] = useState('all');
   const [refreshKey, setRefreshKey] = useState(0);
   
   // Load employee agendas and services for colors
@@ -557,10 +575,6 @@ const RendezVousPage = () => {
 
   // Listen for sidebar filter changes and sidebar date changes
   useEffect(() => {
-    const handleEmployeeFilter = (event: Event) => {
-      const ev = event as CustomEvent<string>;
-      setSelectedEmployee(ev.detail);
-    };
     const handleStatusFilter = (event: Event) => {
       const ev = event as CustomEvent<string>;
       setFilterStatus(ev.detail);
@@ -569,11 +583,9 @@ const RendezVousPage = () => {
       const ev = event as CustomEvent<string>;
       setCurrentDate(new Date(ev.detail));
     };
-    window.addEventListener('employeeFilterChange', handleEmployeeFilter as EventListener);
     window.addEventListener('statusFilterChange', handleStatusFilter as EventListener);
     window.addEventListener('sidebarDateChange', handleSidebarDateChange as EventListener);
     return () => {
-      window.removeEventListener('employeeFilterChange', handleEmployeeFilter as EventListener);
       window.removeEventListener('statusFilterChange', handleStatusFilter as EventListener);
       window.removeEventListener('sidebarDateChange', handleSidebarDateChange as EventListener);
     };
@@ -1002,7 +1014,6 @@ const RendezVousPage = () => {
                           
                           const matches = aptDate.getTime() === compareDate.getTime() && 
                             apt.time === time &&
-                            (selectedEmployee === 'all' || apt.employee === selectedEmployee) &&
                             (filterStatus === 'all' || apt.status === filterStatus);
                           
                           // Debug logging for this specific time slot
@@ -1072,7 +1083,6 @@ const RendezVousPage = () => {
                         
                         const matches = aptDate.getTime() === compareDate.getTime() && 
                           apt.time === time &&
-                          (selectedEmployee === 'all' || apt.employee === selectedEmployee) &&
                           (filterStatus === 'all' || apt.status === filterStatus);
                         
                         // Debug logging
@@ -1139,7 +1149,6 @@ const RendezVousPage = () => {
                   const compareDate = new Date(date);
                   compareDate.setHours(0, 0, 0, 0);
                   return aptDate.getTime() === compareDate.getTime() &&
-                    (selectedEmployee === 'all' || apt.employee === selectedEmployee) &&
                     (filterStatus === 'all' || apt.status === filterStatus);
                 });
                 const confirmedCount = dayAppointments.filter(apt => apt.status === 'confirmed').length;

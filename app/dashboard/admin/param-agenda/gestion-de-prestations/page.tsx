@@ -5,6 +5,7 @@ import { Plus, Search, Edit2, Trash2, Copy, Eye, EyeOff, ChevronDown, X, Check, 
 import { Sketch } from '@uiw/react-color';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Checkbox } from "@/components/ui/checkbox";
+import { defaultAgendas } from '@/lib/mockData';
 
 type Service = {
   id: number;
@@ -37,6 +38,7 @@ const GestionPrestations = () => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [draggedService, setDraggedService] = useState<Service | null>(null);
   const [dragOverCategory, setDragOverCategory] = useState<string | null>(null);
+  const [collaborators, setCollaborators] = useState<string[]>([]);
 
   // Load data from localStorage
   useEffect(() => {
@@ -45,6 +47,18 @@ const GestionPrestations = () => {
     if (typeof window !== 'undefined') {
       const storedServices = localStorage.getItem('services');
       const storedCategories = localStorage.getItem('serviceCategories');
+      const storedAgendas = localStorage.getItem('employeeAgendas');
+      
+      if (storedAgendas) {
+        try {
+          const agendas = JSON.parse(storedAgendas);
+          setCollaborators(agendas.map((a: any) => a.name));
+        } catch {
+          setCollaborators(defaultAgendas.map(a => a.name));
+        }
+      } else {
+        setCollaborators(defaultAgendas.map(a => a.name));
+      }
       
       if (storedServices) {
         setServices(JSON.parse(storedServices));
@@ -1271,7 +1285,7 @@ const ServiceModal = ({ service, categories, onClose, onSave }: {
 
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  {['Yassine El Fassi', 'Samira Bouzid', 'Khalid Ait Lahcen', 'Nadia El Khatib'].map(employee => (
+                  {collaborators.map(employee => (
                     <button
                       key={employee}
                       type="button"

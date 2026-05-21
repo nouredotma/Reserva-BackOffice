@@ -304,7 +304,7 @@ export default function AvisRefusesPage() {
                   <th className="px-6 py-4 text-left text-[10px] font-medium text-gray-400 uppercase tracking-wider">Client</th>
                   <th className="px-6 py-4 text-left text-[10px] font-medium text-gray-400 uppercase tracking-wider">Note</th>
                   <th className="px-6 py-4 text-left text-[10px] font-medium text-gray-400 uppercase tracking-wider hidden lg:table-cell">Service</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-medium text-gray-400 uppercase tracking-wider hidden xl:table-cell">Employé</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-medium text-gray-400 uppercase tracking-wider hidden xl:table-cell">Collaborateur</th>
                   <th className="px-6 py-4 text-left text-[10px] font-medium text-gray-400 uppercase tracking-wider">Commentaire</th>
                   <th className="px-6 py-4 text-left text-[10px] font-medium text-gray-400 uppercase tracking-wider hidden md:table-cell">Raison rejet</th>
                   <th className="px-6 py-4 text-left text-[10px] font-medium text-gray-400 uppercase tracking-wider hidden xl:table-cell">Date rejet</th>

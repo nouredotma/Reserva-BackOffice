@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, Trash2, Users, Settings, File, BarChart3, LogOut, Settings2, ChevronRight, LayoutPanelLeft, Search, Calendar, Clock, Filter, UserCheck, Building, TrendingUp, FileText, ChevronDown, Bell, Menu, CreditCard, LifeBuoy, X } from 'lucide-react';
 import { useAuth } from '@/lib/mock-auth';
-import { employees as mockEmployees } from '@/lib/mockData';
 import { useEffect, useState, useRef } from 'react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 
@@ -23,13 +22,8 @@ const RendezVousSidebar = () => {
 		date.setHours(0, 0, 0, 0);
 		return date;
 	});
-	const [showAllCollaborators, setShowAllCollaborators] = useState(true);
-	const [showMaha, setShowMaha] = useState(true);
-	const [selectedEmployee, setSelectedEmployee] = useState('all');
 	const [statusFilter, setStatusFilter] = useState('all');
 	const [monthYear, setMonthYear] = useState('');
-
-	const employees = ['Tous', ...mockEmployees];
 
 	useEffect(() => {
 		setMounted(true);
@@ -100,27 +94,27 @@ const RendezVousSidebar = () => {
 	return (
 		<div className="flex-1 overflow-y-auto p-6">
 			<div className="space-y-6">
-				<div className="bg-white">
+				<div className="bg-transparent">
 					<div className="flex items-center justify-between mb-4">
 						<button
 							onClick={() => changeMonth(-1)}
-							className="p-1 hover:bg-gray-100 rounded transition-all"
+							className="p-1 hover:bg-white/10 rounded transition-all"
 						>
-							<ChevronDown size={16} className="rotate-90 text-gray-600" />
+							<ChevronDown size={16} className="rotate-90 text-zinc-400" />
 						</button>
-						<h3 className="text-sm font-semibold text-gray-900">
+						<h3 className="text-sm font-semibold text-white">
 							{monthYear}
 						</h3>
 						<button
 							onClick={() => changeMonth(1)}
-							className="p-1 hover:bg-gray-100 rounded transition-all"
+							className="p-1 hover:bg-white/10 rounded transition-all"
 						>
-							<ChevronDown size={16} className="-rotate-90 text-gray-600" />
+							<ChevronDown size={16} className="-rotate-90 text-zinc-400" />
 						</button>
 					</div>
 					<div className="grid grid-cols-7 gap-1 mb-2">
 						{['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, i) => (
-							<div key={i} className="text-center text-xs font-medium text-gray-500 py-1">
+							<div key={i} className="text-center text-xs font-medium text-zinc-500 py-1">
 								{day}
 							</div>
 						))}
@@ -136,7 +130,7 @@ const RendezVousSidebar = () => {
 									className={`aspect-square rounded-md text-xs font-medium transition-all ${
 										isSelected
 											? 'bg-primary text-primary-foreground'
-											: 'text-gray-700 hover:bg-gray-100'
+											: 'text-zinc-300 hover:bg-white/10'
 									}`}
 								>
 									{day}
@@ -148,52 +142,9 @@ const RendezVousSidebar = () => {
 					</div>
 				</div>
 
-				<div className="space-y-3">
-					<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
-						<UserCheck size={14} />
-						Employés
-					</h3>
-					{employees.length > 10 ? (
-    <Select value={selectedEmployee} onValueChange={value => {
-      setSelectedEmployee(value);
-      window.dispatchEvent(new CustomEvent('employeeFilterChange', { detail: value }));
-    }}>
-      <SelectTrigger className="w-full px-4 py-2 rounded-full bg-gray-50 border border-gray-200 text-sm mt-2">
-        <SelectValue placeholder="Sélectionner l'employé" />
-      </SelectTrigger>
-      <SelectContent>
-        {employees.map(employee => (
-          <SelectItem key={employee} value={employee === 'Tous' ? 'all' : employee}>
-            {employee}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  ) : (
-    <div className="flex flex-wrap gap-2">
-      {employees.map((employee) => (
-        <button
-          key={employee}
-          onClick={() => {
-            const value = employee === 'Tous' ? 'all' : employee;
-            setSelectedEmployee(value);
-            window.dispatchEvent(new CustomEvent('employeeFilterChange', { detail: value }));
-          }}
-          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 hover:scale-105 ${
-            (employee === 'Tous' && selectedEmployee === 'all') || selectedEmployee === employee
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          {employee}
-        </button>
-      ))}
-    </div>
-  )}
-				</div>
 
 				<div className="space-y-3">
-					<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
+					<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2">
 						<Filter size={14} />
 						Statut
 					</h3>
@@ -220,7 +171,7 @@ const RendezVousSidebar = () => {
 											: status.color === 'yellow'
 											? 'bg-primary text-primary-foreground'
 											: 'bg-primary text-primary-foreground'
-										: 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+										: 'bg-white/5 text-zinc-300 hover:bg-white/10'
 								}`}
 							>
 								{status.label}
@@ -282,11 +233,11 @@ const ClientsSidebar = () => {
 						onClick={() => setShowFichierClient(!showFichierClient)}
 						className="w-full flex items-center justify-between group"
 					>
-						<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<FileText size={14} />
 							Fichier Client
 						</h3>
-						<ChevronDown size={14} className={`text-gray-500 transition-transform ${showFichierClient ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showFichierClient ? 'rotate-180' : ''}`} />
 					</button>
 					{showFichierClient && (
 						<div className="space-y-1 animate-fadeIn">
@@ -295,7 +246,7 @@ const ClientsSidebar = () => {
 									key={item.path}
 									href={item.path}
 									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
 									}`}
 								>
 									{item.label}
@@ -311,11 +262,11 @@ const ClientsSidebar = () => {
 						onClick={() => setShowMesAvis(!showMesAvis)}
 						className="w-full flex items-center justify-between group"
 					>
-						<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<UserCheck size={14} />
 							Mes Avis
 						</h3>
-						<ChevronDown size={14} className={`text-gray-500 transition-transform ${showMesAvis ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showMesAvis ? 'rotate-180' : ''}`} />
 					</button>
 					{showMesAvis && (
 						<div className="space-y-1 animate-fadeIn">
@@ -324,7 +275,7 @@ const ClientsSidebar = () => {
 								key={item.path}
 									href={item.path}
 									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
 									}`}
 								>
 									{item.label}
@@ -340,11 +291,11 @@ const ClientsSidebar = () => {
 						onClick={() => setShowStatistiquesClients(!showStatistiquesClients)}
 						className="w-full flex items-center justify-between group"
 					>
-						<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<TrendingUp size={14} />
 							Statistiques Clients
 						</h3>
-						<ChevronDown size={14} className={`text-gray-500 transition-transform ${showStatistiquesClients ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showStatistiquesClients ? 'rotate-180' : ''}`} />
 					</button>
 					{showStatistiquesClients && (
 						<div className="space-y-1 animate-fadeIn">
@@ -353,7 +304,7 @@ const ClientsSidebar = () => {
 								key={item.path}
 									href={item.path}
 									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
 									}`}
 								>
 									{item.label}
@@ -425,11 +376,11 @@ const AdminSidebar = () => {
 						onClick={() => setShowParamAgenda(!showParamAgenda)}
 						className="w-full flex items-center justify-between group"
 					>
-						<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<Settings2 size={14} />
 							Agenda
 						</h3>
-						<ChevronDown size={14} className={`text-gray-500 transition-transform ${showParamAgenda ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showParamAgenda ? 'rotate-180' : ''}`} />
 					</button>
 					{showParamAgenda && (
 						<div className="space-y-1 animate-fadeIn">
@@ -438,7 +389,7 @@ const AdminSidebar = () => {
 									key={item.path}
 									href={item.path}
 									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
 									}`}
 								>
 									{item.label}
@@ -454,11 +405,11 @@ const AdminSidebar = () => {
 						onClick={() => setShowParamEtablissement(!showParamEtablissement)}
 						className="w-full flex items-center justify-between group"
 					>
-						<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<Settings2 size={14} />
 							Établissement
 						</h3>
-						<ChevronDown size={14} className={`text-gray-500 transition-transform ${showParamEtablissement ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showParamEtablissement ? 'rotate-180' : ''}`} />
 					</button>
 					{showParamEtablissement && (
 						<div className="space-y-1 animate-fadeIn">
@@ -467,7 +418,7 @@ const AdminSidebar = () => {
 									key={item.path}
 									href={item.path}
 									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
 									}`}
 								>
 									{item.label}
@@ -483,17 +434,17 @@ const AdminSidebar = () => {
 						onClick={() => setShowFichClient(!showFichClient)}
 						className="w-full flex items-center justify-between group"
 					>
-						<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<FileText size={14} />
 							Fiche Client
 						</h3>
-						<ChevronDown size={14} className={`text-gray-500 transition-transform ${showFichClient ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showFichClient ? 'rotate-180' : ''}`} />
 					</button>
 					{showFichClient && (
 						<div className="space-y-1 animate-fadeIn">
 							<Link
 								href="/dashboard/admin/fiche-clients/gestion-fiche-clients"
-								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/fiche-clients/gestion-fiche-clients' ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'}`}
+								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/fiche-clients/gestion-fiche-clients' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
 							>
 								Gestion fiche clients
 							</Link>
@@ -507,11 +458,11 @@ const AdminSidebar = () => {
                         onClick={() => setShowStatistiquesRDV(!showStatistiquesRDV)}
                         className="w-full flex items-center justify-between group"
                     >
-                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+                        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
                             <BarChart3 size={14} />
                             Statistiques RDV
                         </h3>
-                        <ChevronDown size={14} className={`text-gray-500 transition-transform ${showStatistiquesRDV ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showStatistiquesRDV ? 'rotate-180' : ''}`} />
                     </button>
                     {showStatistiquesRDV && (
                         <div className="space-y-1 animate-fadeIn">
@@ -519,7 +470,7 @@ const AdminSidebar = () => {
                                 <Link
                                     key={item.path}
                                     href={item.path}
-                                    className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'}`}
+                                    className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
                                 >
                                     {item.label}
                                 </Link>
@@ -534,29 +485,29 @@ const AdminSidebar = () => {
                         onClick={() => setShowTauxOccupation(!showTauxOccupation)}
                         className="w-full flex items-center justify-between group"
                     >
-                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+                        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
                             <TrendingUp size={14} />
                             Taux d'occupation
                         </h3>
-                        <ChevronDown size={14} className={`text-gray-500 transition-transform ${showTauxOccupation ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showTauxOccupation ? 'rotate-180' : ''}`} />
                     </button>
                     {showTauxOccupation && (
                         <div className="space-y-1 animate-fadeIn">
                             <Link
                                 href="/dashboard/admin/taux-occupation/vue-ensemble"
-                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/vue-ensemble' ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'}`}
+                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/vue-ensemble' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
                             >
                                 Vue d'ensemble
                             </Link>
                             <Link
                                 href="/dashboard/admin/taux-occupation/collaborateurs"
-                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/collaborateurs' ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'}`}
+                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/collaborateurs' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
                             >
                                 Collaborateurs
                             </Link>
                             <Link
                                 href="/dashboard/admin/taux-occupation/prestations"
-                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/prestations' ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'}`}
+                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/prestations' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
                             >
                                 Prestations
                             </Link>
@@ -570,17 +521,17 @@ const AdminSidebar = () => {
                         onClick={() => setShowCorbeilleRDV(!showCorbeilleRDV)}
                         className="w-full flex items-center justify-between group"
                     >
-                        <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+                        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
                             <Trash2 size={14} />
                             Corbeille RDV
                         </h3>
-                        <ChevronDown size={14} className={`text-gray-500 transition-transform ${showCorbeilleRDV ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showCorbeilleRDV ? 'rotate-180' : ''}`} />
                     </button>
                     {showCorbeilleRDV && (
                         <div className="space-y-1 animate-fadeIn">
                             <Link
                                 href="/dashboard/admin/corbeille-rdv/rdv-annules"
-                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/corbeille-rdv/rdv-annules' ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'}`}
+                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/corbeille-rdv/rdv-annules' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
                             >
                                 RDV annulés
                             </Link>
@@ -594,23 +545,23 @@ const AdminSidebar = () => {
 						onClick={() => setShowMesFactures && setShowMesFactures((prev: boolean) => !prev)}
 						className="w-full flex items-center justify-between group"
 					>
-						<h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2 group-hover:text-gray-900 transition-colors">
+						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
 							<File size={14} />
 							Mes factures
 						</h3>
-						<ChevronDown size={14} className={`text-gray-500 transition-transform ${showMesFactures ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showMesFactures ? 'rotate-180' : ''}`} />
 					</button>
 					{showMesFactures && (
 						<div className="space-y-1 animate-fadeIn">
 							<Link
 								href="/dashboard/admin/mes-factures/moyen-de-paiement"
-								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/mes-factures/moyen-de-paiement' ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'}`}
+								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/mes-factures/moyen-de-paiement' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
 							>
 								Moyen de paiement
 							</Link>
 							<Link
 								href="/dashboard/admin/mes-factures/liste-des-factures"
-								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/mes-factures/liste-des-factures' ? 'bg-primary text-primary-foreground' : 'text-gray-700 hover:bg-gray-100'}`}
+								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/mes-factures/liste-des-factures' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
 							>
 								Liste des factures
 							</Link>
@@ -641,15 +592,15 @@ const CaisseSidebar = ({
     <div className="flex-1 overflow-y-auto p-6">
       <div className="space-y-6">
         <div className="space-y-3">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide flex items-center gap-2">
+          <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2">
             <CreditCard size={14} />
             Filtres Caisse
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-gray-500 mb-2">Méthode</label>
+              <label className="block text-xs text-zinc-400 mb-2">Méthode</label>
               <Select value={methodFilter} onValueChange={setMethodFilter}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-gray-50 border border-gray-200 text-sm mt-2">
+                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
                   <SelectValue placeholder="Sélectionner la méthode" />
                 </SelectTrigger>
                 <SelectContent>
@@ -662,9 +613,9 @@ const CaisseSidebar = ({
               </Select>
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-2">Type</label>
+              <label className="block text-xs text-zinc-400 mb-2">Type</label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-gray-50 border border-gray-200 text-sm mt-2">
+                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
                   <SelectValue placeholder="Sélectionner le type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -677,9 +628,9 @@ const CaisseSidebar = ({
               </Select>
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-2">Période</label>
+              <label className="block text-xs text-zinc-400 mb-2">Période</label>
               <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-gray-50 border border-gray-200 text-sm mt-2">
+                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
                   <SelectValue placeholder="Sélectionner la période" />
                 </SelectTrigger>
                 <SelectContent>
@@ -876,17 +827,10 @@ export default function Sidebar() {
 			</header>
 
 			{/* Sidebar */}
-			<aside className="fixed left-0 top-0 w-66 bg-white h-screen flex flex-col border-r border-gray-200 z-50">
+			<aside className="fixed left-0 top-0 w-66 bg-[#0a0a0a] h-screen flex flex-col border-r border-white/10 z-50">
 				<div className="p-6 pb-4">
-					<div className="flex items-center justify-between">
-						<h1 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-							<img src="/icon.png" alt="Reserva" className="w-6 h-6 ml-2 object-contain" />
-
-							Reserva
-						</h1>
-						{/* <button className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all" aria-label="Collapse sidebar">
-							<LayoutPanelLeft size={22} className="text-gray-400" />
-						</button>*/}
+					<div className="flex items-center justify-center w-full">
+						<img src="/logo.png" alt="Reserva" className="h-9 w-auto object-contain brightness-0 invert" />
 					</div>
 				</div>
 

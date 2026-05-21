@@ -19,10 +19,24 @@ export const mockAuthUsers: MockAuthUser[] = [
   },
 ];
 
+export function getMockUsers(): MockAuthUser[] {
+  if (typeof window === 'undefined') return mockAuthUsers;
+  const stored = localStorage.getItem('mock_users');
+  if (stored) {
+    try {
+      return [...mockAuthUsers, ...JSON.parse(stored)];
+    } catch {
+      return mockAuthUsers;
+    }
+  }
+  return mockAuthUsers;
+}
+
 export function authenticateMockUser(email: string, password: string): MockUser | null {
   const normalizedEmail = email.trim().toLowerCase();
+  const users = getMockUsers();
 
-  const user = mockAuthUsers.find(
+  const user = users.find(
     (mockUser) => mockUser.email.toLowerCase() === normalizedEmail && mockUser.password === password
   );
 
@@ -44,6 +58,7 @@ interface AuthContextType {
   login: (email: string, password: string) => boolean;
   logout: () => void;
   isAuthenticated: boolean;
+  signup: (email: string, password: string, name: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,12 +72,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     return null;
   });
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return !!localStorage.getItem('user');
-    }
-    return false;
-  });
+
+  const isAuthenticated = !!user;
 
   const login = (email: string, password: string): boolean => {
     const userData = authenticateMockUser(email, password);
@@ -73,18 +84,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
-    setIsAuthenticated(true);
+    return true;
+  };
+
+  const signup = (email: string, password: string, name: string): boolean => {
+    const users = getMockUsers();
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (users.some((u) => u.email.toLowerCase() === normalizedEmail)) {
+      return false;
+    }
+
+    const newUser: MockAuthUser = {
+      email: normalizedEmail,
+      password,
+      name,
+    };
+
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('mock_users');
+      let registeredUsers: MockAuthUser[] = [];
+      if (stored) {
+        try {
+          registeredUsers = JSON.parse(stored);
+        } catch {}
+      }
+      registeredUsers.push(newUser);
+      localStorage.setItem('mock_users', JSON.stringify(registeredUsers));
+    }
+
+    const userData = { email: newUser.email, name: newUser.name };
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
     return true;
   };
 
   const logout = () => {
     localStorage.removeItem('user');
     setUser(null);
-    setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthenticated, signup }}>
       {children}
     </AuthContext.Provider>
   );

@@ -412,8 +412,8 @@ export default function StatistiquesAvisPage() {
       {/* Employee Statistics */}
       <div className="mt-8 animate-fadeIn">
         <div className="mb-6">
-          <h2 className="text-2xl font-light text-gray-900 mb-1">Performance des employés</h2>
-          <p className="text-xs text-gray-400">Statistiques individuelles par employé</p>
+          <h2 className="text-2xl font-light text-gray-900 mb-1">Performance des collaborateurs</h2>
+          <p className="text-xs text-gray-400">Statistiques individuelles par collaborateur</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
