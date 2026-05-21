@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, use } from 'react';
 import { Eye, EyeOff, Mail } from 'lucide-react';
-import CurvySlideButton from '@/components/CurvySlideButton';
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter, notFound } from 'next/navigation';
 import { useAuth } from '@/lib/mock-auth';
@@ -91,11 +90,6 @@ export default function AuthPage({ params }: { params: Params }) {
   const { login, isAuthenticated, signup } = useAuth();
   const router = useRouter();
 
-  const buttonStyles = {
-    width: '100%',
-    borderRadius: '30px',
-    fontWeight: 500,
-  };
 
   const handlePasswordReset = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,20 +185,6 @@ export default function AuthPage({ params }: { params: Params }) {
 
   return (
     <>
-      <style>{`
-        .btn-animated button {
-          padding: 10px 20px !important;
-          font-size: 14px !important;
-          margin-top: 8px !important;
-        }
-        @media (min-width: 1024px) {
-          .btn-animated button {
-            padding: 12px 24px !important;
-            font-size: 16px !important;
-            margin-top: 12px !important;
-          }
-        }
-      `}</style>
       <div className="min-h-screen lg:h-screen flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden bg-white">
         {/* Left Side - Brand Section */}
         <div className="hidden lg:block w-full h-[320px] lg:h-full lg:w-[700px] bg-white relative overflow-hidden">
@@ -232,16 +212,16 @@ export default function AuthPage({ params }: { params: Params }) {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="flex-1 bg-white flex items-center lg:items-start justify-center p-6 lg:p-12 overflow-y-auto relative">
-          <div className="w-full max-w-md pt-2 lg:pt-4">
+        <div className="flex-1 bg-white flex items-center justify-center p-6 lg:p-12 overflow-y-auto relative">
+          <div className="w-full max-w-md pt-0 lg:pt-2">
             
             {/* Header */}
-            <div className="mt-2 lg:mt-4 mb-6 lg:mb-8">
-              <h1 className="text-3xl lg:text-4xl font-medium text-[#000000] mb-2 lg:mb-3">
+            <div className="mt-1 lg:mt-2 mb-4 lg:mb-5">
+              <h1 className="text-3xl lg:text-4xl font-medium text-[#000000] mb-1.5 lg:mb-2">
                 {showForgotPassword ? 'Mot de passe oublié ?' : 'Bienvenue !'}
               </h1>
               {/* Mode Toggle Links */}
-              <div className="mt-1.5 lg:mt-2 text-left">
+              <div className="mt-1 text-left">
                 {showForgotPassword ? (
                   <p className="text-gray-600 font-medium text-xs lg:text-sm">
                     Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
@@ -278,11 +258,11 @@ export default function AuthPage({ params }: { params: Params }) {
 
             {/* Forgot Password Form */}
             {showForgotPassword ? (
-              <div className="space-y-4 lg:space-y-6">
+              <div className="space-y-2.5 lg:space-y-3">
                 {!resetEmailSent ? (
-                  <form onSubmit={handlePasswordReset} className="space-y-3 lg:space-y-4" noValidate>
+                  <form onSubmit={handlePasswordReset} className="space-y-2.5 lg:space-y-3" noValidate>
                     <div>
-                      <label htmlFor="resetEmail" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1 lg:mb-1.5">
+                      <label htmlFor="resetEmail" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1">
                         Adresse email
                       </label>
                       <input
@@ -291,7 +271,7 @@ export default function AuthPage({ params }: { params: Params }) {
                         placeholder="vous@exemple.com"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
-                        className="w-full px-4 py-2.5 lg:px-6 lg:py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
+                        className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
                         autoFocus
                       />
                       {resetError && (
@@ -309,26 +289,19 @@ export default function AuthPage({ params }: { params: Params }) {
                       </ol>
                     </div>
 
-                    <div
-                      onClick={() => {
-                        const form = document.querySelector('form');
-                        if (form) {
-                          const event = new Event('submit', { bubbles: true, cancelable: true });
-                          form.dispatchEvent(event);
-                        }
-                      }}
-                      className="cursor-pointer w-full"
+                    <button
+                      type="submit"
+                      className="btn-blob mt-1.5 lg:mt-2"
+                      style={{
+                        background: '#FFC900',
+                        color: '#ffffff',
+                        border: '2px solid #FFC900',
+                        '--hover-bg': '#ffffff',
+                        '--hover-text': '#000000',
+                      } as React.CSSProperties}
                     >
-                      <CurvySlideButton
-                        text={"Envoyer le lien de réinitialisation"}
-                        color="#FFC900"
-                        textColor="#ffffff"
-                        borderColor="#FFC900"
-                        hoverTextColor="#000000"
-                        hoverColor="#ffffff"
-                        styles={buttonStyles}
-                      />
-                    </div>
+                      <span>Envoyer le lien de réinitialisation</span>
+                    </button>
 
                     <button
                       type="button"
@@ -339,8 +312,8 @@ export default function AuthPage({ params }: { params: Params }) {
                     </button>
                   </form>
                 ) : (
-                  <div className="text-center space-y-4 lg:space-y-6">
-                    <div className="w-16 h-16 lg:w-20 lg:h-20 bg-green-100 rounded-full flex items-center justify-center mb-4 lg:mb-6 mx-auto">
+                  <div className="text-center space-y-3 lg:space-y-4">
+                    <div className="w-16 h-16 lg:w-20 lg:h-20 bg-green-100 rounded-full flex items-center justify-center mb-3 lg:mb-4 mx-auto">
                       <svg className="w-8 h-8 lg:w-10 lg:h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
                       </svg>
@@ -357,7 +330,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       Vous n&apos;avez pas reçu l&apos;email ? Vérifiez votre dossier spam ou{' '}
                       <button
                         onClick={() => setResetEmailSent(false)}
-                        className="text-[#082259] font-medium hover:underline cursor-pointer"
+                        className="text-primary font-medium hover:underline cursor-pointer"
                       >
                         réessayez
                       </button>
@@ -374,12 +347,12 @@ export default function AuthPage({ params }: { params: Params }) {
               </div>
             ) : (
               /* Login Form */
-              <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4" noValidate>
+              <form onSubmit={handleSubmit} className="space-y-2.5 lg:space-y-3" noValidate>
                 {/* First Name and Last Name - Only for Signup */}
                 {mode === 'signup' && (
-                <div className="grid grid-cols-2 gap-3 lg:gap-4">
+                <div className="grid grid-cols-2 gap-2.5 lg:gap-3">
                   <div>
-                    <label htmlFor="firstName" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1 lg:mb-1.5">
+                    <label htmlFor="firstName" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1">
                       Prénom
                     </label>
                     <input
@@ -388,14 +361,14 @@ export default function AuthPage({ params }: { params: Params }) {
                       placeholder="Jean"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full px-4 py-2.5 lg:px-6 lg:py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
+                      className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
                     />
                     {fieldErrors.firstName && (
                       <p className="mt-1 text-xs lg:text-sm text-red-500">{fieldErrors.firstName}</p>
                     )}
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1 lg:mb-1.5">
+                    <label htmlFor="lastName" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1">
                       Nom
                     </label>
                     <input
@@ -404,7 +377,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       placeholder="Dupont"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full px-4 py-2.5 lg:px-6 lg:py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
+                      className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
                     />
                     {fieldErrors.lastName && (
                       <p className="mt-1 text-xs lg:text-sm text-red-500">{fieldErrors.lastName}</p>
@@ -415,7 +388,7 @@ export default function AuthPage({ params }: { params: Params }) {
 
               {/* Email Input */}
               <div>
-                <label htmlFor="email" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1 lg:mb-1.5">
+                <label htmlFor="email" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1">
                   Email
                 </label>
                 <div className="relative">
@@ -425,7 +398,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     placeholder="vous@exemple.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2.5 lg:px-6 lg:py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-10 lg:pr-12 text-sm lg:text-base font-medium"
+                    className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 pr-10 lg:pr-12 text-sm lg:text-base font-medium"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                     <Mail className="h-4 w-4 lg:h-[18px] lg:w-[18px]" />
@@ -438,7 +411,7 @@ export default function AuthPage({ params }: { params: Params }) {
 
               {/* Password Input */}
               <div>
-                <label htmlFor="password" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1 lg:mb-1.5">
+                <label htmlFor="password" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1">
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -448,7 +421,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-2.5 lg:px-6 lg:py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-10 lg:pr-12 text-sm lg:text-base font-medium"
+                    className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 pr-10 lg:pr-12 text-sm lg:text-base font-medium"
                   />
                   <button
                     type="button"
@@ -471,7 +444,7 @@ export default function AuthPage({ params }: { params: Params }) {
               {/* Confirm Password - Only for Signup */}
               {mode === 'signup' && (
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1 lg:mb-1.5">
+                  <label htmlFor="confirmPassword" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1">
                     Confirmer le mot de passe
                   </label>
                   <div className="relative">
@@ -481,7 +454,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full px-4 py-2.5 lg:px-6 lg:py-3 bg-white border border-gray-200 rounded-full focus:ring-1 focus:ring-[#082259] outline-none transition-all text-gray-900 placeholder-gray-400 pr-10 lg:pr-12 text-sm lg:text-base font-medium"
+                      className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 pr-10 lg:pr-12 text-sm lg:text-base font-medium"
                     />
                     <button
                       type="button"
@@ -555,65 +528,53 @@ export default function AuthPage({ params }: { params: Params }) {
               )}
 
                 {/* Sign In Button */}
-                <div 
-                  onClick={() => {
-                    const form = document.querySelector('form');
-                    if (form) {
-                      const event = new Event('submit', { bubbles: true, cancelable: true });
-                      form.dispatchEvent(event);
-                    }
-                  }}
-                  className="cursor-pointer w-full"
+                <button
+                  type="submit"
+                  className="btn-blob mt-1.5 lg:mt-2"
+                  style={{
+                    background: '#FFC900',
+                    color: '#ffffff',
+                    border: '2px solid #FFC900',
+                    '--hover-bg': '#ffffff',
+                    '--hover-text': '#0A0A0A',
+                  } as React.CSSProperties}
                 >
-                  <CurvySlideButton
-                    text={mode === 'login' ? 'Se connecter' : 'Créer un compte'}
-                    color="#FFC900"
-                    textColor="#ffffff"
-                    borderColor="#FFC900"
-                    hoverTextColor="#0A0A0A"
-                    hoverColor="#ffffff"
-                    styles={buttonStyles}
-                  />
-                </div>
+                  <span>{mode === 'login' ? 'Se connecter' : 'Créer un compte'}</span>
+                </button>
               </form>
             )}
 
             {/* Divider and Social Login */}
             {!showForgotPassword && (
               <>
-                <div className="flex items-center gap-3 lg:gap-4 my-5 lg:my-8">
+                <div className="flex items-center gap-3 lg:gap-4 my-4 lg:my-5">
                   <div className="flex-1 h-px bg-gray-200"></div>
                   <span className="text-xs lg:text-sm font-medium text-gray-400">OU</span>
                   <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
 
                 {/* Social Login */}
-                <CurvySlideButton
-                  text={
-                    <span className="flex items-center justify-center gap-2 lg:gap-3">
-                      <svg className="w-[18px] h-[18px] lg:w-[22px] lg:h-[22px]" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clipPath="url(#clip0_17_40)">
-                          <path d="M47.532 24.552c0-1.636-.146-3.2-.418-4.704H24.48v9.02h13.02c-.56 3.02-2.24 5.58-4.78 7.3v6.06h7.74c4.54-4.18 7.07-10.34 7.07-17.676z" fill="#4285F4"/>
-                          <path d="M24.48 48c6.42 0 11.8-2.12 15.74-5.76l-7.74-6.06c-2.14 1.44-4.88 2.3-8 2.3-6.14 0-11.34-4.14-13.2-9.7H3.36v6.18C7.28 43.82 15.18 48 24.48 48z" fill="#34A853"/>
-                          <path d="M11.28 28.78A13.98 13.98 0 0 1 9.6 24c0-1.66.3-3.28.84-4.78v-6.18H3.36A23.98 23.98 0 0 0 0 24c0 3.98.96 7.74 2.64 11.02l8.64-6.24z" fill="#FBBC05"/>
-                          <path d="M24.48 9.54c3.5 0 6.62 1.2 9.08 3.56l6.8-6.8C36.28 2.12 30.9 0 24.48 0 15.18 0 7.28 4.18 3.36 10.04l8.64 6.18c1.86-5.56 7.06-9.7 13.2-9.7z" fill="#EA4335"/>
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_17_40">
-                            <rect width="48" height="48" fill="white"/>
-                          </clipPath>
-                        </defs>
-                      </svg>
-                      Se connecter avec Google
-                    </span>
-                  }
-                  color="#ffffff"
-                  textColor="#374151"
-                  borderColor="#e5e7eb"
-                  hoverTextColor="#ffffff"
-                  hoverColor="#000000"
-                  styles={buttonStyles}
-                />
+                <button
+                  type="button"
+                  className="btn-blob"
+                  style={{
+                    background: '#ffffff',
+                    color: '#374151',
+                    border: '2px solid #e5e7eb',
+                    '--hover-bg': '#000000',
+                    '--hover-text': '#ffffff',
+                  } as React.CSSProperties}
+                >
+                  <span className="flex items-center justify-center gap-2 lg:gap-3">
+                    <svg className="w-[18px] h-[18px] lg:w-[22px] lg:h-[22px]" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                      <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12S17.373 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
+                      <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z" />
+                      <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.018 0-9.309-3.083-11.101-7.456l-6.522 5.025C9.686 39.997 16.39 44 24 44z" />
+                      <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" />
+                    </svg>
+                    Se connecter avec Google
+                  </span>
+                </button>
                 <div className="w-full text-center mt-2.5 lg:mt-3">
                   <span className="text-[10px] lg:text-xs text-gray-400 font-medium">SSL Connexion sécurisée et privée</span>
                 </div>
