@@ -34,7 +34,7 @@ const AnimatedText = ({ className = "" }: { className?: string }) => {
   return (
     <div className={`min-h-[140px] flex flex-col justify-center text-left pl-2 lg:pl-0 ${className}`}>
       <div className={`transition-all duration-500 pr-0 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}> 
-        <h2 className="text-2xl lg:text-2xl font-extrabold text-white mb-4 leading-tight text-left">
+        <h2 className="text-2xl lg:text-2xl font-medium text-white mb-4 leading-tight text-left">
           {messages[currentIndex].title}
         </h2>
         <p className="text-sm lg:text-base text-white/80 font-medium leading-relaxed text-left">
@@ -94,6 +94,7 @@ export default function AuthPage({ params }: { params: Params }) {
   const buttonStyles = {
     width: '100%',
     borderRadius: '30px',
+    fontWeight: 500,
   };
 
   const handlePasswordReset = (e: React.FormEvent) => {
@@ -236,7 +237,7 @@ export default function AuthPage({ params }: { params: Params }) {
             
             {/* Header */}
             <div className="mt-2 lg:mt-4 mb-6 lg:mb-8">
-              <h1 className="text-3xl lg:text-4xl font-extrabold text-[#000000] mb-2 lg:mb-3">
+              <h1 className="text-3xl lg:text-4xl font-medium text-[#000000] mb-2 lg:mb-3">
                 {showForgotPassword ? 'Mot de passe oublié ?' : 'Bienvenue !'}
               </h1>
               {/* Mode Toggle Links */}
@@ -253,7 +254,7 @@ export default function AuthPage({ params }: { params: Params }) {
                         <button
                           type="button"
                           onClick={() => handleModeSwitch('signup')}
-                          className="text-[#000000] font-bold hover:underline cursor-pointer"
+                          className="text-[#000000] font-medium hover:underline cursor-pointer"
                         >
                           S&apos;inscrire
                         </button>
@@ -264,7 +265,7 @@ export default function AuthPage({ params }: { params: Params }) {
                         <button
                           type="button"
                           onClick={() => handleModeSwitch('login')}
-                          className="text-[#000000] font-bold hover:underline cursor-pointer"
+                          className="text-[#000000] font-medium hover:underline cursor-pointer"
                         >
                           Se connecter
                         </button>
@@ -281,7 +282,7 @@ export default function AuthPage({ params }: { params: Params }) {
                 {!resetEmailSent ? (
                   <form onSubmit={handlePasswordReset} className="space-y-3 lg:space-y-4" noValidate>
                     <div>
-                      <label htmlFor="resetEmail" className="block text-xs lg:text-sm font-bold text-gray-900 mb-1 lg:mb-1.5">
+                      <label htmlFor="resetEmail" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1 lg:mb-1.5">
                         Adresse email
                       </label>
                       <input
@@ -299,7 +300,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     </div>
 
                     <div className="bg-white border border-gray-200 rounded-2xl p-3 lg:p-4 text-left">
-                      <p className="text-xs lg:text-sm text-gray-900 font-semibold mb-1.5 lg:mb-2">Prochaines étapes :</p>
+                      <p className="text-xs lg:text-sm text-gray-900 font-medium mb-1.5 lg:mb-2">Prochaines étapes :</p>
                       <ol className="text-xs lg:text-sm text-gray-900 space-y-1 lg:space-y-1.5 ml-4 list-decimal">
                         <li>Vérifiez votre boîte de réception</li>
                         <li>Cliquez sur le lien de réinitialisation</li>
@@ -332,7 +333,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     <button
                       type="button"
                       onClick={closeForgotPasswordModal}
-                      className="w-full text-gray-600 py-2.5 lg:py-3 rounded-full font-semibold text-xs lg:text-sm hover:text-gray-900 transition-colors cursor-pointer"
+                      className="w-full text-gray-600 py-2.5 lg:py-3 rounded-full font-medium text-xs lg:text-sm hover:text-gray-900 transition-colors cursor-pointer"
                     >
                       Retour à la connexion
                     </button>
@@ -344,11 +345,11 @@ export default function AuthPage({ params }: { params: Params }) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
                       </svg>
                     </div>
-                    <h2 className="text-2xl lg:text-3xl font-bold text-[#000000]">
+                    <h2 className="text-2xl lg:text-3xl font-medium text-[#000000]">
                       Email envoyé !
                     </h2>
                     <p className="text-gray-600 text-xs lg:text-sm leading-relaxed">
-                      Nous avons envoyé un lien de réinitialisation à <strong className="text-[#000000]">{resetEmail}</strong>. 
+                      Nous avons envoyé un lien de réinitialisation à <span className="text-[#000000] font-medium">{resetEmail}</span>. 
                       Veuillez vérifier votre boîte de réception et suivre les instructions.
                     </p>
                     
@@ -356,7 +357,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       Vous n&apos;avez pas reçu l&apos;email ? Vérifiez votre dossier spam ou{' '}
                       <button
                         onClick={() => setResetEmailSent(false)}
-                        className="text-[#082259] font-bold hover:underline cursor-pointer"
+                        className="text-[#082259] font-medium hover:underline cursor-pointer"
                       >
                         réessayez
                       </button>
@@ -364,7 +365,7 @@ export default function AuthPage({ params }: { params: Params }) {
 
                     <button
                       onClick={closeForgotPasswordModal}
-                      className="w-full bg-[#000000] text-white py-2.5 lg:py-3.5 rounded-full font-bold text-xs lg:text-base hover:bg-[#000000] transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer"
+                      className="w-full bg-[#000000] text-white py-2.5 lg:py-3.5 rounded-full font-medium text-xs lg:text-base hover:bg-[#000000] transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer"
                     >
                       Retour à la connexion
                     </button>
@@ -378,7 +379,7 @@ export default function AuthPage({ params }: { params: Params }) {
                 {mode === 'signup' && (
                 <div className="grid grid-cols-2 gap-3 lg:gap-4">
                   <div>
-                    <label htmlFor="firstName" className="block text-xs lg:text-sm font-bold text-gray-900 mb-1 lg:mb-1.5">
+                    <label htmlFor="firstName" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1 lg:mb-1.5">
                       Prénom
                     </label>
                     <input
@@ -394,7 +395,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     )}
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-xs lg:text-sm font-bold text-gray-900 mb-1 lg:mb-1.5">
+                    <label htmlFor="lastName" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1 lg:mb-1.5">
                       Nom
                     </label>
                     <input
@@ -414,7 +415,7 @@ export default function AuthPage({ params }: { params: Params }) {
 
               {/* Email Input */}
               <div>
-                <label htmlFor="email" className="block text-xs lg:text-sm font-bold text-gray-900 mb-1 lg:mb-1.5">
+                <label htmlFor="email" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1 lg:mb-1.5">
                   Email
                 </label>
                 <div className="relative">
@@ -437,7 +438,7 @@ export default function AuthPage({ params }: { params: Params }) {
 
               {/* Password Input */}
               <div>
-                <label htmlFor="password" className="block text-xs lg:text-sm font-bold text-[#000000] mb-1 lg:mb-1.5">
+                <label htmlFor="password" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1 lg:mb-1.5">
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -470,7 +471,7 @@ export default function AuthPage({ params }: { params: Params }) {
               {/* Confirm Password - Only for Signup */}
               {mode === 'signup' && (
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-xs lg:text-sm font-bold text-[#000000] mb-1 lg:mb-1.5">
+                  <label htmlFor="confirmPassword" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1 lg:mb-1.5">
                     Confirmer le mot de passe
                   </label>
                   <div className="relative">
@@ -518,14 +519,14 @@ export default function AuthPage({ params }: { params: Params }) {
                       onCheckedChange={checked => setKeepLoggedIn(checked === true)}
                       className="w-4 h-4 lg:w-5 lg:h-5 ml-1 rounded-full border-2 bg-white border-gray-300 text-[#000000] cursor-pointer"
                     />
-                    <span className="ml-2 text-xs lg:text-sm font-semibold text-gray-700 group-hover:text-gray-900">
+                    <span className="ml-2 text-xs lg:text-sm font-medium text-gray-700 group-hover:text-gray-900">
                       Rester connecté
                     </span>
                   </label>
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
-                    className="text-xs lg:text-sm font-bold text-[#000000] hover:underline cursor-pointer"
+                    className="text-xs lg:text-sm font-medium text-[#000000] hover:underline cursor-pointer"
                   >
                     Mot de passe oublié ?
                   </button>
@@ -539,7 +540,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       onCheckedChange={checked => setAcceptTerms(checked === true)}
                       className="w-4 h-4 lg:w-5 lg:h-5 bg-white rounded-full border-1 border-gray-300 text-[#000000] cursor-pointer mt-0.5"
                     />
-                    <span className="ml-2 lg:ml-3 text-xs lg:text-sm font-semibold text-gray-700 group-hover:text-gray-900">
+                    <span className="ml-2 lg:ml-3 text-xs lg:text-sm font-medium text-gray-700 group-hover:text-gray-900">
                       J&apos;accepte les{' '}
                       <a href="#" className="text-[#000000] hover:underline cursor-pointer">
                         conditions d&apos;utilisation
@@ -582,7 +583,7 @@ export default function AuthPage({ params }: { params: Params }) {
               <>
                 <div className="flex items-center gap-3 lg:gap-4 my-5 lg:my-8">
                   <div className="flex-1 h-px bg-gray-200"></div>
-                  <span className="text-xs lg:text-sm font-semibold text-gray-400">OU</span>
+                  <span className="text-xs lg:text-sm font-medium text-gray-400">OU</span>
                   <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
 

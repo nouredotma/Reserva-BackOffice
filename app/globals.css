@@ -11,7 +11,8 @@
   --reserva-yellow-hover: #e6b500;
   --reserva-ink: #0a0a0a;
   --reserva-paper: #ffffff;
-  --reserva-soft: #f7f7f3;
+  --reserva-neutral-15: #f7f7f7;
+  --reserva-soft: var(--reserva-neutral-15);
 
   --radius: 0.625rem;
   --background: #ffffff;
