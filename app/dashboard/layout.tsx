@@ -711,21 +711,24 @@ function DashboardSidebar() {
 	return (
 		<>
 			{/* Modern Top Bar */}
-			<header className="fixed top-0 left-68 right-0 h-20 backdrop-blur-lg border-b border-gray-200/50 z-40">
+			<header className="fixed top-0 left-68 right-0 h-16 backdrop-blur-lg border-b border-gray-200/50 z-40">
 				<div className="h-full ml-0 px-8 flex items-center justify-between">
 					{/* Left Section - Navigation */}
-					<nav className="flex items-center gap-2">
+					<nav className="flex items-center gap-1">
 						{menuItems.map((item) => {
 							const Icon = item.icon;
-							// Make 'Clients' active for all /dashboard/clients routes
-							const isActive = item.href === '/dashboard/clients'
-							  ? pathname?.startsWith('/dashboard/clients')
-							  : pathname === item.href;
+							const isActive =
+								(item.href === '/dashboard/rendez-vous' && (pathname === '/dashboard' || pathname?.startsWith('/dashboard/rendez-vous'))) ||
+								(item.href === '/dashboard/clients/fichier-client/gestion' && pathname?.startsWith('/dashboard/clients')) ||
+								(item.href === '/dashboard/caisse' && pathname?.startsWith('/dashboard/caisse')) ||
+								(item.href === '/dashboard/admin/param-agenda/gestion-de-prestations' && pathname?.startsWith('/dashboard/admin')) ||
+								pathname === item.href;
 							return (
 								<Link
 									key={item.href}
 									href={item.href}
-									className={`relative px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 inline-flex items-center gap-2.5 ${
+									aria-current={isActive ? 'page' : undefined}
+									className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full text-sm font-semibold ${
 										isActive
 											? 'bg-primary text-primary-foreground'
 											: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
