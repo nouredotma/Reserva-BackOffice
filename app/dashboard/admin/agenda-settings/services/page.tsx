@@ -28,7 +28,6 @@ type Service = {
 const legacyServicePattern = /COIFFURE|Coupe|Brushing|Coloration|Balayage|Manucure|Massage|Barbier|Soin du Visage/i;
 
 const GestionOffers = () => {
-  const [mounted, setMounted] = useState(false);
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -44,8 +43,6 @@ const GestionOffers = () => {
 
   // Load data from localStorage
   useEffect(() => {
-    setMounted(true);
-
     if (typeof window !== 'undefined') {
       const storedServices = localStorage.getItem('services');
       const storedCategories = localStorage.getItem('serviceCategories');
@@ -92,17 +89,17 @@ const GestionOffers = () => {
 
   // Save services to localStorage
   useEffect(() => {
-    if (mounted && services.length > 0) {
+    if (services.length > 0) {
       localStorage.setItem('services', JSON.stringify(services));
     }
-  }, [services, mounted]);
+  }, [services]);
 
   // Save categories to localStorage
   useEffect(() => {
-    if (mounted && categories.length > 0) {
+    if (categories.length > 0) {
       localStorage.setItem('serviceCategories', JSON.stringify(categories));
     }
-  }, [categories, mounted]);
+  }, [categories]);
 
   const handleAddCategory = () => {
     if (newCategoryName.trim()) {
@@ -176,16 +173,6 @@ const GestionOffers = () => {
     return acc;
   }, {} as Record<string, Service[]>);
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen p-0">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0 md:p-0 lg:p-0">

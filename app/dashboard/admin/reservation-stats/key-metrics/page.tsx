@@ -13,14 +13,9 @@ import {
 
 export default function SMEDashboard() {
   const [timeFilter, setTimeFilter] = useState<'week' | 'month' | 'year'>('month');
-  const [mounted, setMounted] = useState(false);
   // Add month picker state
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Helper for month names
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'Jun', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -184,16 +179,6 @@ export default function SMEDashboard() {
     return null;
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0">

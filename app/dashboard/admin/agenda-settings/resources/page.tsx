@@ -34,7 +34,6 @@ type EmployeeAgenda = {
 const legacyAgendaPattern = /Samira|Yassine|Khalid|Nadia El Khatib|Hairdresser|Barber|Beautician|Massage|Manicure/i;
 
 const GestionDesAgendas = () => {
-  const [mounted, setMounted] = useState(false);
   const [agendas, setAgendas] = useState<EmployeeAgenda[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingAgenda, setEditingAgenda] = useState<EmployeeAgenda | null>(null);
@@ -42,8 +41,6 @@ const GestionDesAgendas = () => {
   const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
-    setMounted(true);
-
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('employeeAgendas');
       if (stored) {
@@ -61,10 +58,10 @@ const GestionDesAgendas = () => {
   }, []);
 
   useEffect(() => {
-    if (mounted && agendas.length > 0) {
+    if (agendas.length > 0) {
       localStorage.setItem('employeeAgendas', JSON.stringify(agendas));
     }
-  }, [agendas, mounted]);
+  }, [agendas]);
 
   const handleDeleteAgenda = (id: number) => {
     if (confirm('Are you sure you want to delete this resource?')) {
@@ -92,16 +89,6 @@ const GestionDesAgendas = () => {
     return matchesSearch && matchesStatus;
   });
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen p-0">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0 md:p-0 lg:p-0">

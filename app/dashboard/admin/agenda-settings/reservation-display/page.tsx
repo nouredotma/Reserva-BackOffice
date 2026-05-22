@@ -11,7 +11,6 @@ type DisplayField = {
 };
 
 const GestionAffichageRDV = () => {
-  const [mounted, setMounted] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showColorInRDV, setShowColorInRDV] = useState(true);
   const [fields, setFields] = useState<DisplayField[]>([
@@ -24,7 +23,6 @@ const GestionAffichageRDV = () => {
   const [draggedItem, setDraggedItem] = useState<number | null>(null);
 
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== 'undefined') {
       const savedSettings = localStorage.getItem('rdvDisplaySettings');
       if (savedSettings) {
@@ -75,16 +73,6 @@ const GestionAffichageRDV = () => {
     setDraggedItem(null);
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen p-0">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0 md:p-0 lg:p-0">

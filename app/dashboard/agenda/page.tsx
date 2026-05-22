@@ -537,7 +537,6 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
 };
 
 const AgendaPage = () => {
-  const [mounted, setMounted] = useState(false);
   const [view, setView] = useState('week'); // day, week, month
   const [currentDate, setCurrentDate] = useState(() => {
     const date = new Date();
@@ -598,14 +597,6 @@ const AgendaPage = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 0);
-
-    return () => {
-      clearTimeout(t);
-    };
-  }, []);
-
   // Sample appointments data - normalize dates and load from localStorage
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     // Try to load from localStorage first
@@ -643,10 +634,8 @@ const AgendaPage = () => {
 
   // Dispatch event when main calendar date changes to sync sidebar
   useEffect(() => {
-    if (mounted) {
-      window.dispatchEvent(new CustomEvent('mainCalendarDateChange', { detail: currentDate }));
-    }
-  }, [currentDate, mounted]);
+    window.dispatchEvent(new CustomEvent('mainCalendarDateChange', { detail: currentDate }));
+  }, [currentDate]);
 
   const timeSlots = Array.from({ length: 15 }, (_, i) => `${(i + 9).toString().padStart(2, '0')}:00`);
 
@@ -739,16 +728,6 @@ const AgendaPage = () => {
     }
   }, []);
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 p-4 md:p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div suppressHydrationWarning className="min-h-screen p-0 md:p-0">

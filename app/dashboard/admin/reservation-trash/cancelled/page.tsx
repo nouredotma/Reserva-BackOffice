@@ -5,11 +5,9 @@ import { Trash2, Calendar, Download, Printer, Check } from 'lucide-react';
 import { CancelledAppointment, generateSampleCancelledAppointments } from '@/lib/mockData';
 
 export default function CancelledAppointments() {
-  const [mounted, setMounted] = useState(false);
   const [appointments, setAppointments] = useState<CancelledAppointment[]>([]);
 
   useEffect(() => {
-    setMounted(true);
     setAppointments(generateSampleCancelledAppointments(10));
   }, []);
 
@@ -41,16 +39,6 @@ export default function CancelledAppointments() {
     window.print();
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen p-0 md:p-0">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0 md:p-0">

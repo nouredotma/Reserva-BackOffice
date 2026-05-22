@@ -5,17 +5,12 @@ import { Download, ChevronLeft, ChevronRight, Calendar, TrendingUp } from 'lucid
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function OffersPage() {
-  const [mounted, setMounted] = useState(false);
   const [currentMonth, setCurrentMonth] = useState('December 2024');
   const [compareMode, setCompareMode] = useState(false);
   const [timeFilter, setTimeFilter] = useState('month');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'Jun', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const offresData = [
     {
@@ -55,16 +50,6 @@ export default function OffersPage() {
       ]
     },
   ];
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0">

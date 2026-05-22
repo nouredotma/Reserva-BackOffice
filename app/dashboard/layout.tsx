@@ -15,18 +15,16 @@ const menuItems = [
 ];
 
 const AgendaSidebar = () => {
-	const [mounted, setMounted] = useState(false);
 	const [selectedDate, setSelectedDate] = useState(() => {
 		const date = new Date();
 		date.setHours(0, 0, 0, 0);
 		return date;
 	});
 	const [statusFilter, setStatusFilter] = useState('all');
-	const [monthYear, setMonthYear] = useState('');
 	const [currentTime, setCurrentTime] = useState(() => new Date());
+	const monthYear = selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
 	useEffect(() => {
-		setMounted(true);
 		setCurrentTime(new Date());
 
 		// Listen for main calendar date changes
@@ -44,12 +42,6 @@ const AgendaSidebar = () => {
 			window.removeEventListener('mainCalendarDateChange', handleMainCalendarDateChange as EventListener);
 		};
 	}, []);
-
-	useEffect(() => {
-		if (mounted) {
-			setMonthYear(selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
-		}
-	}, [selectedDate, mounted]);
 
 	const getDaysInMonth = () => {
 		const year = selectedDate.getFullYear();
@@ -86,19 +78,9 @@ const AgendaSidebar = () => {
 		setSelectedDate(new Date());
 	};
 
-	if (!mounted) {
-		return (
-			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-4">
-				<div className="space-y-4">
-					<div className="animate-pulse bg-gray-200 h-64 rounded-xl"></div>
-				</div>
-			</div>
-		);
-	}
-
 	return (
 		<>
-			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
+			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6" suppressHydrationWarning>
 				<div className="space-y-6">
 					<div className="bg-transparent">
 						<div className="flex items-center justify-between mb-4">
@@ -204,7 +186,6 @@ const AgendaSidebar = () => {
 };
 
 const ClientsSidebar = () => {
-	const [mounted, setMounted] = useState(false);
 	const [showFichierClient, setShowFichierClient] = useState(true);
 	const [showMesReviews, setShowMesReviews] = useState(false);
 	const pathname = usePathname();
@@ -222,20 +203,6 @@ const ClientsSidebar = () => {
 			{ label: 'Review statistics', path: '/dashboard/clients/reviews/statistics' }
 		]
 	};
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted) {
-		return (
-			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
-				<div className="space-y-6">
-					<div className="animate-pulse bg-gray-200 h-64 rounded-xl"></div>
-				</div>
-			</div>
-		);
-	}
 
 	return (
 		<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
@@ -303,7 +270,6 @@ const ClientsSidebar = () => {
 };
 
 const AdminSidebar = () => {
-	const [mounted, setMounted] = useState(false);
 	const [showParamAgenda, setShowParamAgenda] = useState(true);
 	const [showEstablishmentSettings, setShowEstablishmentSettings] = useState(false);
 	const [showFichClient, setShowFichClient] = useState(false);
@@ -336,20 +302,6 @@ const AdminSidebar = () => {
 	    { label: 'Reservations', path: '/dashboard/admin/reservation-stats/reservations' },
 	    { label: 'No-shows', path: '/dashboard/admin/reservation-stats/no-shows' },
 	];
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted) {
-		return (
-			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
-				<div className="space-y-6">
-					<div className="animate-pulse bg-gray-200 h-64 rounded-xl"></div>
-				</div>
-			</div>
-		);
-	}
 
 	return (
 		<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">

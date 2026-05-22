@@ -111,7 +111,6 @@ const ExceptionalEditModal: React.FC<{ schedule: ExceptionalSchedule, onClose: (
 };
 
 const GestionHoraires = () => {
-  const [mounted, setMounted] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeTab, setActiveTab] = useState<'establishment' | 'exceptional' | 'agenda' | 'delays'>('establishment');
   const [onlineBooking, setOnlineBooking] = useState<'open' | 'closed'>('open');
@@ -148,7 +147,6 @@ const GestionHoraires = () => {
   const [selectedExceptionalSchedule, setSelectedExceptionalSchedule] = useState<ExceptionalSchedule | null>(null);
 
   useEffect(() => {
-    setMounted(true);
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -205,16 +203,6 @@ const GestionHoraires = () => {
     setSelectedExceptionalSchedule(null);
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-4 md:p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div suppressHydrationWarning className="min-h-screen p-0 md:p-0">

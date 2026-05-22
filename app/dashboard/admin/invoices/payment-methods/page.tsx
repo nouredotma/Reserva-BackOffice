@@ -13,7 +13,6 @@ type PaymentMethod = {
 };
 
 export default function PaymentMethodsPage() {
-  const [mounted, setMounted] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
     {
@@ -35,10 +34,6 @@ export default function PaymentMethodsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showCardBack, setShowCardBack] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const formatIBAN = (value: string) => {
     const cleaned = value.replace(/\s/g, '').toUpperCase();
@@ -150,16 +145,6 @@ export default function PaymentMethodsPage() {
     setError('');
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen p-0 md:p-0">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0 md:p-0">

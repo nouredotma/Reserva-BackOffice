@@ -6,7 +6,6 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { sampleCollaborators } from '@/lib/mockData';
 
 export default function AnalyticsDashboard() {
-  const [mounted, setMounted] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(11); // December
   const [selectedYear, setSelectedYear] = useState(2024);
   const [compareMode, setCompareMode] = useState(false);
@@ -24,7 +23,6 @@ export default function AnalyticsDashboard() {
   }, [showDetails]);
 
   useEffect(() => {
-    setMounted(true);
   }, []);
   const collaborators = sampleCollaborators;
   const totals = {
@@ -55,16 +53,6 @@ export default function AnalyticsDashboard() {
     }
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen">

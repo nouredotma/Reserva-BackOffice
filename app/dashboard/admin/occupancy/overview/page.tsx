@@ -16,7 +16,6 @@ type OccupancyData = {
 };
 
 const StatistiquesPage = () => {
-  const [mounted, setMounted] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState('week'); // week, day, month
   const [selectedEmployee, setSelectedEmployee] = useState('all');
@@ -39,7 +38,6 @@ const StatistiquesPage = () => {
   ];
   const [occupancyData, setOccupancyData] = useState<OccupancyData>(sampleOccupancyData);
   useEffect(() => {
-    setMounted(true);
     if (typeof window !== 'undefined') {
       const storedAgendas = localStorage.getItem('employeeAgendas');
       if (storedAgendas) {
@@ -147,16 +145,6 @@ const StatistiquesPage = () => {
     window.print();
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-4 md:p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0 md:p-0">

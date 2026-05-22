@@ -1,15 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Download, Printer, FileText, CreditCard, Calendar, TrendingUp, Filter } from 'lucide-react';
 
 export default function InvoicesDashboard() {
-  const [mounted, setMounted] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Generate invoice data
   const invoices = [
@@ -63,16 +58,6 @@ export default function InvoicesDashboard() {
     console.log(`Invoice download ${invoiceId}`);
   };
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen p-0 md:p-0">
-        <div className="animate-pulse space-y-4">
-          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
-          <div className="bg-gray-200 h-96 rounded-2xl"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen p-0 md:p-0">
