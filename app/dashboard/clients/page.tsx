@@ -7,7 +7,7 @@ export default function ClientsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/dashboard/clients/guest-files/management');
+    router.replace('/dashboard/clients/guests');
   }, [router]);
 
   return null;

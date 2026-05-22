@@ -241,7 +241,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                       <p className="text-sm text-gray-500 mb-3">No guest found</p>
                       <button
                         type="button"
-                        onClick={() => window.location.href = '/dashboard/clients/guest-files/management'}
+                        onClick={() => window.location.href = '/dashboard/clients/guests'}
                         className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-medium rounded-full hover:bg-gray-800 transition-colors"
                       >
                         <Plus size={14} />

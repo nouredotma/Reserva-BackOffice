@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Download, Printer, ChevronLeft, ChevronRight, Users, TrendingUp, Activity, BarChart3, Filter } from 'lucide-react';
+import { Calendar, Download, Printer, ChevronLeft, ChevronRight, TrendingUp, Activity, BarChart3, Filter } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -17,7 +17,6 @@ type OccupancyData = {
 
 const StatistiquesPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState('week'); // week, day, month
   const [selectedEmployee, setSelectedEmployee] = useState('all');
   const [timeRange, setTimeRange] = useState('all'); // all, morning, afternoon, evening
   const [draggedCell, setDraggedCell] = useState<{day: string, time: string} | null>(null);

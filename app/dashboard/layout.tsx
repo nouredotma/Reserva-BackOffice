@@ -2,16 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Trash2, Users, Settings, File, BarChart3, LogOut, Settings2, ChevronRight, LayoutPanelLeft, Calendar, Clock, Filter, UserCheck, Building, TrendingUp, FileText, ChevronDown, Bell, Menu, CreditCard, LifeBuoy, X } from 'lucide-react';
+import { Home, Trash2, Users, File, BarChart3, LogOut, Settings2, Calendar, Clock, Filter, UserCheck, Building, TrendingUp, FileText, ChevronDown, Bell, CreditCard, X } from 'lucide-react';
 import { useAuth } from '@/lib/mock-auth';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 
 const menuItems = [
 	{ name: 'Agenda', href: '/dashboard/agenda', icon: Home },
-	{ name: 'Clients', href: '/dashboard/clients/guest-files/management', icon: Users },
+	{ name: 'Clients', href: '/dashboard/clients/guests', icon: Users },
 	{ name: 'Cash Desk', href: '/dashboard/cash-desk', icon: CreditCard },
-	{ name: 'Admin', href: '/dashboard/admin/agenda-settings/services', icon: Settings2 },
+	{ name: 'Admin', href: '/dashboard/admin', icon: Settings2 },
 ];
 
 const AgendaSidebar = () => {
@@ -74,10 +74,6 @@ const AgendaSidebar = () => {
 	const changeMonth = (delta: number) => {
 		if (!selectedDate) return;
 		setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + delta, 1));
-	};
-
-	const goToToday = () => {
-		setSelectedDate(new Date());
 	};
 
 	// Don't render until client-side state is initialized
@@ -196,324 +192,68 @@ const AgendaSidebar = () => {
 };
 
 const ClientsSidebar = () => {
-	const [showFichierClient, setShowFichierClient] = useState(true);
-	const [showMesReviews, setShowMesReviews] = useState(false);
 	const pathname = usePathname();
 
-	const menuItems = {
-		fichier: [
-			{ label: 'Guest profiles', path: '/dashboard/clients/guest-files/management' },
-			{ label: 'Duplicate guests', path: '/dashboard/clients/guest-files/duplicates' }
-		],
-		reviews: [
-			{ label: 'Pending reviews', path: '/dashboard/clients/reviews/pending' },
-			{ label: 'Published reviews', path: '/dashboard/clients/reviews/published' },
-			{ label: 'Hidden reviews', path: '/dashboard/clients/reviews/hidden' },
-			{ label: 'Moderation rules', path: '/dashboard/clients/reviews/moderation-rules' },
-			{ label: 'Review statistics', path: '/dashboard/clients/reviews/statistics' }
-		]
-	};
+	const linkClass = (active: boolean) =>
+		`flex w-full items-center gap-2 cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
+			active ? 'bg-primary text-primary-foreground' : 'text-white/60 hover:bg-white/10 hover:text-white cursor-pointer'
+		}`;
 
 	return (
 		<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
-			<div className="space-y-6">
-				{/* Fichier Client */}
-				<div className="space-y-3">
-					<button
-						onClick={() => setShowFichierClient(!showFichierClient)}
-						className="w-full flex items-center justify-between group cursor-pointer"
-					>
-						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-							<FileText size={14} />
-							Guest profiles
-						</h3>
-						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showFichierClient ? 'rotate-180' : ''}`} />
-					</button>
-					{showFichierClient && (
-						<div className="space-y-1 animate-fadeIn">
-							{menuItems.fichier.map((item) => (
-								<Link
-									key={item.path}
-									href={item.path}
-									className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
-									}`}
-								>
-									{item.label}
-								</Link>
-							))}
-						</div>
-					)}
-				</div>
-
-				{/* Reviews */}
-				<div className="space-y-3">
-					<button
-						onClick={() => setShowMesReviews(!showMesReviews)}
-						className="w-full flex items-center justify-between group cursor-pointer"
-					>
-						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-							<UserCheck size={14} />
-							Reviews
-						</h3>
-						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showMesReviews ? 'rotate-180' : ''}`} />
-					</button>
-					{showMesReviews && (
-						<div className="space-y-1 animate-fadeIn">
-							{menuItems.reviews.map((item) => (
-								<Link
-								key={item.path}
-									href={item.path}
-									className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
-									}`}
-								>
-									{item.label}
-								</Link>
-							))}
-						</div>
-					)}
-				</div>
+			<div className="space-y-3">
+				<Link href="/dashboard/clients/guests" className={linkClass(pathname === '/dashboard/clients/guests')}>
+					<FileText size={14} />
+					Guests
+				</Link>
+				<Link href="/dashboard/clients/reviews" className={linkClass(pathname === '/dashboard/clients/reviews')}>
+					<UserCheck size={14} />
+					Reviews
+				</Link>
 			</div>
 		</div>
 	);
 };
 
 const AdminSidebar = () => {
-	const [showParamAgenda, setShowParamAgenda] = useState(true);
-	const [showEstablishmentSettings, setShowEstablishmentSettings] = useState(false);
-	const [showFichClient, setShowFichClient] = useState(false);
-	const [showStatistiquesRDV, setShowStatistiquesRDV] = useState(false);
-	const [showTauxOccupancy, setShowTauxOccupancy] = useState(false);
-	const [showCorbeilleRDV, setShowCorbeilleRDV] = useState(false);
-	const [showMesInvoices, setShowMesInvoices] = useState(false);
 	const pathname = usePathname();
 
-	const agendaSettingsLinks = [
-	    { label: 'Bookable offers', path: '/dashboard/admin/agenda-settings/services' },
-		{ label: 'Resources & capacity', path: '/dashboard/admin/agenda-settings/resources' },
-		{ label: 'Reservation display', path: '/dashboard/admin/agenda-settings/reservation-display' },
-	];
-
-	const establishmentSettingsLinks = [
-		{ label: 'Photo management', path: '/dashboard/admin/establishment-settings/photos' },
-		{ label: 'Establishment description', path: '/dashboard/admin/establishment-settings/description' },
-		{ label: 'Reservation notifications', path: '/dashboard/admin/establishment-settings/web-notifications' },
-		{ label: 'Hours & timing', path: '/dashboard/admin/establishment-settings/hours-delays' },
-		{ label: 'Establishment message', path: '/dashboard/admin/establishment-settings/message' },
-		{ label: 'Waitlist', path: '/dashboard/admin/establishment-settings/waitlist' },
-	];
-
-	const reservationStatsLinks = [
-	    { label: 'Key metrics', path: '/dashboard/admin/reservation-stats/key-metrics' },
-	    { label: 'Other metrics', path: '/dashboard/admin/reservation-stats/other' },
-	    { label: 'Offers', path: '/dashboard/admin/reservation-stats/services' },
-	    { label: 'Resources', path: '/dashboard/admin/reservation-stats/collaborators' },
-	    { label: 'Reservations', path: '/dashboard/admin/reservation-stats/reservations' },
-	    { label: 'No-shows', path: '/dashboard/admin/reservation-stats/no-shows' },
-	];
+	const linkClass = (active: boolean) =>
+		`flex w-full items-center gap-2 cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
+			active ? 'bg-primary text-primary-foreground' : 'text-white/60 hover:bg-white/10 hover:text-white cursor-pointer'
+		}`;
 
 	return (
 		<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
-			<div className="space-y-6">
-				{/* Agenda setup */}
-				<div className="space-y-3">
-					<button
-						onClick={() => setShowParamAgenda(!showParamAgenda)}
-						className="w-full flex items-center justify-between group cursor-pointer"
-					>
-						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-							<Settings2 size={14} />
-							Offers & agenda
-						</h3>
-						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showParamAgenda ? 'rotate-180' : ''}`} />
-					</button>
-					{showParamAgenda && (
-						<div className="space-y-1 animate-fadeIn">
-							{agendaSettingsLinks.map((item) => (
-								<Link
-									key={item.path}
-									href={item.path}
-									className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
-									}`}
-								>
-									{item.label}
-								</Link>
-							))}
-						</div>
-					)}
-				</div>
-
-				{/* Establishment settings */}
-				<div className="space-y-3">
-					<button
-						onClick={() => setShowEstablishmentSettings(!showEstablishmentSettings)}
-						className="w-full flex items-center justify-between group cursor-pointer"
-					>
-						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-							<Settings2 size={14} />
-							Establishment
-						</h3>
-						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showEstablishmentSettings ? 'rotate-180' : ''}`} />
-					</button>
-					{showEstablishmentSettings && (
-						<div className="space-y-1 animate-fadeIn">
-							{establishmentSettingsLinks.map((item) => (
-								<Link
-									key={item.path}
-									href={item.path}
-									className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
-									}`}
-								>
-									{item.label}
-								</Link>
-							))}
-						</div>
-					)}
-				</div>
-
-				{/* Fich Client (now last) */}
-				<div className="space-y-3">
-					<button
-						onClick={() => setShowFichClient(!showFichClient)}
-						className="w-full flex items-center justify-between group cursor-pointer"
-					>
-						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-							<FileText size={14} />
-							Guest profile
-						</h3>
-						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showFichClient ? 'rotate-180' : ''}`} />
-					</button>
-					{showFichClient && (
-						<div className="space-y-1 animate-fadeIn">
-							<Link
-								href="/dashboard/admin/client-records/management"
-								className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/client-records/management' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
-							>
-								Guest profile fields
-							</Link>
-						</div>
-					)}
-				</div>
-
-				{/* Statistiques RDV (new section at the bottom) */}
-				<div className="space-y-3">
-                    <button
-                        onClick={() => setShowStatistiquesRDV(!showStatistiquesRDV)}
-                        className="w-full flex items-center justify-between group cursor-pointer"
-                    >
-                        <h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-                            <BarChart3 size={14} />
-                            Reservation statistics
-                        </h3>
-                        <ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showStatistiquesRDV ? 'rotate-180' : ''}`} />
-                    </button>
-                    {showStatistiquesRDV && (
-                        <div className="space-y-1 animate-fadeIn">
-                            {reservationStatsLinks.map((item) => (
-                                <Link
-                                    key={item.path}
-                                    href={item.path}
-                                    className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
-                                >
-                                    {item.label}
-                                </Link>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* Occupancy Section */}
-                <div className="space-y-3">
-                    <button
-                        onClick={() => setShowTauxOccupancy(!showTauxOccupancy)}
-                        className="w-full flex items-center justify-between group cursor-pointer"
-                    >
-                        <h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-                            <TrendingUp size={14} />
-                            Occupancy
-                        </h3>
-                        <ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showTauxOccupancy ? 'rotate-180' : ''}`} />
-                    </button>
-                    {showTauxOccupancy && (
-                        <div className="space-y-1 animate-fadeIn">
-                            <Link
-                                href="/dashboard/admin/occupancy/overview"
-                                className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/occupancy/overview' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
-                            >
-                                Overview
-                            </Link>
-                            <Link
-                                href="/dashboard/admin/occupancy/collaborators"
-                                className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/occupancy/collaborators' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
-                            >
-                                Resources
-                            </Link>
-                            <Link
-                                href="/dashboard/admin/occupancy/services"
-                                className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/occupancy/services' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
-                            >
-                                Offers
-                            </Link>
-                        </div>
-                    )}
-                </div>
-
-                {/* Cancellations Section */}
-                <div className="space-y-3">
-                    <button
-                        onClick={() => setShowCorbeilleRDV(!showCorbeilleRDV)}
-                        className="w-full flex items-center justify-between group cursor-pointer"
-                    >
-                        <h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-                            <Trash2 size={14} />
-                            Cancellations
-                        </h3>
-                        <ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showCorbeilleRDV ? 'rotate-180' : ''}`} />
-                    </button>
-                    {showCorbeilleRDV && (
-                        <div className="space-y-1 animate-fadeIn">
-                            <Link
-                                href="/dashboard/admin/reservation-trash/cancelled"
-                                className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/reservation-trash/cancelled' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
-                            >
-                                Canceled reservations
-                            </Link>
-                        </div>
-                    )}
-                </div>
-
-				{/* Billing Section */}
-				<div className="space-y-3">
-					<button
-						onClick={() => setShowMesInvoices && setShowMesInvoices((prev: boolean) => !prev)}
-						className="w-full flex items-center justify-between group cursor-pointer"
-					>
-						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
-							<File size={14} />
-							Billing
-						</h3>
-						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showMesInvoices ? 'rotate-180' : ''}`} />
-					</button>
-					{showMesInvoices && (
-						<div className="space-y-1 animate-fadeIn">
-							<Link
-								href="/dashboard/admin/invoices/payment-methods"
-								className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/invoices/payment-methods' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
-							>
-								Payment method
-							</Link>
-							<Link
-								href="/dashboard/admin/invoices/list"
-								className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/invoices/list' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
-							>
-								Invoices
-							</Link>
-						</div>
-					)}
-				</div>
+			<div className="space-y-3">
+				<Link href="/dashboard/admin" className={linkClass(pathname === '/dashboard/admin')}>
+					<BarChart3 size={14} />
+					Overview
+				</Link>
+				<Link href="/dashboard/admin/profile" className={linkClass(pathname === '/dashboard/admin/profile')}>
+					<UserCheck size={14} />
+					Profile
+				</Link>
+				<Link href="/dashboard/admin/establishment" className={linkClass(pathname === '/dashboard/admin/establishment')}>
+					<Settings2 size={14} />
+					Establishment
+				</Link>
+				<Link href="/dashboard/admin/services" className={linkClass(pathname === '/dashboard/admin/services')}>
+					<FileText size={14} />
+					Services
+				</Link>
+				<Link href="/dashboard/admin/occupancy" className={linkClass(pathname === '/dashboard/admin/occupancy')}>
+					<TrendingUp size={14} />
+					Occupancy
+				</Link>
+				<Link href="/dashboard/admin/reservation-trash/cancelled" className={linkClass(pathname === '/dashboard/admin/reservation-trash/cancelled')}>
+					<Trash2 size={14} />
+					Cancellations
+				</Link>
+				<Link href="/dashboard/admin/invoices" className={linkClass(pathname === '/dashboard/admin/invoices')}>
+					<File size={14} />
+					Invoices
+				</Link>
 			</div>
 		</div>
 	);
@@ -665,9 +405,9 @@ function DashboardSidebar() {
 							const Icon = item.icon;
 							const isActive =
 								(item.href === '/dashboard/agenda' && (pathname === '/dashboard' || pathname?.startsWith('/dashboard/agenda'))) ||
-								(item.href === '/dashboard/clients/guest-files/management' && pathname?.startsWith('/dashboard/clients')) ||
+								(item.href === '/dashboard/clients/guests' && pathname?.startsWith('/dashboard/clients')) ||
 								(item.href === '/dashboard/cash-desk' && pathname?.startsWith('/dashboard/cash-desk')) ||
-								(item.href === '/dashboard/admin/agenda-settings/services' && pathname?.startsWith('/dashboard/admin')) ||
+								(item.href === '/dashboard/admin' && pathname?.startsWith('/dashboard/admin')) ||
 								pathname === item.href;
 							return (
 								<Link
