@@ -56,7 +56,7 @@ function SectionRow({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+    <section className="rounded-xl border border-neutral-200 bg-white p-6">
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
           <Icon size={18} className="text-gray-500" />
@@ -230,7 +230,7 @@ export default function EstablishmentManagementPage() {
               <label className="mb-3 block text-sm font-medium text-gray-700">Cover image</label>
               <div className="relative h-56 overflow-hidden rounded-xl bg-gray-100 md:h-72">
                 <img src={coverPreview} alt="Establishment cover" className="h-full w-full object-cover" />
-                <label className="absolute bottom-4 right-4 inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow-sm">
+                <label className="absolute bottom-4 right-4 inline-flex cursor-pointer items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow-sm">
                   <FileImage size={16} />
                   Change cover
                   <input type="file" accept="image/*" className="sr-only" onChange={handleCoverChange} />
@@ -240,7 +240,7 @@ export default function EstablishmentManagementPage() {
             <div>
               <div className="mb-3 flex items-center justify-between">
                 <label className="text-sm font-medium text-gray-700">Gallery</label>
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-neutral-200 px-3 py-1.5 text-xs font-medium text-gray-700">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-neutral-200 px-3 py-1.5 text-xs font-medium text-gray-700">
                   <Plus size={14} />
                   Add images
                   <input type="file" accept="image/*" multiple className="sr-only" onChange={handleGalleryChange} />
@@ -258,7 +258,7 @@ export default function EstablishmentManagementPage() {
                       onClick={() =>
                         setGalleryPreviews((current) => current.filter((_, imageIndex) => imageIndex !== index))
                       }
-                      className="absolute right-2 top-2 hidden h-8 w-8 items-center justify-center rounded-full border-2 border-neutral-200 bg-white text-gray-700 shadow group-hover:flex"
+                      className="absolute right-2 top-2 hidden h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white text-gray-700 shadow group-hover:flex"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -377,7 +377,7 @@ export default function EstablishmentManagementPage() {
                 <Lock size={14} className="text-gray-400" />
                 Category (super admin)
               </label>
-              <div className="flex h-10 items-center rounded-full border-2 border-dashed border-neutral-200 bg-gray-50 px-3 text-sm text-gray-700">
+              <div className="flex h-10 items-center rounded-full border border-dashed border-neutral-200 bg-gray-50 px-3 text-sm text-gray-700">
                 {ownerCategory?.label ?? ownerEstablishment.category}
               </div>
               <p className="mt-1 text-xs text-gray-400">Each establishment belongs to one category only.</p>
@@ -412,7 +412,7 @@ export default function EstablishmentManagementPage() {
                     key={cuisine.key}
                     type="button"
                     onClick={() => toggleCuisine(cuisine.key)}
-                    className={`rounded-full border-2 px-3 py-1.5 text-xs font-medium transition-all ${
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                       selected
                         ? 'border-primary bg-primary/10 text-gray-900'
                         : 'border-neutral-200 text-gray-600 hover:border-neutral-300'
@@ -462,7 +462,7 @@ export default function EstablishmentManagementPage() {
           <div className="grid gap-5 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">City</label>
-              <div className="flex h-10 items-center rounded-full border-2 border-neutral-200 bg-white px-3 text-sm text-gray-700">
+              <div className="flex h-10 items-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-gray-700">
                 {ownerCity?.name ?? form.cityId}
               </div>
             </div>

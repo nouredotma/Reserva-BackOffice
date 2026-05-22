@@ -104,7 +104,7 @@ export default function BookingsPage() {
           <button
             type="button"
             onClick={closeDetail}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border-2 border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:border-neutral-300 hover:bg-gray-50"
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:border-neutral-300 hover:bg-gray-50"
           >
             <ArrowLeft size={16} />
             Back to bookings
@@ -127,7 +127,7 @@ export default function BookingsPage() {
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-          <section className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+          <section className="rounded-xl border border-neutral-200 bg-white p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <Calendar size={18} className="text-gray-500" />
@@ -161,7 +161,7 @@ export default function BookingsPage() {
             </div>
 
             {selected.notes && (
-              <div className="mt-6 rounded-xl border-2 border-neutral-200 p-4">
+              <div className="mt-6 rounded-xl border border-neutral-200 p-4">
                 <p className="mb-2 flex items-center gap-2 text-xs font-medium text-gray-500">
                   <ClipboardList size={14} />
                   Notes
@@ -171,7 +171,7 @@ export default function BookingsPage() {
             )}
           </section>
 
-          <aside className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+          <aside className="rounded-xl border border-neutral-200 bg-white p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
                 <span className="text-sm font-semibold text-primary-foreground">
@@ -214,7 +214,7 @@ export default function BookingsPage() {
       </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <div className="flex min-w-[240px] flex-1 items-center gap-2 rounded-full border-2 border-neutral-200 bg-white px-3 py-2">
+        <div className="flex min-w-[240px] flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2">
           <Search size={16} className="text-gray-400" />
           <Input
             value={query}
@@ -251,7 +251,7 @@ export default function BookingsPage() {
         </Select>
       </div>
 
-      <div className="overflow-hidden rounded-xl border-2 border-neutral-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
           <p className="text-sm font-medium text-gray-900">{filtered.length} bookings</p>
           <p className="text-xs text-gray-400">Click a row to open details</p>

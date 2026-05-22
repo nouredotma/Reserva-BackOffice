@@ -203,7 +203,7 @@ function formatMoney(value: number) {
 function CustomTooltip({ active, payload }: { active?: boolean; payload?: TooltipPayload[] }) {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-xl border-2 border-neutral-200 bg-white px-3 py-2">
+      <div className="rounded-xl border border-neutral-200 bg-white px-3 py-2">
         <p className="text-sm font-medium text-gray-900">{payload[0].value}</p>
       </div>
     );
@@ -228,7 +228,7 @@ function KpiCard({
   const TrendIcon = tone === 'up' ? TrendingUp : ArrowDownRight;
 
   return (
-    <div className="group rounded-xl border-2 border-neutral-200 bg-white p-6 transition-all">
+    <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
       <div className="mb-8 flex items-start justify-between">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 transition-colors group-hover:bg-gray-100">
           <Icon size={18} className="text-gray-400" />
@@ -263,7 +263,7 @@ function DonutChartCard({
   const currentView = getView(chartId);
 
   return (
-    <div className="rounded-xl border-2 border-neutral-200 bg-white p-6 transition-all">
+    <div className="rounded-xl border border-neutral-200 bg-white p-6 transition-all">
       <div className="mb-4">
         <h3 className="mb-1 text-sm font-medium text-gray-900">{title}</h3>
         <p className="text-xs text-gray-400">{subtitle}</p>
@@ -283,7 +283,7 @@ function DonutChartCard({
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="rounded-xl border-2 border-neutral-200 bg-white px-3 py-2">
+                        <div className="rounded-xl border border-neutral-200 bg-white px-3 py-2">
                           <p className="text-xs font-medium text-gray-900">{payload[0].name}</p>
                           <p className="text-xs text-gray-500">{payload[0].value}%</p>
                         </div>
@@ -492,7 +492,7 @@ export default function AdminOverviewPage() {
         <KpiCard icon={CreditCard} label="Revenue" value={formatMoney(metrics.totalRevenue)} trend="+9%" />
       </div>
 
-      <div className="mb-8 rounded-xl border-2 border-neutral-200 bg-white p-6 animate-fadeIn">
+      <div className="mb-8 rounded-xl border border-neutral-200 bg-white p-6 animate-fadeIn">
         <div className="mb-6">
           <h2 className="mb-1 text-xl font-light text-gray-900">Bookings over time</h2>
           <p className="text-xs text-gray-400">Daily trend</p>
@@ -520,7 +520,7 @@ export default function AdminOverviewPage() {
       </div>
 
       <div className="mb-8 grid gap-6 xl:grid-cols-3 animate-fadeIn">
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6 xl:col-span-2">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6 xl:col-span-2">
           <div className="mb-6">
             <h3 className="mb-1 text-sm font-medium text-gray-900">Revenue</h3>
             <p className="text-xs text-gray-400">Financial performance</p>
@@ -556,7 +556,7 @@ export default function AdminOverviewPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-6">
             <h3 className="mb-1 text-sm font-medium text-gray-900">Services populaires</h3>
             <p className="text-xs text-gray-400">Breakdown by service</p>
@@ -620,7 +620,7 @@ export default function AdminOverviewPage() {
           toggleView={toggleView}
         />
 
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6 xl:col-span-2">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6 xl:col-span-2">
           <div className="mb-6">
             <h3 className="mb-1 text-sm font-medium text-gray-900">Performance par ressource</h3>
             <p className="text-xs text-gray-400">This month</p>
@@ -660,7 +660,7 @@ export default function AdminOverviewPage() {
       </div>
 
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4 animate-fadeIn">
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">Cancellation rate</p>
             <div className="flex items-center gap-1 text-emerald-600">
@@ -671,7 +671,7 @@ export default function AdminOverviewPage() {
           <p className="mb-1 text-2xl font-light text-gray-900">{metrics.cancelled}</p>
           <p className="text-xs text-gray-500">Canceled reservations</p>
         </div>
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">No-shows</p>
             <div className="flex items-center gap-1 text-red-500">
@@ -682,7 +682,7 @@ export default function AdminOverviewPage() {
           <p className="mb-1 text-2xl font-light text-gray-900">{metrics.noShows}</p>
           <p className="text-xs text-gray-500">Clients absent</p>
         </div>
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">Average order value</p>
             <div className="flex items-center gap-1 text-emerald-600">
@@ -693,7 +693,7 @@ export default function AdminOverviewPage() {
           <p className="mb-1 text-2xl font-light text-gray-900">{formatMoney(currentData.avgRevenue)}</p>
           <p className="text-xs text-gray-500">Per booking</p>
         </div>
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">Occupancy rate moyen</p>
             <div className="flex items-center gap-1 text-emerald-600">

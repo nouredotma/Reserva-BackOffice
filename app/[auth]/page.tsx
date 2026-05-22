@@ -224,7 +224,13 @@ export default function AuthPage({ params }: { params: Params }) {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="flex-1 bg-white flex items-center justify-center p-6 lg:p-12 overflow-y-auto relative">
+        <div
+          className={`flex-1 bg-white flex justify-center overflow-y-auto relative ${
+            mode === 'signup'
+              ? 'items-start px-6 py-8 lg:px-12 lg:py-10'
+              : 'items-center p-6 lg:p-12'
+          }`}
+        >
           <div className="w-full max-w-md pt-0 lg:pt-2">
 
             {/* Header */}
@@ -246,7 +252,7 @@ export default function AuthPage({ params }: { params: Params }) {
                         <button
                           type="button"
                           onClick={() => handleModeSwitch('signup')}
-                          className="text-[#000000] font-medium hover:underline cursor-pointer"
+                          className="text-[#000000] font-bold underline hover:text-primary cursor-pointer"
                         >
                           Sign up
                         </button>
@@ -257,7 +263,7 @@ export default function AuthPage({ params }: { params: Params }) {
                         <button
                           type="button"
                           onClick={() => handleModeSwitch('login')}
-                          className="text-[#000000] font-medium hover:underline cursor-pointer"
+                          className="text-[#000000] font-bold underline hover:text-primary cursor-pointer"
                         >
                           Sign in
                         </button>
@@ -408,7 +414,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       value={businessCategory}
                       onValueChange={(value) => setBusinessCategory(value as EstablishmentCategory)}
                     >
-                      <SelectTrigger className="w-full rounded-full border-gray-200 bg-neutral-50">
+                      <SelectTrigger className="h-[38px] w-full rounded-full border-gray-200 bg-neutral-50 px-4 py-2 text-sm font-medium text-gray-900 lg:h-[46px] lg:px-6 lg:py-2.5 lg:text-base">
                         <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
                       <SelectContent>
@@ -543,7 +549,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       id="keepLoggedIn"
                       checked={keepLoggedIn}
                       onCheckedChange={checked => setKeepLoggedIn(checked === true)}
-                      className="w-4 h-4 lg:w-5 lg:h-5 ml-1 rounded-full border-2 bg-white border-gray-300 text-[#000000] cursor-pointer"
+                      className="w-4 h-4 lg:w-5 lg:h-5 ml-1 rounded-full border bg-white border-gray-300 text-[#000000] cursor-pointer"
                     />
                     <span className="ml-2 text-xs lg:text-sm font-medium text-gray-700 group-hover:text-gray-900">
                       Stay signed in

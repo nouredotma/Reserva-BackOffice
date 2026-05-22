@@ -130,7 +130,7 @@ export default function ReviewsPage() {
         ].map((item) => {
           const Icon = item.icon;
           return (
-            <div key={item.label} className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+            <div key={item.label} className="rounded-xl border border-neutral-200 bg-white p-6">
               <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <Icon size={18} className="text-gray-400" />
               </div>
@@ -148,14 +148,14 @@ export default function ReviewsPage() {
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search reviews..."
-            className="w-full rounded-full border-2 border-neutral-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-1 focus:ring-gray-900"
+            className="w-full rounded-full border border-neutral-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-1 focus:ring-gray-900"
           />
         </div>
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 animate-fadeIn">
         {filteredReviews.map((review) => (
-          <div key={review.id} className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+          <div key={review.id} className="rounded-xl border border-neutral-200 bg-white p-6">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-900">
@@ -201,7 +201,7 @@ export default function ReviewsPage() {
               </button>
               <button
                 onClick={() => updateStatus(review.id, 'hidden')}
-                className="rounded-full border-2 border-neutral-200 px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                className="rounded-full border border-neutral-200 px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
               >
                 Hide
               </button>
@@ -211,7 +211,7 @@ export default function ReviewsPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr] animate-fadeIn">
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-light text-gray-900">Moderation rules</h2>
@@ -221,7 +221,7 @@ export default function ReviewsPage() {
           </div>
           <div className="space-y-3">
             {sampleModerationRules.map((rule) => (
-              <div key={rule.id} className="flex items-center justify-between rounded-xl border-2 border-neutral-200 p-4">
+              <div key={rule.id} className="flex items-center justify-between rounded-xl border border-neutral-200 p-4">
                 <div>
                   <p className="text-sm font-medium text-gray-900">{rule.name}</p>
                   <p className="mt-1 text-xs text-gray-500">{rule.description}</p>
@@ -234,7 +234,7 @@ export default function ReviewsPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-light text-gray-900">Review statistics</h2>

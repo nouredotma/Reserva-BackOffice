@@ -486,7 +486,7 @@ function DashboardSidebar() {
 										</span>
 									</div>
 								)}
-								<div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
+								<div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 rounded-full border border-white"></div>
 							</div>
 						</Link>
 
@@ -518,7 +518,7 @@ function DashboardSidebar() {
 
 			{showSupportModal && (
 				<div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/35 p-4">
-					<div className="w-full max-w-md rounded-xl border-2 border-neutral-200 bg-white p-6 shadow-xl">
+					<div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl">
 						<div className="mb-5 flex items-start justify-between gap-4">
 							<div>
 								<p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-gray-400">
@@ -546,7 +546,7 @@ function DashboardSidebar() {
 							].map((item) => {
 								const Icon = item.icon;
 								return (
-									<div key={item.label} className="flex items-center justify-between gap-4 rounded-xl border-2 border-neutral-200 p-3">
+									<div key={item.label} className="flex items-center justify-between gap-4 rounded-xl border border-neutral-200 p-3">
 										<div className="flex items-center gap-3">
 											<div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50">
 												<Icon size={16} className="text-gray-500" />
@@ -620,7 +620,7 @@ function DashboardSidebar() {
 								{notificationTab === 'all' && (
 									<>
 										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
+										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
@@ -634,7 +634,7 @@ function DashboardSidebar() {
 											</div>
 										</div>
 										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
+										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
@@ -648,7 +648,7 @@ function DashboardSidebar() {
 											</div>
 										</div>
 										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
+										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
@@ -662,7 +662,7 @@ function DashboardSidebar() {
 											</div>
 										</div>
 										{/* Read Notification */}
-										<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
+										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
 											<div className="flex gap-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 													<CreditCard size={16} className="text-gray-600" />
@@ -679,7 +679,7 @@ function DashboardSidebar() {
 								{notificationTab === 'unread' && (
 									<>
 										{/* Only show unread notifications (those with blue dot) */}
-										<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
+										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
@@ -692,7 +692,7 @@ function DashboardSidebar() {
 												</div>
 											</div>
 										</div>
-										<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
+										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
@@ -705,7 +705,7 @@ function DashboardSidebar() {
 												</div>
 											</div>
 										</div>
-										<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
+										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
 											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
 											<div className="flex gap-4 pr-4">
 												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
@@ -728,7 +728,7 @@ function DashboardSidebar() {
 						<div className="px-8 py-6 border-t border-gray-100">
 							<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Hier</p>
 
-							<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<TrendingUp size={16} className="text-gray-600" />
@@ -741,7 +741,7 @@ function DashboardSidebar() {
 								</div>
 							</div>
 
-							<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<Users size={16} className="text-gray-600" />
@@ -754,7 +754,7 @@ function DashboardSidebar() {
 								</div>
 							</div>
 
-							<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<Bell size={16} className="text-gray-600" />
@@ -773,7 +773,7 @@ function DashboardSidebar() {
 						<div className="px-8 py-6 border-t border-gray-100">
 							<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">This week</p>
 
-							<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<FileText size={16} className="text-gray-600" />
@@ -786,7 +786,7 @@ function DashboardSidebar() {
 								</div>
 							</div>
 
-							<div className="group relative bg-white border-2 border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
+							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
 									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
 										<Building size={16} className="text-gray-600" />
