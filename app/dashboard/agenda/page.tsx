@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, Phone, Mail, X, ChevronLeft, ChevronRight, MoreVertical, Plus, CalendarIcon, MapPin, Ticket, HelpCircle } from 'lucide-react';
 import { bookingModeLabels } from '@/lib/mock-data';
@@ -481,8 +482,6 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
       }
     }
 
-    // If showColorInRDV is true, use employee or service color
-    const color = employeeColor || serviceColor || '#3B82F6';
     return '';
   };
 
@@ -567,6 +566,9 @@ function BookingDetailModal({
   const mode = appointment.bookingMode
     ? modeBadge[appointment.bookingMode]
     : { label: 'Booking', Icon: Calendar };
+  const detailsHref = appointment.bookingId
+    ? `/dashboard/bookings?booking=${encodeURIComponent(appointment.bookingId)}`
+    : '/dashboard/bookings';
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
@@ -630,13 +632,21 @@ function BookingDetailModal({
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-6 w-full rounded-full bg-primary py-2.5 text-sm font-medium text-primary-foreground"
-        >
-          Close
-        </button>
+        <div className="mt-6 flex gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-full border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            Close
+          </button>
+          <Link
+            href={detailsHref}
+            className="flex-1 rounded-full bg-primary py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-[var(--reserva-ink)] hover:text-white"
+          >
+            Open details
+          </Link>
+        </div>
       </div>
     </div>
   );

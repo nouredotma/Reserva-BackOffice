@@ -11,6 +11,7 @@ const daysFromNow = (days: number, hour = 10, minute = 0) => {
 export const sampleAppointments: Appointment[] = [
   {
     id: 1,
+    bookingId: "bk-001",
     clientName: "Yasmine Alaoui",
     service: "Private Garden Dining",
     time: "20:30",
@@ -27,6 +28,7 @@ export const sampleAppointments: Appointment[] = [
   },
   {
     id: 2,
+    bookingId: "bk-002",
     clientName: "Fatima Zahra",
     service: "Table Reservation",
     time: "19:00",
@@ -43,6 +45,7 @@ export const sampleAppointments: Appointment[] = [
   },
   {
     id: 3,
+    bookingId: "bk-007",
     clientName: "Karim Alami",
     service: "Table Reservation",
     time: "21:00",
@@ -59,22 +62,24 @@ export const sampleAppointments: Appointment[] = [
   },
   {
     id: 4,
-    clientName: "Ahmed Benali",
+    bookingId: "bk-003",
+    clientName: "Karim Alami",
     service: "Chef's Table Experience",
     time: "20:00",
     duration: 150,
     status: "confirmed",
     employee: "Chef's table",
-    phone: "+212 6 70 92 13 64",
-    email: "ahmed.benali@email.com",
+    phone: "+212 6 21 40 76 18",
+    email: "karim.alami@email.com",
     date: daysFromNow(4, 20, 0),
-    notes: "Wine pairing, party of 3.",
+    notes: "Chef's table, party of 3.",
     bookingMode: "appointment",
     partySize: 3,
     channel: "direct",
   },
   {
     id: 5,
+    bookingId: "bk-006",
     clientName: "Omar Slaoui",
     service: "Table Reservation",
     time: "13:00",
@@ -91,6 +96,7 @@ export const sampleAppointments: Appointment[] = [
   },
   {
     id: 6,
+    bookingId: "bk-004",
     clientName: "Ahmed Benali",
     service: "Garden Jazz Night",
     time: "21:00",
@@ -107,6 +113,7 @@ export const sampleAppointments: Appointment[] = [
   },
   {
     id: 7,
+    bookingId: "bk-005",
     clientName: "Nadia El Fassi",
     service: "Custom tasting menu",
     time: "14:00",

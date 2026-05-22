@@ -17,6 +17,7 @@ export type BookingModeType = 'appointment' | 'reservation' | 'ticket' | 'reques
 
 export interface Appointment {
   id: number;
+  bookingId?: string;
   clientName: string;
   service: string;
   time: string;

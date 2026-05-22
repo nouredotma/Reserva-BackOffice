@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type ChangeEvent } from 'react';
 import {
+  ArrowLeft,
   Calendar,
   CheckCircle2,
   Clock,
@@ -187,6 +188,7 @@ export default function ServicesManagementPage() {
   const [query, setQuery] = useState('');
   const [services, setServices] = useState<ServiceEditor[]>(buildInitialServices);
   const [selectedId, setSelectedId] = useState<string | null>(ownerServices[0]?.id ?? null);
+  const [detailOpen, setDetailOpen] = useState(false);
 
   const currentService = services.find((service) => service.id === selectedId);
 
@@ -249,6 +251,7 @@ export default function ServicesManagementPage() {
     };
     setServices((current) => [nextService, ...current]);
     setSelectedId(nextId);
+    setDetailOpen(true);
   };
 
   const duplicateService = () => {
@@ -263,6 +266,7 @@ export default function ServicesManagementPage() {
     };
     setServices((current) => [nextService, ...current]);
     setSelectedId(nextId);
+    setDetailOpen(true);
   };
 
   const deleteCurrentService = () => {
@@ -270,6 +274,7 @@ export default function ServicesManagementPage() {
     const remaining = services.filter((service) => service.id !== currentService.id);
     setServices(remaining);
     setSelectedId(remaining[0]?.id ?? null);
+    if (!remaining.length) setDetailOpen(false);
   };
 
   const handleCoverChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -360,60 +365,117 @@ export default function ServicesManagementPage() {
         })}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-        {/* Service list */}
-        <aside className="rounded-lg border border-gray-100 bg-white p-5 lg:sticky lg:top-24 lg:self-start">
-          <div className="mb-4 flex items-center gap-2 text-sm font-medium text-gray-700">
-            <List size={16} />
-            Your services ({services.length})
+      {!detailOpen ? (
+        <div className="overflow-hidden rounded-lg border border-gray-100 bg-white">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 px-5 py-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <List size={16} />
+              Your services ({services.length})
+            </div>
+            <div className="flex min-w-[260px] items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2">
+              <Search size={16} className="text-gray-400" />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search services"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+              />
+            </div>
           </div>
-          <div className="mb-4 flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-2">
-            <Search size={16} className="text-gray-400" />
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search services"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
-            />
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[920px] border-separate border-spacing-0 text-left">
+              <thead>
+                <tr className="bg-gray-50/70 text-xs font-medium uppercase tracking-wider text-gray-400">
+                  <th className="px-5 py-3">Service</th>
+                  <th className="px-5 py-3">Type</th>
+                  <th className="px-5 py-3">Availability</th>
+                  <th className="px-5 py-3">Capacity</th>
+                  <th className="px-5 py-3">Price</th>
+                  <th className="px-5 py-3">Status</th>
+                  <th className="px-5 py-3">Featured</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 text-sm">
+                {filteredServices.map((service) => {
+                  const isActive = service.id === selectedId;
+                  return (
+                    <tr
+                      key={service.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => {
+                        setSelectedId(service.id);
+                        setDetailOpen(true);
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setSelectedId(service.id);
+                          setDetailOpen(true);
+                        }
+                      }}
+                      className={`cursor-pointer border-l-4 transition-colors ${
+                        isActive
+                          ? 'border-l-primary bg-primary/10 outline outline-1 outline-primary/30'
+                          : 'border-l-transparent hover:bg-gray-50'
+                      }`}
+                    >
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={service.coverImage}
+                            alt=""
+                            className="h-11 w-11 shrink-0 rounded-md object-cover"
+                          />
+                          <div className="min-w-0">
+                            <p className="truncate font-medium text-gray-900">{service.name}</p>
+                            <p className="mt-1 truncate text-xs text-gray-400">{service.slug}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-gray-600 capitalize">{service.serviceType.replace('_', ' ')}</td>
+                      <td className="px-5 py-4 text-gray-600">
+                        <p>{service.startTime} - {service.endTime}</p>
+                        <p className="mt-1 text-xs text-gray-400">{service.durationMinutes} min</p>
+                      </td>
+                      <td className="px-5 py-4 text-gray-600">
+                        {service.minPeople}-{service.maxPeople} people
+                        <p className="mt-1 text-xs text-gray-400">{service.capacityPerSlot} per slot</p>
+                      </td>
+                      <td className="px-5 py-4 font-medium text-gray-900">
+                        {service.price > 0 ? `${service.price.toLocaleString()} ${service.currency}` : 'Free'}
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize ${
+                          service.status === 'active'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : service.status === 'draft'
+                              ? 'bg-amber-50 text-amber-700'
+                              : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {service.status}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-gray-600">{service.isFeatured ? 'Yes' : 'No'}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-          <div className="max-h-[calc(100vh-280px)] space-y-2 overflow-y-auto">
-            {filteredServices.map((service) => (
-              <button
-                key={service.id}
-                type="button"
-                onClick={() => setSelectedId(service.id)}
-                className={`w-full rounded-lg border p-4 text-left transition-all ${
-                  service.id === selectedId
-                    ? 'border-primary bg-primary/10'
-                    : 'border-gray-100 hover:border-gray-200'
-                }`}
-              >
-                <div className="flex gap-3">
-                  <img
-                    src={service.coverImage}
-                    alt=""
-                    className="h-12 w-12 shrink-0 rounded-md object-cover"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900">{service.name}</p>
-                    <p className="mt-0.5 truncate text-xs text-gray-400">{service.slug}</p>
-                    <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-                      <span className="capitalize">{service.status}</span>
-                      <span>
-                        {service.price > 0
-                          ? `${service.price.toLocaleString()} ${service.currency}`
-                          : 'Free'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </aside>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <button
+            type="button"
+            onClick={() => setDetailOpen(false)}
+            className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50"
+          >
+            <ArrowLeft size={16} />
+            Back to services
+          </button>
 
-        {/* Service detail */}
-        <div className="min-w-0">
+          <div className="min-w-0">
           {!currentService ? (
             <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-dashed border-gray-200 bg-white p-12 text-center text-gray-400">
               Select a service from the list to edit its details.
@@ -794,8 +856,9 @@ export default function ServicesManagementPage() {
               </SectionRow>
             </div>
           )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
