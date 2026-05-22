@@ -8,7 +8,7 @@ import type { BookingModeType } from '@/lib/types';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { sampleAppointments, defaultAgendas, sampleBookableServices, sampleClients } from '@/lib/mock-data';
+import { sampleAppointments, sampleBookableServices, sampleClients } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import {
@@ -51,25 +51,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
   const [time, setTime] = useState('');
   const [service, setService] = useState('');
   const [duration, setDuration] = useState('');
-  const [employee, setEmployee] = useState('');
   const [notes, setNotes] = useState('');
-  const [collaborators, setCollaborators] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedAgendas = localStorage.getItem('employeeAgendas');
-      if (storedAgendas) {
-        try {
-          const agendas = JSON.parse(storedAgendas);
-          setCollaborators(agendas.map((a: any) => a.name));
-        } catch {
-          setCollaborators(defaultAgendas.map(a => a.name));
-        }
-      } else {
-        setCollaborators(defaultAgendas.map(a => a.name));
-      }
-    }
-  }, []);
 
   const [clients, setClients] = useState<Client[]>([]);
 
@@ -118,7 +100,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
   const handleCreate = () => {
     // Validation
-    if (!date || !time || !service || !duration || !employee) {
+    if (!date || !time || !service || !duration) {
       alert('Please fill in all required fields');
       return;
     }
@@ -150,7 +132,6 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
       time: normalizedTime,
       duration: parseInt(duration),
       status: 'pending',
-      employee,
       phone: selectedClient ? selectedClient.phone : newClientPhone,
       email: selectedClient ? selectedClient.email : newClientEmail,
       date: normalizedDate,
@@ -393,23 +374,6 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
           </div>
         </div>
 
-        {/* Resource */}
-        <div className="space-y-4">
-          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Resource</h3>
-          <Select value={employee} onValueChange={setEmployee}>
-            <SelectTrigger className="rounded-full px-4 py-2 border-neutral-200 focus:ring-2 focus:ring-gray-900">
-              <SelectValue placeholder="Select une ressource" />
-            </SelectTrigger>
-            <SelectContent>
-              {collaborators.map(collab => (
-                <SelectItem key={collab} value={collab}>
-                  {collab}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* Notes */}
         <div className="space-y-4">
           <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Notes</h3>
@@ -552,9 +516,6 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           <Clock size={10} />
           <span>{apt.time} ({apt.duration}m)</span>
         </div>
-        <div className="text-[9px] opacity-50 truncate mt-1 border-t border-black/5 pt-1">
-          {apt.employee}
-        </div>
       </div>
     );
   }
@@ -608,10 +569,6 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           <span className="font-medium">{apt.time}</span>
           <span className="text-gray-300">|</span>
           <span>{apt.duration} min</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <User size={14} className="text-gray-400" />
-          <span className="font-medium">{apt.employee}</span>
         </div>
         <button 
           onClick={(e) => { e.stopPropagation(); onOpen?.(apt); }}
@@ -690,11 +647,12 @@ function BookingDetailModal({
             {appointment.duration} minutes
             {appointment.partySize ? ` · ${appointment.partySize} people` : ''}
           </div>
-          <div className="flex items-center gap-2 text-gray-700">
-            <MapPin size={16} className="text-gray-400" />
-            {appointment.employee}
-            {appointment.channel ? ` · ${appointment.channel === 'online' ? 'Online' : 'Direct'}` : ''}
-          </div>
+          {appointment.channel && (
+            <div className="flex items-center gap-2 text-gray-700">
+              <MapPin size={16} className="text-gray-400" />
+              {appointment.channel === 'online' ? 'Online' : 'Direct'}
+            </div>
+          )}
           {appointment.notes && (
             <p className="rounded-xl bg-gray-50 p-3 text-gray-600">{appointment.notes}</p>
           )}

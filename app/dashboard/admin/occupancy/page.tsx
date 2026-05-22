@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calendar, Download, Printer, ChevronLeft, ChevronRight, TrendingUp, Activity, BarChart3, Filter } from 'lucide-react';
 import {
   Select,
@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { sampleOccupancyData, defaultAgendas } from '@/lib/mock-data';
+import { sampleOccupancyData } from '@/lib/mock-data';
 
 type OccupancyData = {
   [key: string]: { [key: string]: number };
@@ -17,10 +17,8 @@ type OccupancyData = {
 
 const StatistiquesPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedEmployee, setSelectedEmployee] = useState('all');
   const [timeRange, setTimeRange] = useState('all'); // all, morning, afternoon, evening
   const [draggedCell, setDraggedCell] = useState<{day: string, time: string} | null>(null);
-  const [collaborators, setCollaborators] = useState<string[]>([]);
 
   const daysOfWeek = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
   const timeSlots = [
@@ -36,21 +34,6 @@ const StatistiquesPage = () => {
     '19:00 - 20:00'
   ];
   const [occupancyData, setOccupancyData] = useState<OccupancyData>(sampleOccupancyData);
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedAgendas = localStorage.getItem('employeeAgendas');
-      if (storedAgendas) {
-        try {
-          const agendas = JSON.parse(storedAgendas);
-          setCollaborators(agendas.map((a: any) => a.name));
-        } catch {
-          setCollaborators(defaultAgendas.map(a => a.name));
-        }
-      } else {
-        setCollaborators(defaultAgendas.map(a => a.name));
-      }
-    }
-  }, []);
 
   const getColorClass = (value: number) => {
     if (value === 0) return 'bg-gray-100 text-gray-400';
@@ -232,23 +215,7 @@ const StatistiquesPage = () => {
 
           {/* Filters */}
           <div className="flex items-center gap-4 no-print">
-            <div className="flex items-center gap-2">
-              <Filter size={14} className="text-gray-400" />
-              <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-                <SelectTrigger className="w-[200px] rounded-full border-neutral-200 text-sm">
-                  <SelectValue placeholder="All resources" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All resources</SelectItem>
-                  {collaborators.map(collab => (
-                    <SelectItem key={collab} value={collab.toLowerCase().split(' ')[0]}>
-                      {collab}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
+            <Filter size={14} className="text-gray-400" />
             <Select value={timeRange} onValueChange={setTimeRange}>
               <SelectTrigger className="w-[160px] rounded-full border-neutral-200 text-sm">
                 <SelectValue placeholder="All hours" />

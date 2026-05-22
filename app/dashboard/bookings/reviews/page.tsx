@@ -30,7 +30,6 @@ type UnifiedReview = {
   rating: number;
   comment: string;
   service?: string;
-  employeeName?: string;
   date: Date;
   status: ReviewStatus;
   views?: number;
@@ -181,7 +180,6 @@ export default function ReviewsPage() {
 
             <div className="mb-4 flex flex-wrap items-center gap-2">
               {review.service && <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] font-medium text-gray-600">{review.service}</span>}
-              {review.employeeName && <span className="rounded-full bg-gray-100 px-2 py-1 text-[10px] font-medium text-gray-600">{review.employeeName}</span>}
               <span className="text-[10px] text-gray-400">
                 {new Date(review.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </span>

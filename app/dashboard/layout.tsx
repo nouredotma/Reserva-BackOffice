@@ -6,6 +6,7 @@ import { Home, Trash2, Users, File, BarChart3, LogOut, Settings2, Calendar, Cloc
 import { useAuth } from '@/lib/mock-auth';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { CashDeskFiltersProvider, useCashDeskFilters, type CashDeskMethodFilter, type CashDeskPeriodFilter, type CashDeskTypeFilter } from '@/lib/cash-desk-filters';
 
 const menuItems = [
 	{ name: 'Agenda', href: '/dashboard/agenda', icon: Home },
@@ -266,21 +267,31 @@ const AdminSidebar = () => {
 	);
 };
 
-const CashDeskSidebar = ({
-  methodFilter,
-  setMethodFilter,
-  typeFilter,
-  setTypeFilter,
-  selectedPeriod,
-  setSelectedPeriod
-}: {
-  methodFilter: string;
-  setMethodFilter: (v: string) => void;
-  typeFilter: string;
-  setTypeFilter: (v: string) => void;
-  selectedPeriod: string;
-  setSelectedPeriod: (v: string) => void;
-}) => {
+const CashDeskSidebar = () => {
+  const {
+    methodFilter,
+    setMethodFilter,
+    typeFilter,
+    setTypeFilter,
+    selectedPeriod,
+    setSelectedPeriod,
+  } = useCashDeskFilters();
+
+  const handleMethodFilterChange = (value: string) => {
+    const nextMethodFilter = value as CashDeskMethodFilter;
+    setMethodFilter(nextMethodFilter);
+  };
+
+  const handleTypeFilterChange = (value: string) => {
+    const nextTypeFilter = value as CashDeskTypeFilter;
+    setTypeFilter(nextTypeFilter);
+  };
+
+  const handlePeriodFilterChange = (value: string) => {
+    const nextPeriodFilter = value as CashDeskPeriodFilter;
+    setSelectedPeriod(nextPeriodFilter);
+  };
+
   return (
     <div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6">
       <div className="space-y-6">
@@ -292,7 +303,7 @@ const CashDeskSidebar = ({
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-white/60 mb-2">Method</label>
-              <Select value={methodFilter} onValueChange={setMethodFilter}>
+              <Select value={methodFilter} onValueChange={handleMethodFilterChange}>
                 <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
                   <SelectValue placeholder="Select method" />
                 </SelectTrigger>
@@ -307,7 +318,7 @@ const CashDeskSidebar = ({
             </div>
             <div>
               <label className="block text-sm font-medium text-white/60 mb-2">Type</label>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
                 <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
@@ -322,7 +333,7 @@ const CashDeskSidebar = ({
             </div>
             <div>
               <label className="block text-sm font-medium text-white/60 mb-2">Period</label>
-              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+              <Select value={selectedPeriod} onValueChange={handlePeriodFilterChange}>
                 <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
                   <SelectValue placeholder="Select period" />
                 </SelectTrigger>
@@ -346,9 +357,6 @@ function DashboardSidebar() {
 	const { logout, user } = useAuth();
 	const [mounted, setMounted] = useState(false);
 	const router = useRouter();
-	const [caisseMethodFilter, setCashDeskMethodFilter] = useState('all');
-	const [caisseTypeFilter, setCashDeskTypeFilter] = useState('all');
-	const [caissePeriod, setCashDeskPeriod] = useState('all');
 
 	// Notification sidebar state
 	const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
@@ -397,16 +405,7 @@ function DashboardSidebar() {
 		} else if (pathname?.startsWith('/dashboard/bookings') || pathname?.startsWith('/dashboard/clients')) {
 			return <BookingsSidebar />;
 		} else if (pathname?.startsWith('/dashboard/cash-desk')) {
-			return (
-				<CashDeskSidebar
-					methodFilter={caisseMethodFilter}
-					setMethodFilter={setCashDeskMethodFilter}
-					typeFilter={caisseTypeFilter}
-					setTypeFilter={setCashDeskTypeFilter}
-					selectedPeriod={caissePeriod}
-					setSelectedPeriod={setCashDeskPeriod}
-				/>
-			);
+			return <CashDeskSidebar />;
 		}
 		return <AgendaSidebar />;
 	};
@@ -825,16 +824,18 @@ export default function DashboardLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-[var(--reserva-neutral-15)]">
-      <DashboardSidebar />
-      <style>{`
-        @media print {
-          .sidebar { display: none !important; }
-        }
-      `}</style>
-      <main className="flex-1 p-8">
-        {children}
-      </main>
-    </div>
+    <CashDeskFiltersProvider>
+      <div className="flex min-h-screen bg-[var(--reserva-neutral-15)]">
+        <DashboardSidebar />
+        <style>{`
+          @media print {
+            .sidebar { display: none !important; }
+          }
+        `}</style>
+        <main className="flex-1 p-8">
+          {children}
+        </main>
+      </div>
+    </CashDeskFiltersProvider>
   );
 }

@@ -15,8 +15,6 @@ export const sampleBookableServices: BookableServiceFixture[] = ownerServices.ma
   duration: service.duration_minutes ?? 90,
   category: "RESTAURANTS",
   visibility: service.status === "active" ? "bookable" : "hidden",
-  competences: ["Garden floor", "Indoor dining", "Chef's table"].slice(0, index + 1),
-  multipleProviders: service.capacity_per_slot > 1,
 }));
 
 export const sampleBookableCategories = ["RESTAURANTS"];

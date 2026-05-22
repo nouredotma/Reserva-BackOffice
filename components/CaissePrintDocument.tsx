@@ -1,18 +1,7 @@
-import React from 'react';
-import { Document, Page, Text, View, StyleSheet, pdf, Image } from '@react-pdf/renderer';
+import type { FC } from 'react';
+import { Document, Page, Text, View, StyleSheet, pdf, Image as PdfImage } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
-
-interface Transaction {
-  id: string;
-  type: 'Sale' | 'Refund' | 'Deposit' | 'Withdrawal';
-  amount: number;
-  method: 'Cash' | 'Card' | 'Transfer' | 'Check';
-  client?: string;
-  employee?: string;
-  date: Date;
-  note?: string;
-  category?: string;
-}
+import type { Transaction } from '@/lib/types';
 
 interface CashDeskPrintDocumentProps {
   transactions: Transaction[];
@@ -276,13 +265,12 @@ const styles = StyleSheet.create({
     padding: 6,
     fontWeight: 'bold',
   },
-  col1: { width: '15%' },
-  col2: { width: '12%' },
-  col3: { width: '12%', textAlign: 'right' },
-  col4: { width: '12%' },
-  col5: { width: '20%' },
-  col6: { width: '15%' },
-  col7: { width: '14%' },
+  col1: { width: '17%' },
+  col2: { width: '13%' },
+  col3: { width: '14%', textAlign: 'right' },
+  col4: { width: '14%' },
+  col5: { width: '22%' },
+  col6: { width: '20%' },
   typeBadgeInTable: {
     fontSize: 6,
     backgroundColor: '#e5e7eb',
@@ -385,7 +373,7 @@ const styles = StyleSheet.create({
 });
 
 // PDF Document Component
-const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
+const CashDeskPDFDocument: FC<CashDeskPrintDocumentProps> = ({
   transactions,
   totalSales,
   totalCash,
@@ -395,11 +383,6 @@ const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
   totalWithdrawals
 }) => {
   const now = new Date();
-  const currentDate = now.toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  });
   const refNumber = now.getTime().toString().slice(-8);
 
   const totalEntries = totalSales + totalDeposits;
@@ -434,21 +417,6 @@ const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
     .sort((a, b) => b[1].total - a[1].total)
     .slice(0, 5);
 
-  // Calculate employee stats
-  const employeeStats = transactions
-    .filter(t => t.employee && t.type === 'Sale')
-    .reduce((acc, t) => {
-      const employee = t.employee!;
-      if (!acc[employee]) acc[employee] = { total: 0, count: 0 };
-      acc[employee].total += t.amount;
-      acc[employee].count += 1;
-      return acc;
-    }, {} as Record<string, { total: number; count: number }>);
-
-  const topEmployees = Object.entries(employeeStats)
-    .sort((a, b) => b[1].total - a[1].total)
-    .slice(0, 5);
-
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -461,7 +429,7 @@ const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
               <Text style={styles.refNumber}>Ref: RPT-{refNumber}</Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
-              <Image
+              <PdfImage
                 src="/logo.png"
                 style={[styles.logo, { marginLeft: 12 }]}
               />
@@ -613,30 +581,6 @@ const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
               </View>
             </View>
 
-            {/* Top Employees */}
-            <View style={styles.performanceCard}>
-              <Text style={styles.performanceTitle}>Top 5 Resources</Text>
-              <View style={styles.performanceTable}>
-                <View style={styles.performanceTableHeader}>
-                  <Text style={styles.performanceCol1}>#</Text>
-                  <Text style={styles.performanceCol2}>Resource</Text>
-                  <Text style={styles.performanceCol3}>Sales</Text>
-                  <Text style={styles.performanceCol4}>Amount</Text>
-                </View>
-                {topEmployees.length > 0 ? topEmployees.map(([employee, stats], index) => (
-                  <View key={employee} style={index % 2 === 0 ? styles.performanceTableRow : styles.performanceTableRowAlt}>
-                    <Text style={styles.performanceCol1}>{index + 1}</Text>
-                    <Text style={styles.performanceCol2}>{employee}</Text>
-                    <Text style={styles.performanceCol3}>{stats.count}</Text>
-                    <Text style={styles.performanceCol4}>{stats.total.toFixed(2)}</Text>
-                  </View>
-                )) : (
-                  <View style={styles.performanceTableRow}>
-                    <Text style={{ width: '100%', textAlign: 'center', padding: 10, color: '#6b7280' }}>No data</Text>
-                  </View>
-                )}
-              </View>
-            </View>
           </View>
         </View>
 
@@ -683,8 +627,7 @@ const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
             <Text style={styles.col3}>Amount</Text>
             <Text style={styles.col4}>Method</Text>
             <Text style={styles.col5}>Client</Text>
-            <Text style={styles.col6}>Resource</Text>
-            <Text style={styles.col7}>Note</Text>
+            <Text style={styles.col6}>Note</Text>
           </View>
           {transactions.map((tx, index) => (
             <View key={tx.id} style={index % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
@@ -700,8 +643,7 @@ const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
               </Text>
               <Text style={styles.col4}>{tx.method}</Text>
               <Text style={styles.col5}>{tx.client || '-'}</Text>
-              <Text style={styles.col6}>{tx.employee || '-'}</Text>
-              <Text style={[styles.col7, { color: '#6b7280' }]}>{tx.note || '-'}</Text>
+              <Text style={[styles.col6, { color: '#6b7280' }]}>{tx.note || '-'}</Text>
             </View>
           ))}
           <View style={styles.tableFooter}>
@@ -774,12 +716,3 @@ export const generateCashDeskPDF = async (props: CashDeskPrintDocumentProps) => 
   const blob = await pdf(<CashDeskPDFDocument {...props} />).toBlob();
   saveAs(blob, `rapport-caisse-${new Date().toISOString().split('T')[0]}.pdf`);
 };
-
-// Dummy component for ref compatibility (not used for PDF generation)
-export const CashDeskPrintDocument = React.forwardRef<HTMLDivElement, CashDeskPrintDocumentProps>(
-  (props, ref) => {
-    return <div ref={ref} style={{ display: 'none' }} />;
-  }
-);
-
-CashDeskPrintDocument.displayName = 'CashDeskPrintDocument';

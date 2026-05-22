@@ -13,10 +13,9 @@ export default function CancellationsPage() {
 
   const exportData = () => {
     const csvContent = [
-      ['Appointment with', 'Appointment date', 'Client', 'Booked online', 'Created', 'Cancellation', 'Canceled by client'].join(','),
+      ['Appointment date', 'Client', 'Booked online', 'Created', 'Cancellation', 'Canceled by client'].join(','),
       ...appointments.map(apt =>
         [
-          apt.collaborator,
           apt.date,
           apt.client,
           apt.takenOnline ? 'Yes' : 'No',
@@ -108,9 +107,6 @@ export default function CancellationsPage() {
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Appointment with
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Appointment date
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -136,9 +132,6 @@ export default function CancellationsPage() {
             <tbody className="divide-y divide-gray-100">
               {appointments.map((apt) => (
                 <tr key={apt.id} className="hover:bg-gray-50/30 transition-colors">
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-700">{apt.collaborator}</span>
-                  </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-400">
                       {apt.date}

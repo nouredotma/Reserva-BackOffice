@@ -62,7 +62,7 @@ export const categories: Category[] = [
     label: "Corporate & B2B",
     label_fr: "Corporate & B2B",
     image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1170&auto=format&fit=crop",
-    description: "Team meals, events & employee perks",
+    description: "Team meals, events & corporate perks",
     description_fr: "Repas d'equipe, evenements & avantages",
   },
 ]

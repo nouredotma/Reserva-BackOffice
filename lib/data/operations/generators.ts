@@ -5,7 +5,6 @@ import type {
   ServiceCategory,
 } from "../../types";
 import { moroccanNames, sampleClients, servicesList } from "./clients";
-import { defaultAgendas } from "./agendas";
 
 const now = new Date();
 
@@ -123,7 +122,6 @@ export function generateSampleRankedClients(length: number = 100): ClientRanking
 }
 
 export function generateSampleCancelledAppointments(length: number = 10): CancelledAppointment[] {
-  const resources = defaultAgendas.map((agenda) => agenda.name);
   const clients = sampleClients.map((client) => client.name);
   const formatDate = (date: Date) => date.toLocaleDateString("en-US");
   const formatTime = (date: Date) =>
@@ -135,7 +133,6 @@ export function generateSampleCancelledAppointments(length: number = 10): Cancel
     const cancellationDate = daysAgo(i % 7, 11, 20);
     return {
       id: i + 1,
-      collaborator: resources[i % resources.length],
       date: formatDate(appointmentDate),
       client: clients[i % clients.length],
       takenOnline: i % 3 !== 0,

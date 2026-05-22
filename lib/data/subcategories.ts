@@ -58,7 +58,7 @@ export const subcategories: Subcategory[] = [
   { key: "corporate-wellness", label: "Corporate Wellness Packs",        label_fr: "Packs bien-être pour entreprises",         category_key: "corporate" },
   { key: "meeting-room",       label: "Meeting Room Booking",            label_fr: "Réservation de salles de réunion",         category_key: "corporate" },
   { key: "corporate-event",    label: "Corporate Events",                label_fr: "Événements d'entreprise",                  category_key: "corporate" },
-  { key: "employee-perks",     label: "Employee Benefits Marketplace",   label_fr: "Marketplace d'avantages salariés",         category_key: "corporate" },
+  { key: "corporate-benefits", label: "Corporate Benefits Marketplace",  label_fr: "Marketplace d'avantages entreprise",       category_key: "corporate" },
 
   // ── Services Maison & Lifestyle ────────────────────────────────────────
   { key: "cleaning",           label: "Cleaning Services",               label_fr: "Services de ménage",                       category_key: "services" },

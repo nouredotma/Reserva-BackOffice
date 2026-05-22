@@ -7,7 +7,6 @@ export interface Transaction {
   amount: number;
   method: 'Cash' | 'Card' | 'Transfer' | 'Check';
   client?: string;
-  employee?: string;
   date: Date;
   note?: string;
   category?: string;
@@ -23,7 +22,6 @@ export interface Appointment {
   time: string;
   duration: number;
   status: 'confirmed' | 'pending' | 'cancelled' | 'completed' | 'no_show' | string;
-  employee: string;
   phone?: string;
   email?: string;
   date: Date;
@@ -48,29 +46,6 @@ export interface Client {
   notes?: string;
 }
 
-export interface WorkingHours {
-  day: string;
-  isWorking: boolean;
-  startTime: string;
-  endTime: string;
-  breaks: { start: string; end: string }[];
-}
-
-export interface EmployeeAgenda {
-  id: number;
-  name: string;
-  email: string;
-  color: string;
-  role: string;
-  workingHours: WorkingHours[];
-  timeSlotDuration: number;
-  bufferTime: number;
-  maxAppointmentsPerDay: number;
-  allowOnlineBooking: boolean;
-  services: string[];
-  status: 'active' | 'inactive' | 'vacation';
-}
-
 export interface PendingReview {
   id: string;
   clientName: string;
@@ -78,7 +53,6 @@ export interface PendingReview {
   rating: number;
   comment: string;
   service?: string;
-  employeeName?: string;
   date: Date;
   status: 'pending';
 }
@@ -96,7 +70,6 @@ export interface ApprovedReview {
   views?: number;
   reply?: string;
   replyDate?: Date;
-  employeeName?: string;
 }
 
 export interface RejectedReview {
@@ -106,7 +79,6 @@ export interface RejectedReview {
   rating: number;
   comment: string;
   service?: string;
-  employeeName?: string;
   date: Date;
   status: 'rejected';
   rejectReason?: string;
@@ -157,19 +129,6 @@ export interface ServiceCategory {
   growth: number;
 }
 
-export interface CollaboratorStats {
-  id: number;
-  name: string;
-  color: string;
-  totalServices: number;
-  inSalon: number;
-  online: number;
-  onlineRate: number;
-  revenue: number;
-  occupationRate?: number;
-  workedHours?: number;
-}
-
 export interface Photo {
   id: number;
   url: string;
@@ -197,18 +156,6 @@ export interface ReviewStats {
     rejected: number;
     averageRating: number;
   };
-}
-
-export interface EmployeeReviewStats {
-  name: string;
-  role: string;
-  reviews: number;
-  avgRating: number;
-  stars5: number;
-  stars4: number;
-  stars3: number;
-  responses: number;
-  trend: string;
 }
 
 export interface NewClient {
@@ -245,7 +192,6 @@ export interface ClientRanking {
 
 export interface CancelledAppointment {
   id: number;
-  collaborator: string;
   date: string;
   client: string;
   takenOnline: boolean;
@@ -270,6 +216,4 @@ export interface BookableServiceFixture {
   duration: number;
   category: string;
   visibility: 'bookable' | 'visible' | 'hidden';
-  competences: string[];
-  multipleProviders: boolean;
 }

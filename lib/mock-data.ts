@@ -13,10 +13,7 @@ export type {
   CancelledAppointment,
   Client,
   ClientRanking,
-  CollaboratorStats,
   DuplicateClient,
-  EmployeeAgenda,
-  EmployeeReviewStats,
   ModerationRule,
   NewClient,
   PendingReview,
@@ -25,7 +22,6 @@ export type {
   ReviewStats,
   ServiceCategory,
   Transaction,
-  WorkingHours,
 } from "./types";
 
 export { cities } from "./data/cities";
@@ -53,12 +49,8 @@ export {
   sampleRejectedReviews,
   sampleModerationRules,
   sampleReviewPeriodStats,
-  sampleEmployeeReviewStats,
 } from "./data/operations/reviews";
 export {
-  defaultAgendas,
-  defaultWorkingHours,
-  sampleCollaborators,
   sampleOccupancyData,
 } from "./data/operations/agendas";
 export { samplePhotos } from "./data/operations/photos";

@@ -6,13 +6,10 @@ import {
   ArrowUpRight,
   BarChart3,
   Calendar,
-  Camera,
   ChevronLeft,
   ChevronRight,
   CreditCard,
   Download,
-  Globe,
-  Phone,
   Store,
   TrendingUp,
   Users,
@@ -34,7 +31,7 @@ import {
 import {
   sampleAppointments,
   sampleBookableServices,
-  sampleCollaborators,
+  sampleOccupancyData,
   sampleTransactions,
 } from '@/lib/mock-data';
 
@@ -171,20 +168,6 @@ const dashboardData = {
 const directVsOnlineData: DonutDatum[] = [
   { name: 'Walk-in / direct', value: 40, color: '#10b981' },
   { name: 'Online', value: 60, color: '#d1d5db' },
-];
-
-const resourceDirectData: DonutDatum[] = [
-  { name: 'Restaurant floor', value: 35, color: '#3B82F6' },
-  { name: 'Wellness suites', value: 25, color: '#EC4899' },
-  { name: 'Pool & beach', value: 20, color: '#8B5CF6' },
-  { name: 'Concierge desk', value: 20, color: '#10B981' },
-];
-
-const resourceOnlineData: DonutDatum[] = [
-  { name: 'Restaurant floor', value: 30, color: '#3B82F6' },
-  { name: 'Wellness suites', value: 30, color: '#EC4899' },
-  { name: 'Pool & beach', value: 25, color: '#8B5CF6' },
-  { name: 'Concierge desk', value: 15, color: '#10B981' },
 ];
 
 const serviceBookingData: DonutDatum[] = [
@@ -381,8 +364,9 @@ export default function AdminOverviewPage() {
       .reduce((sum, transaction) => sum + transaction.amount, 0);
     const cancelled = sampleAppointments.filter((appointment) => appointment.status === 'cancelled').length;
     const noShows = sampleAppointments.filter((appointment) => appointment.status === 'no_show').length;
+    const occupancyValues = Object.values(sampleOccupancyData).flatMap((day) => Object.values(day));
     const averageOccupancy = Math.round(
-      sampleCollaborators.reduce((sum, collaborator) => sum + (collaborator.occupationRate ?? 0), 0) / Math.max(sampleCollaborators.length, 1),
+      occupancyValues.reduce((sum, value) => sum + value, 0) / Math.max(occupancyValues.length, 1),
     );
 
     return {
@@ -396,11 +380,13 @@ export default function AdminOverviewPage() {
 
   const serviceData = useMemo(
     () =>
-      sampleCollaborators.map((collaborator) => ({
-        name: collaborator.name,
-        value: collaborator.totalServices,
-        color: collaborator.color,
-      })),
+      sampleBookableServices
+        .map((service, index) => ({
+          name: service.name,
+          value: sampleAppointments.filter((appointment) => appointment.service === service.name).length,
+          color: ['#3B82F6', '#EC4899', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444'][index] ?? '#64748B',
+        }))
+        .filter((service) => service.value > 0),
     [],
   );
 
@@ -593,25 +579,6 @@ export default function AdminOverviewPage() {
           toggleView={toggleView}
         />
         <DonutChartCard
-          chartId="resource-direct"
-          data={resourceDirectData}
-          getView={getView}
-          subtitle="By resource"
-          title="Walk-in bookings by resource"
-          toggleView={toggleView}
-        />
-        <DonutChartCard
-          chartId="resource-online"
-          data={resourceOnlineData}
-          getView={getView}
-          subtitle="Online only"
-          title="Online bookings by resource"
-          toggleView={toggleView}
-        />
-      </div>
-
-      <div className="mb-8 grid gap-6 xl:grid-cols-3 animate-fadeIn">
-        <DonutChartCard
           chartId="service-total"
           data={serviceBookingData}
           getView={getView}
@@ -619,44 +586,6 @@ export default function AdminOverviewPage() {
           title="Total bookings by service"
           toggleView={toggleView}
         />
-
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 xl:col-span-2">
-          <div className="mb-6">
-            <h3 className="mb-1 text-sm font-medium text-gray-900">Performance par ressource</h3>
-            <p className="text-xs text-gray-400">This month</p>
-          </div>
-          <div className="space-y-4">
-            {sampleCollaborators.slice(0, 4).map((collaborator) => (
-              <div key={collaborator.id} className="group flex cursor-pointer items-center justify-between rounded-xl p-4 transition-colors hover:bg-gray-50">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200">
-                    <span className="text-sm font-medium text-gray-700">
-                      {collaborator.name
-                        .split(' ')
-                        .map((part) => part[0])
-                        .join('')}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">{collaborator.name}</p>
-                    <p className="text-xs text-gray-400">{collaborator.totalServices} reservations</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-8">
-                  <div className="text-center">
-                    <p className="mb-1 text-xs text-gray-400">Online</p>
-                    <p className="text-lg font-medium text-gray-900">{collaborator.online}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="mb-1 text-xs text-gray-400">Online rate</p>
-                    <p className="text-lg font-medium text-emerald-600">{collaborator.onlineRate}%</p>
-                  </div>
-                  <ChevronRight size={16} className="text-gray-400 opacity-0 transition-opacity group-hover:opacity-100" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4 animate-fadeIn">
@@ -702,7 +631,7 @@ export default function AdminOverviewPage() {
             </div>
           </div>
           <p className="mb-1 text-2xl font-light text-gray-900">{metrics.averageOccupancy}%</p>
-          <p className="text-xs text-gray-500">Across resources</p>
+          <p className="text-xs text-gray-500">Across service hours</p>
         </div>
       </div>
 

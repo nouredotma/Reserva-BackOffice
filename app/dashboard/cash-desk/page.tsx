@@ -1,42 +1,43 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { DollarSign, CreditCard, RefreshCcw, Download, Plus, Search, Filter, Calendar, Users, X, ChevronDown, ChevronUp, TrendingUp, TrendingDown, Wallet, Receipt, Clock, BarChart3, PieChart, Eye, Printer, FileText, ArrowUpRight, ArrowDownRight } from 'lucide-react';
-import { BarChart, Bar, PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { useState, useEffect } from 'react';
+import { DollarSign, CreditCard, RefreshCcw, Download, Plus, Search, Calendar, X, Wallet, Receipt, Printer, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { generateCashDeskPDF } from '@/components/CaissePrintDocument';
+import { useCashDeskFilters, type CashDeskPeriodFilter } from '@/lib/cash-desk-filters';
 import { sampleTransactions } from '@/lib/mock-data';
+import type { Transaction } from '@/lib/types';
 
-interface Transaction {
-  id: string;
-  type: 'Sale' | 'Refund' | 'Deposit' | 'Withdrawal';
-  amount: number;
-  method: 'Cash' | 'Card' | 'Transfer' | 'Check';
-  client?: string;
-  employee?: string;
-  date: Date;
-  note?: string;
-  category?: string;
-}
+const isWithinSelectedPeriod = (date: Date, selectedPeriod: CashDeskPeriodFilter) => {
+  if (selectedPeriod === 'all') return true;
 
-interface CashDeskPageProps {
-  methodFilter: 'all' | 'Cash' | 'Card' | 'Transfer' | 'Check';
-  typeFilter: 'all' | 'Sale' | 'Refund' | 'Deposit' | 'Withdrawal';
-  selectedPeriod: 'day' | 'week' | 'month' | 'all';
-  setMethodFilter: (filter: 'all' | 'Cash' | 'Card' | 'Transfer' | 'Check') => void;
-  setTypeFilter: (filter: 'all' | 'Sale' | 'Refund' | 'Deposit' | 'Withdrawal') => void;
-  setSelectedPeriod: (period: 'day' | 'week' | 'month' | 'all') => void;
-}
+  const now = new Date();
+  const transactionDate = new Date(date);
 
-export default function CashDeskPage({
-  methodFilter,
-  typeFilter,
-  selectedPeriod,
-  setMethodFilter,
-  setTypeFilter,
-  setSelectedPeriod,
-}: CashDeskPageProps) {
+  if (selectedPeriod === 'day') {
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    return transactionDate >= startOfDay;
+  }
+
+  if (selectedPeriod === 'week') {
+    const startOfWeek = new Date(now);
+    startOfWeek.setHours(0, 0, 0, 0);
+    const weekday = startOfWeek.getDay();
+    const mondayOffset = weekday === 0 ? -6 : 1 - weekday;
+    startOfWeek.setDate(startOfWeek.getDate() + mondayOffset);
+    return transactionDate >= startOfWeek;
+  }
+
+  return (
+    transactionDate.getFullYear() === now.getFullYear() &&
+    transactionDate.getMonth() === now.getMonth()
+  );
+};
+
+export default function CashDeskPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { methodFilter, typeFilter, selectedPeriod } = useCashDeskFilters();
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,44 +45,50 @@ export default function CashDeskPage({
     amount: 0,
     method: 'Cash' as Transaction['method'],
     client: '',
-    employee: '',
     note: ''
   });
-  const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setTransactions(sampleTransactions);
   }, []);
 
   // Filtering
+  const normalizedSearch = searchTerm.trim().toLowerCase();
   const filteredTransactions = transactions.filter(tx => {
     const matchesSearch =
-      tx.client?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tx.employee?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tx.note?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tx.method.toLowerCase().includes(searchTerm.toLowerCase());
+      !normalizedSearch ||
+      tx.client?.toLowerCase().includes(normalizedSearch) ||
+      tx.note?.toLowerCase().includes(normalizedSearch) ||
+      tx.method.toLowerCase().includes(normalizedSearch);
     const matchesMethod = methodFilter === 'all' || tx.method === methodFilter;
     const matchesType = typeFilter === 'all' || tx.type === typeFilter;
-    return matchesSearch && matchesMethod && matchesType;
+    const matchesPeriod = isWithinSelectedPeriod(tx.date, selectedPeriod);
+    return matchesSearch && matchesMethod && matchesType && matchesPeriod;
   });
 
   // Stats
-  const totalSales = transactions.filter(t => t.type === 'Sale').reduce((sum, t) => sum + t.amount, 0);
-  const totalCash = transactions.filter(t => t.method === 'Cash').reduce((sum, t) => sum + t.amount, 0);
-  const totalCard = transactions.filter(t => t.method === 'Card').reduce((sum, t) => sum + t.amount, 0);
-  const totalRefunds = transactions.filter(t => t.type === 'Refund').reduce((sum, t) => sum + t.amount, 0);
-  const totalDeposits = transactions.filter(t => t.type === 'Deposit').reduce((sum, t) => sum + t.amount, 0);
-  const totalWithdrawals = transactions.filter(t => t.type === 'Withdrawal').reduce((sum, t) => sum + t.amount, 0);
+  const totalSales = filteredTransactions.filter(t => t.type === 'Sale').reduce((sum, t) => sum + t.amount, 0);
+  const totalCash = filteredTransactions.filter(t => t.method === 'Cash').reduce((sum, t) => sum + t.amount, 0);
+  const totalCard = filteredTransactions.filter(t => t.method === 'Card').reduce((sum, t) => sum + t.amount, 0);
+  const totalTransfer = filteredTransactions.filter(t => t.method === 'Transfer').reduce((sum, t) => sum + t.amount, 0);
+  const totalRefunds = filteredTransactions.filter(t => t.type === 'Refund').reduce((sum, t) => sum + t.amount, 0);
+  const totalDeposits = filteredTransactions.filter(t => t.type === 'Deposit').reduce((sum, t) => sum + t.amount, 0);
+  const totalWithdrawals = filteredTransactions.filter(t => t.type === 'Withdrawal').reduce((sum, t) => sum + t.amount, 0);
+  const getSalesShare = (amount: number) => (totalSales > 0 ? (amount / totalSales) * 100 : 0);
+  const totalInflow = totalSales + totalDeposits;
+  const totalOutflow = Math.abs(totalRefunds + totalWithdrawals);
+  const netBalance = totalInflow - totalOutflow;
+  const inflowCount = filteredTransactions.filter(t => t.type === 'Sale' || t.type === 'Deposit').length;
+  const outflowCount = filteredTransactions.filter(t => t.type === 'Refund' || t.type === 'Withdrawal').length;
 
   // Export CSV
   const exportToCSV = () => {
-    const headers = ['Type', 'Amount', 'Method', 'Client', 'Resource', 'Date', 'Note'];
+    const headers = ['Type', 'Amount', 'Method', 'Client', 'Date', 'Note'];
     const rows = filteredTransactions.map(tx => [
       tx.type,
       tx.amount,
       tx.method,
       tx.client || '',
-      tx.employee || '',
       tx.date.toLocaleString('en-US'),
       tx.note || ''
     ]);
@@ -105,13 +112,13 @@ export default function CashDeskPage({
     };
     setTransactions([newTx, ...transactions]);
     setShowModal(false);
-    setFormData({ type: 'Sale', amount: 0, method: 'Cash', client: '', employee: '', note: '' });
+    setFormData({ type: 'Sale', amount: 0, method: 'Cash', client: '', note: '' });
   };
 
   // Print handler
   const handlePrint = () => {
     generateCashDeskPDF({
-      transactions,
+      transactions: filteredTransactions,
       totalSales,
       totalCash,
       totalCard,
@@ -280,23 +287,23 @@ export default function CashDeskPage({
                 <ArrowUpRight className="text-emerald-600" size={16} />
                 <span className="text-xs text-emerald-700 font-medium">Inflow</span>
               </div>
-              <p className="text-2xl font-light text-emerald-900">{totalSales + totalDeposits} MAD</p>
-              <p className="text-xs text-emerald-600 mt-1">{transactions.filter(t => t.amount > 0).length} transactions</p>
+              <p className="text-2xl font-light text-emerald-900">{totalInflow} MAD</p>
+              <p className="text-xs text-emerald-600 mt-1">{inflowCount} transactions</p>
             </div>
             <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <ArrowDownRight className="text-red-600" size={16} />
                 <span className="text-xs text-red-700 font-medium">Outflow</span>
               </div>
-              <p className="text-2xl font-light text-red-900">{Math.abs(totalRefunds + totalWithdrawals)} MAD</p>
-              <p className="text-xs text-red-600 mt-1">{transactions.filter(t => t.amount < 0).length} transactions</p>
+              <p className="text-2xl font-light text-red-900">{totalOutflow} MAD</p>
+              <p className="text-xs text-red-600 mt-1">{outflowCount} transactions</p>
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-gray-100">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Solde net</span>
               <span className="text-xl font-medium text-gray-900">
-                {totalSales + totalDeposits + totalRefunds + totalWithdrawals} MAD
+                {netBalance} MAD
               </span>
             </div>
           </div>
@@ -317,7 +324,7 @@ export default function CashDeskPage({
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-emerald-500 rounded-full transition-all"
-                  style={{ width: `${(totalCash / totalSales) * 100}%` }}
+                  style={{ width: `${getSalesShare(totalCash)}%` }}
                 />
               </div>
             </div>
@@ -329,7 +336,7 @@ export default function CashDeskPage({
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-blue-500 rounded-full transition-all"
-                  style={{ width: `${(totalCard / totalSales) * 100}%` }}
+                  style={{ width: `${getSalesShare(totalCard)}%` }}
                 />
               </div>
             </div>
@@ -337,13 +344,13 @@ export default function CashDeskPage({
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-gray-600">Transfer</span>
                 <span className="text-sm font-medium text-gray-900">
-                  {transactions.filter(t => t.method === 'Transfer').reduce((sum, t) => sum + t.amount, 0)} MAD
+                  {totalTransfer} MAD
                 </span>
               </div>
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-purple-500 rounded-full transition-all"
-                  style={{ width: `${(transactions.filter(t => t.method === 'Transfer').reduce((sum, t) => sum + t.amount, 0) / totalSales) * 100}%` }}
+                  style={{ width: `${getSalesShare(totalTransfer)}%` }}
                 />
               </div>
             </div>
@@ -364,7 +371,6 @@ export default function CashDeskPage({
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resource</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
               </tr>
@@ -392,7 +398,6 @@ export default function CashDeskPage({
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">{tx.client || '-'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{tx.employee || '-'}</td>
                   <td className="px-6 py-4 text-xs text-gray-400">{tx.date.toLocaleString('en-US')}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{tx.note || '-'}</td>
                 </tr>
@@ -423,7 +428,7 @@ export default function CashDeskPage({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                    <Select value={formData.type} onValueChange={v => setFormData({ ...formData, type: v as any })}>
+                    <Select value={formData.type} onValueChange={v => setFormData({ ...formData, type: v as Transaction['type'] })}>
                       <SelectTrigger className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-neutral-200 text-sm mt-2">
                         <SelectValue placeholder="Select le type" />
                       </SelectTrigger>
@@ -467,7 +472,7 @@ export default function CashDeskPage({
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Method</label>
-                    <Select value={formData.method} onValueChange={v => setFormData({ ...formData, method: v as any })}>
+                    <Select value={formData.method} onValueChange={v => setFormData({ ...formData, method: v as Transaction['method'] })}>
                       <SelectTrigger className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-neutral-200 text-sm mt-2">
                         <SelectValue placeholder="Select method" />
                       </SelectTrigger>
@@ -482,10 +487,6 @@ export default function CashDeskPage({
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
                     <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-neutral-200 text-sm" placeholder="Client name" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Resource</label>
-                    <input type="text" value={formData.employee} onChange={e => setFormData({ ...formData, employee: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-neutral-200 text-sm" placeholder="Resource name" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>

@@ -1,6 +1,5 @@
 import type {
   ApprovedReview,
-  EmployeeReviewStats,
   ModerationRule,
   PendingReview,
   RejectedReview,
@@ -23,7 +22,6 @@ export const samplePendingReviews: PendingReview[] = [
     rating: 5,
     comment: "Magical garden atmosphere and attentive service.",
     service: "Table Reservation",
-    employeeName: "Garden floor",
     date: daysAgo(1, 22, 0),
     status: "pending",
   },
@@ -34,7 +32,6 @@ export const samplePendingReviews: PendingReview[] = [
     rating: 4,
     comment: "Wonderful dinner; slight wait for the terrace table.",
     service: "Private Garden Dining",
-    employeeName: "Garden floor",
     date: daysAgo(2, 21, 10),
     status: "pending",
   },
@@ -54,7 +51,6 @@ export const sampleApprovedReviews: ApprovedReview[] = [
     views: 184,
     reply: "Thank you Ahmed — the chef was delighted to host you.",
     replyDate: daysAgo(3, 12, 0),
-    employeeName: "Chef's table",
   },
   {
     id: "R-A-2",
@@ -67,7 +63,6 @@ export const sampleApprovedReviews: ApprovedReview[] = [
     status: "approved",
     isPublic: true,
     views: 265,
-    employeeName: "Garden floor",
   },
 ];
 
@@ -79,7 +74,6 @@ export const sampleRejectedReviews: RejectedReview[] = [
     rating: 1,
     comment: "Promotional link unrelated to Le Jardin.",
     service: "Table Reservation",
-    employeeName: "Garden floor",
     date: daysAgo(6, 9, 0),
     status: "rejected",
     rejectReason: "Promotional spam",
@@ -194,28 +188,3 @@ export const sampleReviewPeriodStats: Record<
     stats: makeStats(523, 12, 498, 13, 4.7, 19410),
   },
 };
-
-export const sampleEmployeeReviewStats: EmployeeReviewStats[] = [
-  {
-    name: "Garden floor",
-    role: "Terrace & garden service",
-    reviews: 210,
-    avgRating: 4.8,
-    stars5: 152,
-    stars4: 46,
-    stars3: 12,
-    responses: 198,
-    trend: "+14%",
-  },
-  {
-    name: "Chef's table",
-    role: "Tasting experiences",
-    reviews: 86,
-    avgRating: 4.9,
-    stars5: 78,
-    stars4: 6,
-    stars3: 2,
-    responses: 82,
-    trend: "+22%",
-  },
-];
