@@ -1,0 +1,48 @@
+import type { City } from "../reserva-types"
+
+export const cities: City[] = [
+  {
+    id: "casablanca",
+    name: "Casablanca",
+    name_fr: "Casablanca",
+    slug: "casablanca",
+    region: "Grand Casablanca",
+    region_fr: "Grand Casablanca",
+    image: "/cities/casablanca.webp",
+    coordinates: { lat: 33.5731, lng: -7.5898 },
+    description: "Morocco's economic capital and largest city, a vibrant hub of business, culture, and coastal charm.",
+    description_fr: "Capitale économique et plus grande ville du Maroc, un centre vibrant d'affaires, de culture et de charme côtier.",
+    listings_count: {
+      wellness: 42,
+      "day-passes": 20,
+      conciergerie: 12,
+      spectacles: 18,
+      voyage: 42,
+      corporate: 16,
+      services: 24,
+      restaurants: 128,
+    },
+  },
+  {
+    id: "marrakesh",
+    name: "Marrakesh",
+    name_fr: "Marrakech",
+    slug: "marrakesh",
+    region: "Marrakech-Safi",
+    region_fr: "Marrakech-Safi",
+    image: "/cities/marrakesh.webp",
+    coordinates: { lat: 31.6295, lng: -7.9811 },
+    description: "The Red City, famous for its historic medina, vibrant souks, and stunning palatial architecture.",
+    description_fr: "La Ville Rouge, célèbre pour sa médina historique, ses souks vibrants et son architecture palatiale.",
+    listings_count: {
+      wellness: 58,
+      "day-passes": 30,
+      conciergerie: 18,
+      spectacles: 24,
+      voyage: 67,
+      corporate: 14,
+      services: 30,
+      restaurants: 95,
+    },
+  },
+]

@@ -13,18 +13,23 @@ export interface Transaction {
   category?: string;
 }
 
+export type BookingModeType = 'appointment' | 'reservation' | 'ticket' | 'request';
+
 export interface Appointment {
   id: number;
   clientName: string;
   service: string;
   time: string;
   duration: number;
-  status: 'confirmed' | 'pending' | 'cancelled' | string;
+  status: 'confirmed' | 'pending' | 'cancelled' | 'completed' | 'no_show' | string;
   employee: string;
   phone?: string;
   email?: string;
   date: Date;
   notes?: string;
+  bookingMode?: BookingModeType;
+  guestCount?: number;
+  channel?: 'online' | 'direct';
 }
 
 export interface Client {

@@ -9,7 +9,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
 
 const menuItems = [
 	{ name: 'Agenda', href: '/dashboard/agenda', icon: Home },
-	{ name: 'Clients', href: '/dashboard/clients/guests', icon: Users },
+	{ name: 'Bookings', href: '/dashboard/bookings', icon: Users },
 	{ name: 'Cash Desk', href: '/dashboard/cash-desk', icon: CreditCard },
 	{ name: 'Admin', href: '/dashboard/admin', icon: Settings2 },
 ];
@@ -191,7 +191,7 @@ const AgendaSidebar = () => {
 	);
 };
 
-const ClientsSidebar = () => {
+const BookingsSidebar = () => {
 	const pathname = usePathname();
 
 	const linkClass = (active: boolean) =>
@@ -202,11 +202,15 @@ const ClientsSidebar = () => {
 	return (
 		<div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6">
 			<div className="space-y-3">
-				<Link href="/dashboard/clients/guests" className={linkClass(pathname === '/dashboard/clients/guests')}>
+				<Link href="/dashboard/bookings" className={linkClass(pathname === '/dashboard/bookings')}>
+					<Calendar size={14} />
+					All bookings
+				</Link>
+				<Link href="/dashboard/bookings/guests" className={linkClass(pathname === '/dashboard/bookings/guests')}>
 					<FileText size={14} />
 					Guests
 				</Link>
-				<Link href="/dashboard/clients/reviews" className={linkClass(pathname === '/dashboard/clients/reviews')}>
+				<Link href="/dashboard/bookings/reviews" className={linkClass(pathname === '/dashboard/bookings/reviews')}>
 					<UserCheck size={14} />
 					Reviews
 				</Link>
@@ -302,7 +306,7 @@ const CashDeskSidebar = ({
               <label className="block text-sm font-medium text-white/60 mb-2">Type</label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
-                  <SelectValue placeholder="Select le type" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
@@ -322,8 +326,8 @@ const CashDeskSidebar = ({
                 <SelectContent>
                   <SelectItem value="day">Today</SelectItem>
                   <SelectItem value="week">This week</SelectItem>
-                  <SelectItem value="month">Ce mois</SelectItem>
-                  <SelectItem value="all">Tout</SelectItem>
+                  <SelectItem value="month">This month</SelectItem>
+                  <SelectItem value="all">All time</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -377,8 +381,8 @@ function DashboardSidebar() {
 			return <AdminSidebar />;
 		} else if (pathname === '/dashboard' || pathname === '/dashboard/agenda') {
 			return <AgendaSidebar />;
-		} else if (pathname?.startsWith('/dashboard/clients')) {
-			return <ClientsSidebar />;
+		} else if (pathname?.startsWith('/dashboard/bookings') || pathname?.startsWith('/dashboard/clients')) {
+			return <BookingsSidebar />;
 		} else if (pathname?.startsWith('/dashboard/cash-desk')) {
 			return (
 				<CashDeskSidebar
@@ -405,7 +409,7 @@ function DashboardSidebar() {
 							const Icon = item.icon;
 							const isActive =
 								(item.href === '/dashboard/agenda' && (pathname === '/dashboard' || pathname?.startsWith('/dashboard/agenda'))) ||
-								(item.href === '/dashboard/clients/guests' && pathname?.startsWith('/dashboard/clients')) ||
+								(item.href === '/dashboard/bookings' && (pathname?.startsWith('/dashboard/bookings') || pathname?.startsWith('/dashboard/clients'))) ||
 								(item.href === '/dashboard/cash-desk' && pathname?.startsWith('/dashboard/cash-desk')) ||
 								(item.href === '/dashboard/admin' && pathname?.startsWith('/dashboard/admin')) ||
 								pathname === item.href;

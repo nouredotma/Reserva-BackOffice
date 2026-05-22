@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { sampleOccupancyData, defaultAgendas } from '@/lib/mockData';
+import { sampleOccupancyData, defaultAgendas } from '@/lib/mock-data';
 
 type OccupancyData = {
   [key: string]: { [key: string]: number };

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Trash2, Calendar, Download, Printer, Check } from 'lucide-react';
-import { CancelledAppointment, generateSampleCancelledAppointments } from '@/lib/mockData';
+import { CancelledAppointment, generateSampleCancelledAppointments } from '@/lib/mock-data';
 
 export default function CancelledAppointments() {
   const [appointments, setAppointments] = useState<CancelledAppointment[]>([]);

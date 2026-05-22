@@ -5,6 +5,9 @@ import { Eye, EyeOff, Mail } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter, notFound } from 'next/navigation';
 import { useAuth } from '@/lib/mock-auth';
+import { categoryRegistrationOptions } from '@/lib/mock-data';
+import type { EstablishmentCategory } from '@/lib/reserva-types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Animated Text Component
 const AnimatedText = ({ className = "" }: { className?: string }) => {
@@ -80,6 +83,8 @@ export default function AuthPage({ params }: { params: Params }) {
   const [lastName, setLastName] = useState('');
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [businessCategory, setBusinessCategory] = useState<EstablishmentCategory>('restaurants');
+  const [establishmentName, setEstablishmentName] = useState('');
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({});
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -96,13 +101,13 @@ export default function AuthPage({ params }: { params: Params }) {
     setResetError('');
 
     if (!resetEmail.trim()) {
-      setResetError('Veuillez entrer votre adresse email');
+      setResetError('Please enter your email address');
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(resetEmail)) {
-      setResetError('Veuillez entrer une adresse email valide');
+      setResetError('Please enter a valid email address');
       return;
     }
 
@@ -127,10 +132,11 @@ export default function AuthPage({ params }: { params: Params }) {
     if (mode === 'signup') {
       // Validation for signup
       if (!firstName.trim()) errors.firstName = 'First name is required';
-      if (!lastName.trim()) errors.lastName = 'Le nom est requis';
-      if (!email.trim()) errors.email = 'L\'email est requis';
-      if (!password) errors.password = 'Le password est requis';
-      if (!confirmPassword) errors.confirmPassword = 'Veuillez confirmer votre password';
+      if (!lastName.trim()) errors.lastName = 'Last name is required';
+      if (!email.trim()) errors.email = 'Email is required';
+      if (!password) errors.password = 'Password is required';
+      if (!confirmPassword) errors.confirmPassword = 'Please confirm your password';
+      if (!businessCategory) errors.businessCategory = 'Select your business category';
 
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors);
@@ -138,7 +144,7 @@ export default function AuthPage({ params }: { params: Params }) {
       }
 
       if (password !== confirmPassword) {
-        setError('Les mots de passe ne correspondent pas');
+        setError('Passwords do not match');
         return;
       }
       if (password.length < 8) {
@@ -146,18 +152,24 @@ export default function AuthPage({ params }: { params: Params }) {
         return;
       }
       if (!acceptTerms) {
-        setError('Veuillez accepter les conditions d\'utilisation');
+        setError('Please accept the terms of use');
         return;
       }
 
-      const success = signup(email, password, `${firstName} ${lastName}`);
+      const success = signup(
+        email,
+        password,
+        `${firstName} ${lastName}`.trim(),
+        businessCategory,
+        establishmentName.trim() || undefined,
+      );
       if (!success) {
         setError('This email is already used by another account');
       }
     } else {
       // Login validation
-      if (!email.trim()) errors.email = 'L\'email est requis';
-      if (!password) errors.password = 'Le password est requis';
+      if (!email.trim()) errors.email = 'Email is required';
+      if (!password) errors.password = 'Password is required';
 
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors);
@@ -165,7 +177,7 @@ export default function AuthPage({ params }: { params: Params }) {
       }
       const success = login(email, password);
       if (!success) {
-        setError('Email ou password invalide');
+        setError('Invalid email or password');
       }
     }
   };
@@ -230,13 +242,13 @@ export default function AuthPage({ params }: { params: Params }) {
                   <p className="text-gray-600 font-medium text-xs lg:text-sm">
                     {mode === 'login' ? (
                       <>
-                        Pas encore de compte ?{' '}
+                        Don&apos;t have an account?{' '}
                         <button
                           type="button"
                           onClick={() => handleModeSwitch('signup')}
                           className="text-[#000000] font-medium hover:underline cursor-pointer"
                         >
-                          S&apos;inscrire
+                          Sign up
                         </button>
                       </>
                     ) : (
@@ -268,7 +280,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       <input
                         id="resetEmail"
                         type="text"
-                        placeholder="vous@exemple.com"
+                        placeholder="you@example.com"
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
                         className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
@@ -285,7 +297,7 @@ export default function AuthPage({ params }: { params: Params }) {
                         <li>Check your inbox</li>
                         <li>Click the reset link</li>
                         <li>Create a new password</li>
-                        <li>Connectez-vous avec votre nouveau password</li>
+                        <li>Sign in with your new password</li>
                       </ol>
                     </div>
 
@@ -358,7 +370,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     <input
                       id="firstName"
                       type="text"
-                      placeholder="Jean"
+                      placeholder="John"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
@@ -374,7 +386,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     <input
                       id="lastName"
                       type="text"
-                      placeholder="Dupont"
+                      placeholder="Smith"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       className="w-full px-4 py-2 lg:px-6 lg:py-2.5 bg-neutral-50 border border-gray-200 rounded-full focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 outline-none transition-all text-gray-900 placeholder-gray-400 text-sm lg:text-base font-medium"
@@ -384,6 +396,47 @@ export default function AuthPage({ params }: { params: Params }) {
                     )}
                   </div>
                 </div>
+              )}
+
+              {mode === 'signup' && (
+                <>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-900 lg:text-sm">
+                      What type of business do you run?
+                    </label>
+                    <Select
+                      value={businessCategory}
+                      onValueChange={(value) => setBusinessCategory(value as EstablishmentCategory)}
+                    >
+                      <SelectTrigger className="w-full rounded-full border-gray-200 bg-neutral-50">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categoryRegistrationOptions.map((option) => (
+                          <SelectItem key={option.key} value={option.key}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldErrors.businessCategory && (
+                      <p className="mt-1 text-xs text-red-500 lg:text-sm">{fieldErrors.businessCategory}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label htmlFor="establishmentName" className="mb-1 block text-xs font-medium text-gray-900 lg:text-sm">
+                      Establishment name (optional)
+                    </label>
+                    <input
+                      id="establishmentName"
+                      type="text"
+                      placeholder="e.g. Le Jardin"
+                      value={establishmentName}
+                      onChange={(e) => setEstablishmentName(e.target.value)}
+                      className="w-full rounded-full border border-gray-200 bg-neutral-50 px-4 py-2 text-sm font-medium text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-gray-200 focus:ring-1 focus:ring-primary focus:ring-offset-0 lg:px-6 lg:py-2.5 lg:text-base"
+                    />
+                  </div>
+                </>
               )}
 
               {/* Email Input */}
@@ -427,7 +480,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                    aria-label={showPassword ? 'Masquer le password' : 'Afficher le password'}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? (
                       <EyeOff className="h-[18px] w-[18px] lg:h-[22px] lg:w-[22px]" />
@@ -445,7 +498,7 @@ export default function AuthPage({ params }: { params: Params }) {
               {mode === 'signup' && (
                 <div>
                   <label htmlFor="confirmPassword" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1">
-                    Confirmer le password
+                    Confirm password
                   </label>
                   <div className="relative">
                     <input
@@ -514,11 +567,11 @@ export default function AuthPage({ params }: { params: Params }) {
                       className="w-4 h-4 lg:w-5 lg:h-5 bg-white rounded-full border-1 border-gray-300 text-[#000000] cursor-pointer mt-0.5"
                     />
                     <span className="ml-2 lg:ml-3 text-xs lg:text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                      J&apos;accepte les{' '}
+                      I accept the{' '}
                       <a href="#" className="text-[#000000] hover:underline cursor-pointer">
-                        conditions d&apos;utilisation
+                        terms of use
                       </a>{' '}
-                      et la{' '}
+                      and{' '}
                       <a href="#" className="text-[#000000] hover:underline cursor-pointer">
                         privacy policy
                       </a>
@@ -528,6 +581,13 @@ export default function AuthPage({ params }: { params: Params }) {
               )}
 
                 {/* Sign In Button */}
+                {mode === 'login' && (
+                  <p className="text-[11px] leading-relaxed text-gray-500">
+                    Demo: <span className="font-medium text-gray-700">restaurant@reserva.demo</span> /{' '}
+                    <span className="font-medium text-gray-700">demo123</span> (and 7 other category accounts).
+                  </p>
+                )}
+
                 <button
                   type="submit"
                   className="btn-blob mt-1.5 lg:mt-2"
@@ -549,7 +609,7 @@ export default function AuthPage({ params }: { params: Params }) {
               <>
                 <div className="flex items-center gap-3 lg:gap-4 my-4 lg:my-5">
                   <div className="flex-1 h-px bg-gray-200"></div>
-                  <span className="text-xs lg:text-sm font-medium text-gray-400">OU</span>
+                  <span className="text-xs lg:text-sm font-medium text-gray-400">OR</span>
                   <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
 
@@ -572,7 +632,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.018 0-9.309-3.083-11.101-7.456l-6.522 5.025C9.686 39.997 16.39 44 24 44z" />
                       <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" />
                     </svg>
-                    Sign in avec Google
+                    Sign in with Google
                   </span>
                 </button>
                 <div className="w-full text-center mt-2.5 lg:mt-3">

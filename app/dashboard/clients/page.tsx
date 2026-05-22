@@ -3,12 +3,11 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function ClientsPage() {
+/** Legacy route — guest CRM lives under Bookings. */
+export default function ClientsRedirectPage() {
   const router = useRouter();
-
   useEffect(() => {
-    router.replace('/dashboard/clients/guests');
+    router.replace('/dashboard/bookings');
   }, [router]);
-
   return null;
 }

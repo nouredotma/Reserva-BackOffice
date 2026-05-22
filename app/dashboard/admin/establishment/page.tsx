@@ -3,11 +3,11 @@
 import { useMemo, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import {
   Building2,
-  Check,
   CheckCircle2,
   FileImage,
   Globe2,
   Image as ImageIcon,
+  Lock,
   Mail,
   MapPin,
   Navigation,
@@ -16,88 +16,25 @@ import {
   Save,
   Tag,
   Trash2,
+  Utensils,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  CUISINES_LOCALIZED,
+  getOwnerCategory,
+  getOwnerCity,
+  getOwnerSubcategoryOptions,
+  ownerEstablishment,
+  ownerRestaurantDetails,
+} from '@/lib/mock-data';
 
-const categories = [
-  { key: 'wellness', label: 'Wellness & Fitness' },
-  { key: 'day-passes', label: 'Day pass' },
-  { key: 'conciergerie', label: 'Concierge' },
-  { key: 'spectacles', label: 'Tickets & Spectacles' },
-  { key: 'voyage', label: 'Travel' },
-  { key: 'corporate', label: 'Corporate' },
-  { key: 'services', label: 'Services' },
-  { key: 'restaurants', label: 'Restaurants' },
-];
-
-const subcategories: Record<string, string[]> = {
-  wellness: [
-    'Hair Salons & Barbers',
-    'Manicure & Pedicure',
-    'Hammam & Wellness Rituals',
-    'Aesthetic Clinics & Skincare',
-    'Home Massage',
-    'Personal Coaches',
-    'Gym',
-    'Nutritionist Consultations',
-    'Golf Course Booking',
-    'Tennis / Padel Courts',
-  ],
-  'day-passes': [
-    'Beach Clubs',
-    'Pool Day Pass',
-    'Kids Club & Family Activities',
-    'Private Villa Experiences',
-    'Yacht / Boat Rental',
-    'Bike / Moto / Quad Rental',
-    'Desert Camps & Excursions',
-    'Guided City Tours',
-  ],
-  conciergerie: [
-    'Airport Fast-Track',
-    'Luxury Chauffeur',
-    'Private Jets / Helicopters',
-    'Bodyguard',
-    'VIP Nightlife Tables',
-    'Chat Concierge',
-    'Personal Shopper',
-    'Last-Minute Bookings',
-  ],
-  spectacles: ['Cinema Tickets', 'Theatre & Comedy Shows', 'Festival Passes', 'Museums & Exhibitions', 'Escape Games', 'Gaming Lounges'],
-  voyage: ['Flights', 'Train Tickets', 'Car Rental', 'Travel Insurance', 'Weekend & Custom Stays'],
-  corporate: ['Team Lunch Booking', 'Corporate Wellness Packs', 'Meeting Room Booking', 'Corporate Events', 'Employee Benefits Marketplace'],
-  services: [
-    'Cleaning',
-    'Pressing Pickup & Delivery',
-    'Private Chef',
-    'Babysitting',
-    'Pet Grooming & Sitting',
-    "Chef's Table",
-    'Exclusive Tasting Menus',
-    'Private Events',
-    'Art Workshops',
-    'Sunset Rooftop Experiences',
-  ],
-  restaurants: [
-    'Brunch & Cafes',
-    'Buffets & All-You-Can-Eat',
-    'Fine Dining',
-    'Rooftops & Lounges',
-    "Chef's Table & Private Dining",
-    'Tea Time & Pastries',
-    'Family Restaurants',
-    'Romantic Restaurants',
-    'Live Music Restaurants',
-    'Karaoke Rooms',
-    'Tasting Menus',
-    'Event Dinners',
-    'VIP Tables',
-    'Exclusive Offers & Experiences',
-  ],
-};
+const cuisineOptions = Object.entries(CUISINES_LOCALIZED).map(([key, labels]) => ({
+  key,
+  label: labels.en,
+}));
 
 function slugify(value: string) {
   return value
@@ -107,34 +44,62 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, '');
 }
 
+function SectionRow({
+  title,
+  description,
+  icon: Icon,
+  children,
+}: {
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-lg border border-gray-100 bg-white p-6">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+          <Icon size={18} className="text-gray-500" />
+        </div>
+        <div>
+          <h2 className="text-xl font-light text-gray-900">{title}</h2>
+          <p className="text-sm text-gray-400">{description}</p>
+        </div>
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export default function EstablishmentManagementPage() {
+  const ownerCategory = getOwnerCategory();
+  const ownerCity = getOwnerCity();
+  const subcategoryOptions = getOwnerSubcategoryOptions();
+
   const [saved, setSaved] = useState(false);
-  const [coverPreview, setCoverPreview] = useState('/tile.webp');
-  const [galleryPreviews, setGalleryPreviews] = useState<string[]>(['/tile.webp', '/logo.png']);
+  const [coverPreview, setCoverPreview] = useState(ownerEstablishment.cover_image);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>(ownerEstablishment.gallery_images);
   const [tagInput, setTagInput] = useState('');
   const [locationStatus, setLocationStatus] = useState('');
   const [form, setForm] = useState({
-    name: 'Le Jardin Reserva',
-    nameFr: 'Le Jardin Reserva',
-    slug: 'le-jardin-reserva',
-    category: 'restaurants',
-    subcategoryValues: ['Fine Dining', 'Rooftops & Lounges'],
-    shortDescription: 'Premium dining and private event reservations in the heart of Marrakech.',
-    fullDescription:
-      'A refined establishment profile built for public booking pages, with table reservations, private events, deposits, and guest follow-up.',
-    city: 'Marrakesh',
-    address: 'Rue Haroun Errachid, Hivernage, Marrakech',
-    latitude: '31.6211',
-    longitude: '-8.0023',
-    phone: '+212 5 24 44 00 00',
-    email: 'contact@lejardin-reserva.ma',
-    website: 'https://lejardin-reserva.ma',
-    priceLevel: '$$$',
-    status: 'active',
-    tags: ['terrace', 'fine dining', 'private events'],
+    name: ownerEstablishment.name,
+    nameFr: ownerEstablishment.name_fr,
+    slug: ownerEstablishment.slug,
+    subcategory: ownerEstablishment.subcategory ?? '',
+    cuisineTypes: [...ownerRestaurantDetails.cuisine_type],
+    shortDescription: ownerEstablishment.short_description,
+    fullDescription: ownerEstablishment.full_description,
+    cityId: ownerEstablishment.city_id,
+    address: ownerEstablishment.address,
+    latitude: String(ownerEstablishment.coordinates.lat),
+    longitude: String(ownerEstablishment.coordinates.lng),
+    phone: ownerEstablishment.phone,
+    email: ownerEstablishment.email,
+    website: ownerEstablishment.website ?? '',
+    priceLevel: ownerEstablishment.price_level,
+    status: ownerEstablishment.status,
+    tags: [...ownerEstablishment.tags],
   });
-
-  const availableSubcategories = useMemo(() => subcategories[form.category] ?? [], [form.category]);
 
   const updateField = (field: keyof typeof form, value: string | string[]) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -153,15 +118,17 @@ export default function EstablishmentManagementPage() {
   const handleGalleryChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
     if (!files.length) return;
-    setGalleryPreviews((current) => [...current, ...files.map((file) => URL.createObjectURL(file))].slice(0, 8));
+    setGalleryPreviews((current) =>
+      [...current, ...files.map((file) => URL.createObjectURL(file))].slice(0, 8),
+    );
   };
 
-  const toggleSubcategory = (value: string) => {
+  const toggleCuisine = (key: string) => {
     setForm((current) => ({
       ...current,
-      subcategoryValues: current.subcategoryValues.includes(value)
-        ? current.subcategoryValues.filter((item) => item !== value)
-        : [...current.subcategoryValues, value],
+      cuisineTypes: current.cuisineTypes.includes(key)
+        ? current.cuisineTypes.filter((item) => item !== key)
+        : [...current.cuisineTypes, key],
     }));
   };
 
@@ -204,8 +171,16 @@ export default function EstablishmentManagementPage() {
     );
   };
 
+  const selectedSubcategoryLabel = useMemo(
+    () => subcategoryOptions.find((s) => s.key === form.subcategory)?.label ?? 'Not set',
+    [form.subcategory, subcategoryOptions],
+  );
+
   const saveProfile = () => {
-    localStorage.setItem('establishment_profile_settings', JSON.stringify(form));
+    localStorage.setItem(
+      'establishment_profile_settings',
+      JSON.stringify({ ...form, coverPreview, galleryPreviews }),
+    );
     setSaved(true);
     window.setTimeout(() => setSaved(false), 2200);
   };
@@ -224,7 +199,9 @@ export default function EstablishmentManagementPage() {
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Establishment</h1>
-            <p className="text-sm text-gray-400">Public venue profile mapped to the client-side establishment model.</p>
+            <p className="text-sm text-gray-400">
+              Public venue profile for {ownerCategory?.label ?? 'your category'} — aligned with the Reserva client model.
+            </p>
           </div>
           <div className="flex items-center gap-3">
             {saved && (
@@ -241,295 +218,275 @@ export default function EstablishmentManagementPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
-        <div className="space-y-6">
-          <div className="overflow-hidden rounded-lg border border-gray-100 bg-white">
-            <div className="relative h-56 bg-gray-100">
-              <img src={coverPreview} alt="Establishment cover" className="h-full w-full object-cover" />
-              <label className="absolute bottom-4 right-4 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-900">
-                <FileImage size={16} />
-                Cover
-                <input type="file" accept="image/*" className="sr-only" onChange={handleCoverChange} />
-              </label>
+      <div className="space-y-6">
+        {/* Row 1 — Media */}
+        <SectionRow
+          title="Photos"
+          description="Cover image and gallery shown on your public listing."
+          icon={ImageIcon}
+        >
+          <div className="space-y-6">
+            <div>
+              <label className="mb-3 block text-sm font-medium text-gray-700">Cover image</label>
+              <div className="relative h-56 overflow-hidden rounded-lg bg-gray-100 md:h-72">
+                <img src={coverPreview} alt="Establishment cover" className="h-full w-full object-cover" />
+                <label className="absolute bottom-4 right-4 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow-sm">
+                  <FileImage size={16} />
+                  Change cover
+                  <input type="file" accept="image/*" className="sr-only" onChange={handleCoverChange} />
+                </label>
+              </div>
             </div>
-            <div className="p-6">
-              <h2 className="text-2xl font-light text-gray-900">{form.name}</h2>
-              <p className="mt-2 text-sm leading-relaxed text-gray-500">{form.shortDescription}</p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {form.tags.map((tag) => (
-                  <span key={tag} className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
-                    {tag}
-                  </span>
+            <div>
+              <div className="mb-3 flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-700">Gallery</label>
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700">
+                  <Plus size={14} />
+                  Add images
+                  <input type="file" accept="image/*" multiple className="sr-only" onChange={handleGalleryChange} />
+                </label>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {galleryPreviews.map((preview, index) => (
+                  <div
+                    key={`${preview}-${index}`}
+                    className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100"
+                  >
+                    <img src={preview} alt={`Gallery ${index + 1}`} className="h-full w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setGalleryPreviews((current) => current.filter((_, imageIndex) => imageIndex !== index))
+                      }
+                      className="absolute right-2 top-2 hidden h-8 w-8 items-center justify-center rounded-full bg-white text-gray-700 shadow group-hover:flex"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
+        </SectionRow>
 
-          <div className="rounded-lg border border-gray-100 bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-light text-gray-900">Gallery</h2>
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700">
-                <Plus size={14} />
-                Add images
-                <input type="file" accept="image/*" multiple className="sr-only" onChange={handleGalleryChange} />
-              </label>
+        {/* Row 2 — Name & descriptions */}
+        <SectionRow
+          title="Identity"
+          description="Name and descriptions in English and French."
+          icon={Building2}
+        >
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Name (EN)</label>
+              <Input value={form.name} onChange={(event) => handleNameChange(event.target.value)} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {galleryPreviews.map((preview, index) => (
-                <div key={`${preview}-${index}`} className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
-                  <img src={preview} alt={`Gallery ${index + 1}`} className="h-full w-full object-cover" />
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Name (FR)</label>
+              <Input value={form.nameFr} onChange={(event) => updateField('nameFr', event.target.value)} />
+            </div>
+            <div className="md:col-span-2">
+              <label className="mb-2 block text-sm font-medium text-gray-700">Short description</label>
+              <Textarea
+                value={form.shortDescription}
+                onChange={(event) => updateField('shortDescription', event.target.value)}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="mb-2 block text-sm font-medium text-gray-700">Full description</label>
+              <Textarea
+                className="min-h-32"
+                value={form.fullDescription}
+                onChange={(event) => updateField('fullDescription', event.target.value)}
+              />
+            </div>
+          </div>
+        </SectionRow>
+
+        {/* Row 3 — Contact & publication */}
+        <SectionRow
+          title="Contact & status"
+          description="Slug, publication state, price level, and guest contact channels."
+          icon={Mail}
+        >
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Slug</label>
+              <Input value={form.slug} onChange={(event) => updateField('slug', event.target.value)} />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Status</label>
+              <Select value={form.status} onValueChange={(value) => updateField('status', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Price level</label>
+              <Select value={form.priceLevel} onValueChange={(value) => updateField('priceLevel', value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="$">$</SelectItem>
+                  <SelectItem value="$$">$$</SelectItem>
+                  <SelectItem value="$$$">$$$</SelectItem>
+                  <SelectItem value="$$$$">$$$$</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Phone size={14} />
+                Phone
+              </label>
+              <Input value={form.phone} onChange={(event) => updateField('phone', event.target.value)} />
+            </div>
+            <div>
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Mail size={14} />
+                Email
+              </label>
+              <Input type="email" value={form.email} onChange={(event) => updateField('email', event.target.value)} />
+            </div>
+            <div>
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Globe2 size={14} />
+                Website
+              </label>
+              <Input value={form.website} onChange={(event) => updateField('website', event.target.value)} />
+            </div>
+          </div>
+        </SectionRow>
+
+        {/* Row 4 — Category, subcategory, cuisines, tags */}
+        <SectionRow
+          title="Category & discovery"
+          description="Category is set by Reserva super admin. Choose one subcategory and your cuisines."
+          icon={Tag}
+        >
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Lock size={14} className="text-gray-400" />
+                Category (super admin)
+              </label>
+              <div className="flex h-10 items-center rounded-md border border-dashed border-gray-200 bg-gray-50 px-3 text-sm text-gray-700">
+                {ownerCategory?.label ?? ownerEstablishment.category}
+              </div>
+              <p className="mt-1 text-xs text-gray-400">Each establishment belongs to one category only.</p>
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Subcategory</label>
+              <Select value={form.subcategory} onValueChange={(value) => updateField('subcategory', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select subcategory">{selectedSubcategoryLabel}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {subcategoryOptions.map((sub) => (
+                    <SelectItem key={sub.key} value={sub.key}>
+                      {sub.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <label className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Utensils size={14} />
+              Cuisines (super admin catalog)
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {cuisineOptions.map((cuisine) => {
+                const selected = form.cuisineTypes.includes(cuisine.key);
+                return (
                   <button
+                    key={cuisine.key}
                     type="button"
-                    onClick={() => setGalleryPreviews((current) => current.filter((_, imageIndex) => imageIndex !== index))}
-                    className="absolute right-2 top-2 hidden h-8 w-8 items-center justify-center rounded-full bg-white text-gray-700 group-hover:flex"
+                    onClick={() => toggleCuisine(cuisine.key)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                      selected
+                        ? 'border-primary bg-primary/10 text-gray-900'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                    }`}
                   >
-                    <Trash2 size={14} />
+                    {cuisine.label}
                   </button>
-                </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <label className="mb-2 block text-sm font-medium text-gray-700">Tags</label>
+            <div className="flex gap-2">
+              <Input
+                value={tagInput}
+                onChange={(event) => setTagInput(event.target.value)}
+                onKeyDown={handleTagKeyDown}
+                placeholder="Add a tag"
+              />
+              <Button type="button" variant="outline" onClick={addTag}>
+                <Plus size={16} />
+              </Button>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {form.tags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => removeTag(tag)}
+                  className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-red-50 hover:text-red-600"
+                >
+                  {tag}
+                </button>
               ))}
             </div>
           </div>
-        </div>
+        </SectionRow>
 
-        <div className="space-y-6">
-          <section className="rounded-lg border border-gray-100 bg-white p-6">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
-                <Building2 size={18} className="text-gray-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-light text-gray-900">Identity</h2>
-                <p className="text-sm text-gray-400">Core fields from the establishments table.</p>
+        {/* Row 5 — Location */}
+        <SectionRow
+          title="Location"
+          description={`${ownerCity?.name ?? 'City'}, address, and map coordinates.`}
+          icon={MapPin}
+        >
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">City</label>
+              <div className="flex h-10 items-center rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700">
+                {ownerCity?.name ?? form.cityId}
               </div>
             </div>
-
-            <div className="grid gap-5 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Name</label>
-                <Input value={form.name} onChange={(event) => handleNameChange(event.target.value)} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Name FR</label>
-                <Input value={form.nameFr} onChange={(event) => updateField('nameFr', event.target.value)} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Slug</label>
-                <Input value={form.slug} onChange={(event) => updateField('slug', event.target.value)} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Status</label>
-                <Select value={form.status} onValueChange={(value) => updateField('status', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-gray-700">Short description</label>
-                <Textarea value={form.shortDescription} onChange={(event) => updateField('shortDescription', event.target.value)} />
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-gray-700">Full description</label>
-                <Textarea className="min-h-32" value={form.fullDescription} onChange={(event) => updateField('fullDescription', event.target.value)} />
-              </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Address</label>
+              <Input value={form.address} onChange={(event) => updateField('address', event.target.value)} />
             </div>
-          </section>
-
-          <section className="rounded-lg border border-gray-100 bg-white p-6">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
-                <Tag size={18} className="text-gray-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-light text-gray-900">Category and tags</h2>
-                <p className="text-sm text-gray-400">Categories are managed by the super admin; the owner selects where this venue appears.</p>
-              </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Latitude</label>
+              <Input value={form.latitude} onChange={(event) => updateField('latitude', event.target.value)} />
             </div>
-
-            <div className="grid gap-5 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Category</label>
-                <Select
-                  value={form.category}
-                  onValueChange={(value) => setForm((current) => ({ ...current, category: value, subcategoryValues: [] }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category.key} value={category.key}>
-                        {category.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Price level</label>
-                <Select value={form.priceLevel} onValueChange={(value) => updateField('priceLevel', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="$">$</SelectItem>
-                    <SelectItem value="$$">$$</SelectItem>
-                    <SelectItem value="$$$">$$$</SelectItem>
-                    <SelectItem value="$$$$">$$$$</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Longitude</label>
+              <Input value={form.longitude} onChange={(event) => updateField('longitude', event.target.value)} />
             </div>
-
-            <div className="mt-6">
-              <label className="mb-3 block text-sm font-medium text-gray-700">Subcategories</label>
-              <div className="grid gap-3 md:grid-cols-2">
-                {availableSubcategories.map((subcategory) => {
-                  const selected = form.subcategoryValues.includes(subcategory);
-
-                  return (
-                    <label
-                      key={subcategory}
-                      className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-left text-sm transition-all ${
-                        selected
-                        ? 'border-primary bg-primary/10 text-gray-900'
-                        : 'border-gray-100 text-gray-600 hover:border-gray-200'
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selected}
-                        onChange={() => toggleSubcategory(subcategory)}
-                        className="sr-only"
-                      />
-                      <span
-                        aria-hidden="true"
-                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
-                          selected ? 'border-primary bg-primary text-primary-foreground' : 'border-gray-300 bg-white'
-                        }`}
-                      >
-                        {selected ? <Check size={12} strokeWidth={3} /> : null}
-                      </span>
-                      <span>{subcategory}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <label className="mb-2 block text-sm font-medium text-gray-700">Tags</label>
-              <div className="flex gap-2">
-                <Input value={tagInput} onChange={(event) => setTagInput(event.target.value)} onKeyDown={handleTagKeyDown} placeholder="Add a tag" />
-                <Button type="button" variant="outline" onClick={addTag}>
-                  <Plus size={16} />
-                </Button>
-              </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {form.tags.map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => removeTag(tag)}
-                    className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-red-50 hover:text-red-600"
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="rounded-lg border border-gray-100 bg-white p-6">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
-                <MapPin size={18} className="text-gray-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-light text-gray-900">Location</h2>
-                <p className="text-sm text-gray-400">City, address, and exact map coordinates for the public listing.</p>
-              </div>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">City</label>
-                <Select value={form.city} onValueChange={(value) => updateField('city', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Casablanca">Casablanca</SelectItem>
-                    <SelectItem value="Marrakesh">Marrakesh</SelectItem>
-                    <SelectItem value="Rabat">Rabat</SelectItem>
-                    <SelectItem value="Tangier">Tangier</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Address</label>
-                <Input value={form.address} onChange={(event) => updateField('address', event.target.value)} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Latitude</label>
-                <Input value={form.latitude} onChange={(event) => updateField('latitude', event.target.value)} />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Longitude</label>
-                <Input value={form.longitude} onChange={(event) => updateField('longitude', event.target.value)} />
-              </div>
-            </div>
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <Button type="button" variant="outline" onClick={useCurrentLocation}>
-                <Navigation size={16} />
-                Use current location
-              </Button>
-              {locationStatus && <span className="text-sm text-gray-500">{locationStatus}</span>}
-            </div>
-          </section>
-
-          <section className="rounded-lg border border-gray-100 bg-white p-6">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
-                <ImageIcon size={18} className="text-gray-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-light text-gray-900">Contact</h2>
-                <p className="text-sm text-gray-400">Public communication channels shown on the client website.</p>
-              </div>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-3">
-              <div>
-                <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Phone size={14} />
-                  Phone
-                </label>
-                <Input value={form.phone} onChange={(event) => updateField('phone', event.target.value)} />
-              </div>
-              <div>
-                <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Mail size={14} />
-                  Email
-                </label>
-                <Input type="email" value={form.email} onChange={(event) => updateField('email', event.target.value)} />
-              </div>
-              <div>
-                <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Globe2 size={14} />
-                  Website
-                </label>
-                <Input value={form.website} onChange={(event) => updateField('website', event.target.value)} />
-              </div>
-            </div>
-          </section>
-        </div>
+          </div>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Button type="button" variant="outline" onClick={useCurrentLocation}>
+              <Navigation size={16} />
+              Use current location
+            </Button>
+            {locationStatus && <span className="text-sm text-gray-500">{locationStatus}</span>}
+          </div>
+        </SectionRow>
       </div>
     </div>
   );

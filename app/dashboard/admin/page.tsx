@@ -36,7 +36,7 @@ import {
   sampleBookableServices,
   sampleCollaborators,
   sampleTransactions,
-} from '@/lib/mockData';
+} from '@/lib/mock-data';
 
 type TooltipPayload = {
   name?: string;
@@ -169,8 +169,8 @@ const dashboardData = {
 };
 
 const directVsOnlineData: DonutDatum[] = [
-  { name: 'Pris en direct', value: 40, color: '#10b981' },
-  { name: 'Pris en ligne', value: 60, color: '#d1d5db' },
+  { name: 'Walk-in / direct', value: 40, color: '#10b981' },
+  { name: 'Online', value: 60, color: '#d1d5db' },
 ];
 
 const resourceDirectData: DonutDatum[] = [
@@ -478,23 +478,23 @@ export default function AdminOverviewPage() {
             <div className="h-8 w-px bg-gray-200" />
             <button className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-600 transition-colors hover:text-gray-900">
               <Download size={14} />
-              Exporter
+              Export
             </button>
           </div>
         </div>
       </div>
 
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5 animate-fadeIn">
-        <KpiCard icon={Calendar} label="Namebre de reservations en ligne" value={currentData.onlineBookings.toString()} trend="+12%" />
-        <KpiCard icon={Users} label="Namebre de reservations" value={currentData.totalBookings.toString()} trend="+8%" />
-        <KpiCard icon={BarChart3} label="Taux en ligne" value={`${currentData.onlineRate}%`} trend="+15%" />
+        <KpiCard icon={Calendar} label="Online bookings" value={currentData.onlineBookings.toString()} trend="+12%" />
+        <KpiCard icon={Users} label="Total bookings" value={currentData.totalBookings.toString()} trend="+8%" />
+        <KpiCard icon={BarChart3} label="Online rate" value={`${currentData.onlineRate}%`} trend="+15%" />
         <KpiCard icon={Store} label="Active services" value={metrics.activeServices.toString()} trend="+5%" />
-        <KpiCard icon={CreditCard} label="Chiffre d'affaires" value={formatMoney(metrics.totalRevenue)} trend="+9%" />
+        <KpiCard icon={CreditCard} label="Revenue" value={formatMoney(metrics.totalRevenue)} trend="+9%" />
       </div>
 
       <div className="mb-8 rounded-lg border border-gray-100 bg-white p-6 animate-fadeIn">
         <div className="mb-6">
-          <h2 className="mb-1 text-xl font-light text-gray-900">Reservations pris</h2>
+          <h2 className="mb-1 text-xl font-light text-gray-900">Bookings over time</h2>
           <p className="text-xs text-gray-400">Daily trend</p>
         </div>
         <ReResponsiveContainer width="100%" height={320}>
@@ -503,18 +503,18 @@ export default function AdminOverviewPage() {
             <ReXAxis dataKey="day" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#f0f0f0' }} tickLine={false} />
             <ReYAxis tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={false} tickLine={false} />
             <ReTooltip content={<CustomTooltip />} />
-            <ReLine type="monotone" dataKey="direct" stroke="#1f2937" strokeWidth={2} dot={{ fill: '#1f2937', strokeWidth: 0, r: 3 }} name="Pris en direct" />
-            <ReLine type="monotone" dataKey="online" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981', strokeWidth: 0, r: 3 }} name="Pris en ligne" />
+            <ReLine type="monotone" dataKey="direct" stroke="#1f2937" strokeWidth={2} dot={{ fill: '#1f2937', strokeWidth: 0, r: 3 }} name="Walk-in / direct" />
+            <ReLine type="monotone" dataKey="online" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981', strokeWidth: 0, r: 3 }} name="Online" />
           </ReLineChart>
         </ReResponsiveContainer>
         <div className="mt-4 flex items-center justify-center gap-8 border-t border-gray-100 pt-4">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-gray-900" />
-            <span className="text-xs text-gray-600">Pris en direct</span>
+            <span className="text-xs text-gray-600">Walk-in / direct</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-emerald-500" />
-            <span className="text-xs text-gray-600">Pris en ligne</span>
+            <span className="text-xs text-gray-600">Online</span>
           </div>
         </div>
       </div>
@@ -522,7 +522,7 @@ export default function AdminOverviewPage() {
       <div className="mb-8 grid gap-6 xl:grid-cols-3 animate-fadeIn">
         <div className="rounded-lg border border-gray-100 bg-white p-6 xl:col-span-2">
           <div className="mb-6">
-            <h3 className="mb-1 text-sm font-medium text-gray-900">Chiffre d'affaires</h3>
+            <h3 className="mb-1 text-sm font-medium text-gray-900">Revenue</h3>
             <p className="text-xs text-gray-400">Financial performance</p>
           </div>
           <ReResponsiveContainer width="100%" height={240}>
@@ -546,11 +546,11 @@ export default function AdminOverviewPage() {
               <p className="text-lg font-medium text-gray-900">{currentData.totalRevenue.toLocaleString()} MAD</p>
             </div>
             <div>
-              <p className="mb-1 text-xs text-gray-400">Moyenne</p>
+              <p className="mb-1 text-xs text-gray-400">Average</p>
               <p className="text-lg font-medium text-gray-900">{currentData.avgRevenue.toLocaleString()} MAD</p>
             </div>
             <div>
-              <p className="mb-1 text-xs text-gray-400">Pic</p>
+              <p className="mb-1 text-xs text-gray-400">Peak day</p>
               <p className="text-lg font-medium text-gray-900">{currentData.peakDay}</p>
             </div>
           </div>
@@ -559,7 +559,7 @@ export default function AdminOverviewPage() {
         <div className="rounded-lg border border-gray-100 bg-white p-6">
           <div className="mb-6">
             <h3 className="mb-1 text-sm font-medium text-gray-900">Services populaires</h3>
-            <p className="text-xs text-gray-400">Breakdown par type</p>
+            <p className="text-xs text-gray-400">Breakdown by service</p>
           </div>
           <div className="space-y-4">
             {serviceData.map((service) => (
@@ -588,24 +588,24 @@ export default function AdminOverviewPage() {
           chartId="rdv-pris"
           data={directVsOnlineData}
           getView={getView}
-          subtitle="Breakdown par canal"
-          title="reservations pris"
+          subtitle="By channel"
+          title="Bookings taken"
           toggleView={toggleView}
         />
         <DonutChartCard
           chartId="resource-direct"
           data={resourceDirectData}
           getView={getView}
-          subtitle="Distribution par ressource"
-          title="Namebre d'offres en direct par ressource"
+          subtitle="By resource"
+          title="Walk-in bookings by resource"
           toggleView={toggleView}
         />
         <DonutChartCard
           chartId="resource-online"
           data={resourceOnlineData}
           getView={getView}
-          subtitle="Reservations en ligne"
-          title="Namebre d'offres en ligne par ressource"
+          subtitle="Online only"
+          title="Online bookings by resource"
           toggleView={toggleView}
         />
       </div>
@@ -616,14 +616,14 @@ export default function AdminOverviewPage() {
           data={serviceBookingData}
           getView={getView}
           subtitle="Complete service distribution"
-          title="Namebre total de reservations par offre"
+          title="Total bookings by service"
           toggleView={toggleView}
         />
 
         <div className="rounded-lg border border-gray-100 bg-white p-6 xl:col-span-2">
           <div className="mb-6">
             <h3 className="mb-1 text-sm font-medium text-gray-900">Performance par ressource</h3>
-            <p className="text-xs text-gray-400">Classement du mois</p>
+            <p className="text-xs text-gray-400">This month</p>
           </div>
           <div className="space-y-4">
             {sampleCollaborators.slice(0, 4).map((collaborator) => (
@@ -648,7 +648,7 @@ export default function AdminOverviewPage() {
                     <p className="text-lg font-medium text-gray-900">{collaborator.online}</p>
                   </div>
                   <div className="text-center">
-                    <p className="mb-1 text-xs text-gray-400">Taux en ligne</p>
+                    <p className="mb-1 text-xs text-gray-400">Online rate</p>
                     <p className="text-lg font-medium text-emerald-600">{collaborator.onlineRate}%</p>
                   </div>
                   <ChevronRight size={16} className="text-gray-400 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -662,7 +662,7 @@ export default function AdminOverviewPage() {
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4 animate-fadeIn">
         <div className="rounded-lg border border-gray-100 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-xs text-gray-400">Taux d'annulation</p>
+            <p className="text-xs text-gray-400">Cancellation rate</p>
             <div className="flex items-center gap-1 text-emerald-600">
               <ArrowDownRight size={12} />
               <span className="text-[10px] font-medium">-2.1%</span>
@@ -684,14 +684,14 @@ export default function AdminOverviewPage() {
         </div>
         <div className="rounded-lg border border-gray-100 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-xs text-gray-400">Panier moyen</p>
+            <p className="text-xs text-gray-400">Average order value</p>
             <div className="flex items-center gap-1 text-emerald-600">
               <ArrowUpRight size={12} />
               <span className="text-[10px] font-medium">+8.5%</span>
             </div>
           </div>
           <p className="mb-1 text-2xl font-light text-gray-900">{formatMoney(currentData.avgRevenue)}</p>
-          <p className="text-xs text-gray-500">Par reservation</p>
+          <p className="text-xs text-gray-500">Per booking</p>
         </div>
         <div className="rounded-lg border border-gray-100 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
@@ -706,67 +706,6 @@ export default function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-2 animate-fadeIn">
-        <div className="rounded-lg border border-gray-100 bg-white p-6">
-          <div className="mb-6">
-            <h3 className="mb-1 text-sm font-medium text-gray-900">Times de pointe</h3>
-            <p className="text-xs text-gray-400">Occupancy rate moyen</p>
-          </div>
-          <div className="space-y-3">
-            {[
-              { time: '09:00 - 11:00', rate: 65, color: '#93C5FD' },
-              { time: '11:00 - 13:00', rate: 78, color: '#60A5FA' },
-              { time: '14:00 - 16:00', rate: 92, color: '#3B82F6' },
-              { time: '16:00 - 18:00', rate: 88, color: '#FFC900' },
-              { time: '18:00 - 20:00', rate: 71, color: '#60A5FA' },
-            ].map((slot) => (
-              <div key={slot.time}>
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-xs text-gray-600">{slot.time}</span>
-                  <span className="text-sm font-medium text-gray-900">{slot.rate}%</span>
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-                  <div className="h-full rounded-full transition-all duration-500" style={{ width: `${slot.rate}%`, backgroundColor: slot.color }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-gray-100 bg-white p-6">
-          <div className="mb-6">
-            <h3 className="mb-1 text-sm font-medium text-gray-900">Canaux de reservation</h3>
-            <p className="text-xs text-gray-400">Origine des reservations</p>
-          </div>
-          <div className="space-y-4">
-            {[
-              { channel: 'Site web', count: 89, percentage: 44, icon: Globe },
-              { channel: 'Instagram', count: 32, percentage: 16, icon: Camera },
-              { channel: 'Phone', count: 18, percentage: 9, icon: Phone },
-              { channel: 'En personne', count: 13, percentage: 7, icon: Store },
-            ].map((channel) => {
-              const Icon = channel.icon;
-              return (
-                <div key={channel.channel} className="flex items-center justify-between">
-                  <div className="flex flex-1 items-center gap-3">
-                    <Icon size={18} className="text-foreground" />
-                    <div className="flex-1">
-                      <div className="mb-1 flex items-center justify-between">
-                        <span className="text-xs text-gray-600">{channel.channel}</span>
-                        <span className="text-xs font-medium text-gray-900">{channel.count}</span>
-                      </div>
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
-                        <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${channel.percentage}%` }} />
-                      </div>
-                    </div>
-                  </div>
-                  <span className="ml-3 text-xs text-gray-400">{channel.percentage}%</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

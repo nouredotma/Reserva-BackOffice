@@ -5,7 +5,7 @@ import { DollarSign, CreditCard, RefreshCcw, Download, Plus, Search, Filter, Cal
 import { BarChart, Bar, PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { generateCashDeskPDF } from '@/components/CaissePrintDocument';
-import { sampleTransactions } from '@/lib/mockData';
+import { sampleTransactions } from '@/lib/mock-data';
 
 interface Transaction {
   id: string;

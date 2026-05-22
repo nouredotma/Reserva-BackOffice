@@ -1,0 +1,68 @@
+import type { Category } from "../reserva-types"
+
+export const categories: Category[] = [
+  {
+    key: "restaurants",
+    label: "Restaurants",
+    label_fr: "Restaurants",
+    image: "https://images.unsplash.com/photo-1560053608-13721e0d69e8?q=80&w=1170&auto=format&fit=crop",
+    description: "Dining, rooftops & exclusive tables",
+    description_fr: "Dining, rooftops & tables exclusives",
+  },
+  {
+    key: "wellness",
+    label: "Wellness & Fitness",
+    label_fr: "Bien-être & Fitness",
+    image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    description: "Wellness, beauty & private coaching",
+    description_fr: "Bien-etre, beaute & coaching prive",
+  },
+  {
+    key: "day-passes",
+    label: "Day pass",
+    label_fr: "Pass journée",
+    image: "https://plus.unsplash.com/premium_photo-1675745330148-1f7e5a7674a5?q=80&w=1170&auto=format&fit=crop",
+    description: "Pools, clubs & leisure access",
+    description_fr: "Piscines, clubs & loisirs",
+  },
+  {
+    key: "spectacles",
+    label: "Tickets & Spectacles",
+    label_fr: "Tickets & Spectacles",
+    image: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=1170&auto=format&fit=crop",
+    description: "Theater, concerts, festivals & cultural shows",
+    description_fr: "Théâtre, concerts, festivals & spectacles",
+  },
+  {
+    key: "services",
+    label: "Services",
+    label_fr: "Services",
+    image: "https://images.unsplash.com/photo-1556911220-bff31c812dba?q=80&w=1170&auto=format&fit=crop",
+    description: "Home, lifestyle & private experiences",
+    description_fr: "Maison, lifestyle & experiences privees",
+  },
+  {
+    key: "conciergerie",
+    label: "VIP & Concierge",
+    label_fr: "VIP & Conciergerie",
+    image: "https://images.unsplash.com/photo-1724230758718-406bab979e67?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    description: "VIP access & private assistance",
+    description_fr: "Acces VIP & assistance privee",
+  },
+  {
+    key: "voyage",
+    label: "Travel",
+    label_fr: "Voyage",
+    image: "https://images.unsplash.com/photo-1578774204375-826dc5d996ed?q=80&w=1170&auto=format&fit=crop",
+    description: "Flights, stays & tailor-made escapes",
+    description_fr: "Vols, sejours & escapades sur mesure",
+  },
+  {
+    key: "corporate",
+    label: "Corporate & B2B",
+    label_fr: "Corporate & B2B",
+    image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=1170&auto=format&fit=crop",
+    description: "Team meals, events & employee perks",
+    description_fr: "Repas d'equipe, evenements & avantages",
+  },
+]

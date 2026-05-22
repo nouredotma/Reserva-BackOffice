@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, User, Phone, Mail, X, ChevronLeft, ChevronRight, MoreVertical, Plus, CalendarIcon, MapPin } from 'lucide-react';
+import { Calendar, Clock, User, Phone, Mail, X, ChevronLeft, ChevronRight, MoreVertical, Plus, CalendarIcon, MapPin, Ticket, HelpCircle } from 'lucide-react';
+import { bookingModeLabels } from '@/lib/mock-data';
+import type { BookingModeType } from '@/lib/types';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { sampleAppointments, defaultAgendas, sampleBookableServices, sampleClients } from '@/lib/mockData';
+import { sampleAppointments, defaultAgendas, sampleBookableServices, sampleClients } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import {
@@ -25,20 +27,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import DatePickerDemo from '@/components/ui/datepicker';
 
-// New types to clarify props and state
-type Appointment = {
-  id: number;
-  clientName: string;
-  service: string;
-  time: string;
-  duration: number;
-  status: 'confirmed' | 'pending' | 'cancelled' | string;
-  employee: string;
-  phone?: string;
-  email?: string;
-  date: Date;
-  notes?: string;
-};
+import type { Appointment } from '@/lib/types';
 
 type Client = {
   id: number;
@@ -241,7 +230,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                       <p className="text-sm text-gray-500 mb-3">No guest found</p>
                       <button
                         type="button"
-                        onClick={() => window.location.href = '/dashboard/clients/guests'}
+                        onClick={() => window.location.href = '/dashboard/bookings/guests'}
                         className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-medium rounded-full hover:bg-gray-800 transition-colors"
                       >
                         <Plus size={14} />
@@ -453,10 +442,18 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 );
 }
 
+const modeBadge: Record<BookingModeType, { label: string; Icon: typeof Calendar }> = {
+  appointment: { label: bookingModeLabels.appointment, Icon: Clock },
+  reservation: { label: bookingModeLabels.reservation, Icon: Calendar },
+  ticket: { label: bookingModeLabels.ticket, Icon: Ticket },
+  request: { label: bookingModeLabels.request, Icon: HelpCircle },
+};
+
 interface AppointmentCardProps {
   apt: Appointment;
   isCompact?: boolean;
   onDragStart?: (e: React.DragEvent<HTMLDivElement>, appointment: Appointment) => void;
+  onOpen?: (appointment: Appointment) => void;
   employeeColor?: string;
   serviceColor?: string;
   showColorInRDV?: boolean;
@@ -466,6 +463,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   apt,
   isCompact = false,
   onDragStart,
+  onOpen,
   employeeColor,
   serviceColor,
   showColorInRDV = true
@@ -506,12 +504,22 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   };
 
   const color = employeeColor || serviceColor || '#3B82F6';
+  const mode = apt.bookingMode ? modeBadge[apt.bookingMode] : null;
 
   return (
     <div
       draggable
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpen?.(apt)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen?.(apt);
+        }
+      }}
       onDragStart={(e) => onDragStart && onDragStart(e, apt)}
-      className={`${getStatusBg(apt.status)} rounded-lg p-3 cursor-move  transition-all border ${
+      className={`${getStatusBg(apt.status)} rounded-lg p-3 cursor-pointer transition-all border ${
         isCompact ? 'text-xs' : 'text-sm'
       }`}
       style={showColorInRDV ? getLightColorStyle(color) : {}}
@@ -527,9 +535,15 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           </button>
         )}
       </div>
-      <div className="flex items-center gap-1.5 text-xs opacity-60">
+      <div className="flex flex-wrap items-center gap-1.5 text-xs opacity-60">
         <Clock size={11} />
         <span>{apt.time} · {apt.duration}min</span>
+        {mode && (
+          <span className="inline-flex items-center gap-0.5 rounded-full bg-white/60 px-1.5 py-0.5 text-[10px] font-medium">
+            <mode.Icon size={10} />
+            {mode.label}
+          </span>
+        )}
       </div>
       {!isCompact && (
         <div className="mt-2 pt-2 border-t border-current/10 text-xs opacity-60">
@@ -543,10 +557,96 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   );
 };
 
+function BookingDetailModal({
+  appointment,
+  onClose,
+}: {
+  appointment: Appointment;
+  onClose: () => void;
+}) {
+  const mode = appointment.bookingMode
+    ? modeBadge[appointment.bookingMode]
+    : { label: 'Booking', Icon: Calendar };
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-gray-400">
+              <mode.Icon size={14} />
+              {mode.label}
+            </p>
+            <h2 className="mt-1 text-2xl font-light text-gray-900">{appointment.service}</h2>
+            <p className="mt-1 text-sm capitalize text-gray-500">{appointment.status}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-900"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="space-y-3 text-sm">
+          <div className="flex items-center gap-2 text-gray-700">
+            <User size={16} className="text-gray-400" />
+            {appointment.clientName}
+          </div>
+          {appointment.phone && (
+            <div className="flex items-center gap-2 text-gray-700">
+              <Phone size={16} className="text-gray-400" />
+              {appointment.phone}
+            </div>
+          )}
+          {appointment.email && (
+            <div className="flex items-center gap-2 text-gray-700">
+              <Mail size={16} className="text-gray-400" />
+              {appointment.email}
+            </div>
+          )}
+          <div className="flex items-center gap-2 text-gray-700">
+            <CalendarIcon size={16} className="text-gray-400" />
+            {appointment.date.toLocaleDateString('en-US', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+            })}{' '}
+            at {appointment.time}
+          </div>
+          <div className="flex items-center gap-2 text-gray-700">
+            <Clock size={16} className="text-gray-400" />
+            {appointment.duration} minutes
+            {appointment.guestCount ? ` · ${appointment.guestCount} guests` : ''}
+          </div>
+          <div className="flex items-center gap-2 text-gray-700">
+            <MapPin size={16} className="text-gray-400" />
+            {appointment.employee}
+            {appointment.channel ? ` · ${appointment.channel === 'online' ? 'Online' : 'Direct'}` : ''}
+          </div>
+          {appointment.notes && (
+            <p className="rounded-lg bg-gray-50 p-3 text-gray-600">{appointment.notes}</p>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-6 w-full rounded-full bg-primary py-2.5 text-sm font-medium text-primary-foreground"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
 const AgendaPage = () => {
   const [view, setView] = useState('week'); // day, week, month
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [showNewRDV, setShowNewRDV] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [draggedEvent, setDraggedEvent] = useState<Appointment | null>(null);
   const [filterStatus, setFilterStatus] = useState('all');
   const [refreshKey, setRefreshKey] = useState(0);
@@ -933,6 +1033,7 @@ const AgendaPage = () => {
                               apt={apt}
                               isCompact
                               onDragStart={handleDragStart}
+                              onOpen={setSelectedAppointment}
                               employeeColor={employeeColor}
                               serviceColor={serviceColor}
                               showColorInRDV={displaySettings.showColorInRDV}
@@ -990,6 +1091,7 @@ const AgendaPage = () => {
                             key={apt.id}
                             apt={apt}
                             onDragStart={handleDragStart}
+                            onOpen={setSelectedAppointment}
                             employeeColor={employeeColor}
                             serviceColor={serviceColor}
                             showColorInRDV={displaySettings.showColorInRDV}
@@ -1084,6 +1186,7 @@ const AgendaPage = () => {
                             apt={apt}
                             isCompact
                             onDragStart={handleDragStart}
+                            onOpen={setSelectedAppointment}
                             employeeColor={employeeColor}
                             serviceColor={serviceColor}
                             showColorInRDV={displaySettings.showColorInRDV}
@@ -1093,7 +1196,7 @@ const AgendaPage = () => {
                       {/* More indicator */}
                       {dayAppointments.length > 3 && (
                         <div className="text-[10px] text-gray-500 font-medium px-1.5 py-1 hover:text-gray-900 transition-colors">
-                          +{dayAppointments.length - 3} autre{dayAppointments.length - 3 > 1 ? 's' : ''}
+                          +{dayAppointments.length - 3} more
                         </div>
                       )}
                     </div>
@@ -1142,6 +1245,13 @@ const AgendaPage = () => {
           </div>
         )}
       </div>
+
+      {selectedAppointment && (
+        <BookingDetailModal
+          appointment={selectedAppointment}
+          onClose={() => setSelectedAppointment(null)}
+        />
+      )}
 
       {showNewRDV && (
         <NewAppointmentModal

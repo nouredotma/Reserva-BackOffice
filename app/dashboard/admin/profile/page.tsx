@@ -12,8 +12,8 @@ export default function AdminProfilePage() {
   const [saved, setSaved] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [profile, setProfile] = useState({
-    name: user?.name ?? 'Omar Alaoui',
-    email: user?.email ?? 'omar@gmail.com',
+    name: user?.name ?? 'Le Jardin Owner',
+    email: user?.email ?? 'restaurant@reserva.demo',
     phone: '+212 6 24 18 77 90',
     role: 'Owner admin',
     language: 'en',
