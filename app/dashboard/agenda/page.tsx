@@ -39,7 +39,7 @@ type Client = {
   address?: string;
 };
 
-const legacyAppointmentPattern = /Consultation|Follow-up|Therapy|Manicure|Hairdresser|Massage|Samira|Khalid|Yassine|Nadia El Khatib|2025/;
+// Legacy appointment pattern removed
 
 interface NewAppointmentModalProps {
   onClose: () => void;
@@ -452,45 +452,47 @@ const modeBadge: Record<BookingModeType, { label: string; Icon: typeof Calendar 
 
 interface AppointmentCardProps {
   apt: Appointment;
-  isCompact?: boolean;
+  viewType: 'day' | 'week' | 'month';
   onDragStart?: (e: React.DragEvent<HTMLDivElement>, appointment: Appointment) => void;
   onOpen?: (appointment: Appointment) => void;
-  employeeColor?: string;
-  serviceColor?: string;
-  showColorInRDV?: boolean;
 }
+
+const modeColors: Record<BookingModeType, string> = {
+  appointment: '#6366F1', // Indigo
+  reservation: '#10B981', // Emerald
+  ticket: '#F59E0B',      // Amber
+  request: '#EC4899',     // Rose
+};
+
+const fallbackColors = [
+  '#3B82F6', // Blue
+  '#8B5CF6', // Violet
+  '#EF4444', // Red
+  '#06B6D4', // Cyan
+  '#14B8A6', // Teal
+  '#F43F5E', // Rose
+  '#F59E0B', // Amber
+  '#10B981', // Emerald
+];
 
 const AppointmentCard: React.FC<AppointmentCardProps> = ({
   apt,
-  isCompact = false,
+  viewType,
   onDragStart,
   onOpen,
-  employeeColor,
-  serviceColor,
-  showColorInRDV = true
 }) => {
-  const getStatusBg = (status: string) => {
-    // If showColorInRDV is false, use status colors
-    if (!showColorInRDV) {
-      switch (status) {
-        case 'confirmed': return 'bg-emerald-50 border-emerald-200 text-emerald-900';
-        case 'pending': return 'bg-amber-50 border-amber-200 text-amber-900';
-        case 'completed': return 'bg-blue-50 border-blue-200 text-blue-900';
-        case 'cancelled': return 'bg-rose-50 border-rose-200 text-rose-900';
-        case 'no_show': return 'bg-purple-50 border-purple-200 text-purple-900';
-        default: return 'bg-gray-50 border-neutral-200 text-gray-900';
-      }
+  const getCardColor = () => {
+    if (apt.bookingMode && modeColors[apt.bookingMode]) {
+      return modeColors[apt.bookingMode];
     }
-
-    return '';
+    const index = Math.abs(apt.id) % fallbackColors.length;
+    return fallbackColors[index];
   };
 
-  // Generate lighter background and border colors from the main color
-  const getLightColorStyle = (color: string) => {
-    if (!showColorInRDV) return {};
+  const color = getCardColor();
 
-    // Convert hex to RGB
-    const hex = color.replace('#', '');
+  const getStyle = (colorStr: string) => {
+    const hex = colorStr.replace('#', '');
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
@@ -498,12 +500,64 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
     return {
       backgroundColor: `rgba(${r}, ${g}, ${b}, 0.1)`,
       borderColor: `rgba(${r}, ${g}, ${b}, 0.3)`,
-      color: color
+      color: colorStr,
     };
   };
 
-  const color = employeeColor || serviceColor || '#3B82F6';
   const mode = apt.bookingMode ? modeBadge[apt.bookingMode] : null;
+
+  if (viewType === 'month') {
+    return (
+      <div
+        draggable
+        role="button"
+        tabIndex={0}
+        onClick={() => onOpen?.(apt)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onOpen?.(apt);
+          }
+        }}
+        onDragStart={(e) => onDragStart && onDragStart(e, apt)}
+        className="flex items-center gap-1.5 px-2 py-1 rounded border text-[10px] font-medium leading-none cursor-pointer transition-all hover:brightness-95 select-none truncate w-full"
+        style={getStyle(color)}
+      >
+        <span className="font-semibold shrink-0 tabular-nums">{apt.time}</span>
+        <span className="truncate">{apt.clientName}</span>
+      </div>
+    );
+  }
+
+  if (viewType === 'week') {
+    return (
+      <div
+        draggable
+        role="button"
+        tabIndex={0}
+        onClick={() => onOpen?.(apt)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onOpen?.(apt);
+          }
+        }}
+        onDragStart={(e) => onDragStart && onDragStart(e, apt)}
+        className="flex flex-col gap-1 p-2.5 rounded-xl border text-xs cursor-pointer transition-all hover:brightness-95 select-none w-full"
+        style={getStyle(color)}
+      >
+        <div className="font-semibold truncate">{apt.clientName}</div>
+        <div className="text-[10px] opacity-75 truncate">{apt.service}</div>
+        <div className="flex items-center gap-1 text-[10px] opacity-60 tabular-nums">
+          <Clock size={10} />
+          <span>{apt.time} ({apt.duration}m)</span>
+        </div>
+        <div className="text-[9px] opacity-50 truncate mt-1 border-t border-black/5 pt-1">
+          {apt.employee}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -518,40 +572,54 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         }
       }}
       onDragStart={(e) => onDragStart && onDragStart(e, apt)}
-      className={`${getStatusBg(apt.status)} rounded-xl p-3 cursor-pointer transition-all border ${
-        isCompact ? 'text-xs' : 'text-sm'
-      }`}
-      style={showColorInRDV ? getLightColorStyle(color) : {}}
+      className="flex flex-row items-center justify-between gap-3 p-4 rounded-xl border text-sm cursor-pointer transition-all hover:brightness-95 select-none w-full"
+      style={getStyle(color)}
     >
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-1 min-w-0">
-          <p className="font-medium truncate break-words w-full">{apt.clientName}</p>
-          <p className="text-xs opacity-60 truncate break-words w-full mt-0.5">{apt.service}</p>
-        </div>
-        {!isCompact && (
-          <button className="p-1 opacity-40 hover:opacity-100 transition-opacity">
-            <MoreVertical size={14} />
-          </button>
-        )}
-      </div>
-      <div className="flex flex-wrap items-center gap-1.5 text-xs opacity-60">
-        <Clock size={11} />
-        <span>{apt.time} · {apt.duration}min</span>
-        {mode && (
-          <span className="inline-flex items-center gap-0.5 rounded-full bg-white/60 px-1.5 py-0.5 text-[10px] font-medium">
-            <mode.Icon size={10} />
-            {mode.label}
+      <div className="flex flex-col gap-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-semibold text-gray-900">{apt.clientName}</span>
+          {mode && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider">
+              <mode.Icon size={10} />
+              {mode.label}
+            </span>
+          )}
+          <span className={cn(
+            "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border capitalize bg-white/40",
+            apt.status === 'confirmed' && 'border-emerald-200 text-emerald-800 bg-emerald-50/50',
+            apt.status === 'pending' && 'border-amber-200 text-amber-800 bg-amber-50/50',
+            apt.status === 'completed' && 'border-blue-200 text-blue-800 bg-blue-50/50',
+            apt.status === 'cancelled' && 'border-rose-200 text-rose-800 bg-rose-50/50',
+            apt.status === 'no_show' && 'border-purple-200 text-purple-800 bg-purple-50/50',
+          )}>
+            {apt.status.replace('_', ' ')}
           </span>
+        </div>
+        <div className="text-xs text-gray-500 font-medium">{apt.service}</div>
+        {apt.notes && (
+          <div className="text-xs text-gray-400 italic mt-1 line-clamp-1 max-w-xl">
+            "{apt.notes}"
+          </div>
         )}
       </div>
-      {!isCompact && (
-        <div className="mt-2 pt-2 border-t border-current/10 text-xs opacity-60">
-          <div className="flex items-center gap-1">
-            <User size={11} />
-            <span className="truncate break-words w-full">{apt.employee}</span>
-          </div>
+      <div className="flex items-center gap-4 shrink-0 text-xs text-gray-600">
+        <div className="flex items-center gap-1.5 tabular-nums">
+          <Clock size={14} className="text-gray-400" />
+          <span className="font-medium">{apt.time}</span>
+          <span className="text-gray-300">|</span>
+          <span>{apt.duration} min</span>
         </div>
-      )}
+        <div className="flex items-center gap-1.5">
+          <User size={14} className="text-gray-400" />
+          <span className="font-medium">{apt.employee}</span>
+        </div>
+        <button 
+          onClick={(e) => { e.stopPropagation(); onOpen?.(apt); }}
+          className="p-1.5 rounded-full hover:bg-black/5 text-gray-400 hover:text-gray-900 transition-colors"
+        >
+          <MoreVertical size={16} />
+        </button>
+      </div>
     </div>
   );
 };
@@ -661,42 +729,6 @@ const AgendaPage = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Load employee agendas and services for colors
-  const [employeeAgendas, setEmployeeAgendas] = useState<Array<{id: number, name: string, color: string}>>([]);
-  const [services, setServices] = useState<Array<{id: number, name: string, color: string}>>([]);
-  const [displaySettings, setDisplaySettings] = useState<{showColorInRDV: boolean}>({ showColorInRDV: true });
-
-  // Load settings and data on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Initialize currentDate
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      setCurrentDate(today);
-
-      // Load employee agendas
-      const storedAgendas = localStorage.getItem('employeeAgendas');
-      if (storedAgendas) {
-        const agendas = JSON.parse(storedAgendas);
-        setEmployeeAgendas(agendas.map((a: any) => ({ id: a.id, name: a.name, color: a.color })));
-      }
-
-      // Load services
-      const storedServices = localStorage.getItem('services');
-      if (storedServices) {
-        const servicesData = JSON.parse(storedServices);
-        setServices(servicesData.map((s: any) => ({ id: s.id, name: s.name, color: s.color })));
-      }
-
-      // Load display settings
-      const storedSettings = localStorage.getItem('rdvDisplaySettings');
-      if (storedSettings) {
-        const settings = JSON.parse(storedSettings);
-        setDisplaySettings(settings);
-      }
-    }
-  }, []);
-
   // Listen for sidebar filter changes and sidebar date changes
   useEffect(() => {
     const handleStatusFilter = (event: Event) => {
@@ -718,22 +750,37 @@ const AgendaPage = () => {
   // Sample appointments data - normalize dates and load from localStorage
   const [appointments, setAppointments] = useState<Appointment[]>(sampleAppointments);
 
-  // Hydrate appointments from localStorage after mount
+  // Load settings and hydrate data on mount
   useEffect(() => {
-    const stored = localStorage.getItem('appointments');
-    if (stored) {
-      try {
-        if (legacyAppointmentPattern.test(stored)) {
+    if (typeof window !== 'undefined') {
+      // Initialize currentDate
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      setCurrentDate(today);
+
+      // Hydrate appointments with legacy check
+      const stored = localStorage.getItem('appointments');
+      if (stored) {
+        try {
+          const isLegacy = /Consultation|Follow-up|Therapy|Manicure|Hairdresser|Massage|Samira|Khalid|Yassine|Nadia El Khatib|2025/.test(stored);
+          if (isLegacy) {
+            setAppointments(sampleAppointments);
+            localStorage.setItem('appointments', JSON.stringify(sampleAppointments));
+          } else {
+            const parsed = JSON.parse(stored) as Array<Omit<Appointment, 'date'> & { date: string }>;
+            setAppointments(parsed.map(apt => ({
+              ...apt,
+              date: new Date(apt.date)
+            })));
+          }
+        } catch (e) {
+          console.error('Error loading appointments:', e);
           setAppointments(sampleAppointments);
-          return;
+          localStorage.setItem('appointments', JSON.stringify(sampleAppointments));
         }
-        const parsed = JSON.parse(stored) as Array<Omit<Appointment, 'date'> & { date: string }>;
-        setAppointments(parsed.map(apt => ({
-          ...apt,
-          date: new Date(apt.date)
-        })));
-      } catch (e) {
-        console.error('Error loading appointments:', e);
+      } else {
+        setAppointments(sampleAppointments);
+        localStorage.setItem('appointments', JSON.stringify(sampleAppointments));
       }
     }
   }, []);
@@ -836,14 +883,7 @@ const AgendaPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const stored = localStorage.getItem('appointments');
-    if (!stored || legacyAppointmentPattern.test(stored)) {
-      setAppointments(sampleAppointments);
-      localStorage.setItem('appointments', JSON.stringify(sampleAppointments));
-    }
-  }, []);
+  // Combined legacy patterns into the initial mount hydration hook
 
   // Don't render until currentDate is initialized on the client
   if (!currentDate) {
@@ -857,13 +897,13 @@ const AgendaPage = () => {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
         @keyframes slideUp {
           from { transform: translateY(20px); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
         }
+        @keyframes slideDown {
+          from { transform: translateY(-20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
         .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
         .animate-slideUp { animation: slideUp 0.3s ease-out; }
@@ -1034,22 +1074,15 @@ const AgendaPage = () => {
 
                           return matches;
                         })
-                        .map(apt => {
-                          const employeeColor = employeeAgendas.find(e => e.name === apt.employee)?.color;
-                          const serviceColor = services.find(s => s.name === apt.service)?.color;
-                          return (
-                            <AppointmentCard
-                              key={apt.id}
-                              apt={apt}
-                              isCompact
-                              onDragStart={handleDragStart}
-                              onOpen={setSelectedAppointment}
-                              employeeColor={employeeColor}
-                              serviceColor={serviceColor}
-                              showColorInRDV={displaySettings.showColorInRDV}
-                            />
-                          );
-                        })
+                        .map(apt => (
+                          <AppointmentCard
+                            key={apt.id}
+                            apt={apt}
+                            viewType="week"
+                            onDragStart={handleDragStart}
+                            onOpen={setSelectedAppointment}
+                          />
+                        ))
                       }
                     </div>
                   ))}
@@ -1093,21 +1126,15 @@ const AgendaPage = () => {
 
                         return matches;
                       })
-                      .map(apt => {
-                        const employeeColor = employeeAgendas.find(e => e.name === apt.employee)?.color;
-                        const serviceColor = services.find(s => s.name === apt.service)?.color;
-                        return (
-                          <AppointmentCard
-                            key={apt.id}
-                            apt={apt}
-                            onDragStart={handleDragStart}
-                            onOpen={setSelectedAppointment}
-                            employeeColor={employeeColor}
-                            serviceColor={serviceColor}
-                            showColorInRDV={displaySettings.showColorInRDV}
-                          />
-                        );
-                      })
+                      .map(apt => (
+                        <AppointmentCard
+                          key={apt.id}
+                          apt={apt}
+                          viewType="day"
+                          onDragStart={handleDragStart}
+                          onOpen={setSelectedAppointment}
+                        />
+                      ))
                     }
                   </div>
                 </div>
@@ -1187,22 +1214,15 @@ const AgendaPage = () => {
 
                     {/* Appointments - use AppointmentCard for color logic */}
                     <div className="space-y-1">
-                      {dayAppointments.slice(0, 3).map(apt => {
-                        const employeeColor = employeeAgendas.find(e => e.name === apt.employee)?.color;
-                        const serviceColor = services.find(s => s.name === apt.service)?.color;
-                        return (
-                          <AppointmentCard
-                            key={apt.id}
-                            apt={apt}
-                            isCompact
-                            onDragStart={handleDragStart}
-                            onOpen={setSelectedAppointment}
-                            employeeColor={employeeColor}
-                            serviceColor={serviceColor}
-                            showColorInRDV={displaySettings.showColorInRDV}
-                          />
-                        );
-                      })}
+                      {dayAppointments.slice(0, 3).map(apt => (
+                        <AppointmentCard
+                          key={apt.id}
+                          apt={apt}
+                          viewType="month"
+                          onDragStart={handleDragStart}
+                          onOpen={setSelectedAppointment}
+                        />
+                      ))}
                       {/* More indicator */}
                       {dayAppointments.length > 3 && (
                         <div className="text-[10px] text-gray-500 font-medium px-1.5 py-1 hover:text-gray-900 transition-colors">
