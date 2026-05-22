@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
 import { useMemo, useState } from 'react';
 import { Calendar, Mail, MapPin, Merge, Phone, Search, Trash2, User as UserIcon, Users } from 'lucide-react';
 import { sampleClients, sampleDuplicates, type Client, type DuplicateClient } from '@/lib/mock-data';
 
-export default function GuestsPage() {
+export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>(sampleClients);
   const [duplicates, setDuplicates] = useState<DuplicateClient[]>(sampleDuplicates);
   const [searchTerm, setSearchTerm] = useState('');
@@ -75,7 +75,7 @@ export default function GuestsPage() {
       <div className="mb-8 pt-20 animate-slideUp">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div className="flex items-baseline gap-4">
-            <h1 className="text-5xl font-light tracking-tight text-gray-900">Guests</h1>
+            <h1 className="text-5xl font-light tracking-tight text-gray-900">Clients</h1>
             <span className="text-sm text-gray-400">
               {viewMode === 'all' ? filteredClients.length : filteredDuplicates.length} records
             </span>
@@ -104,7 +104,7 @@ export default function GuestsPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
-              placeholder="Search guests..."
+              placeholder="Search clients..."
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               className="w-full rounded-full border border-gray-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-gray-900"
@@ -131,7 +131,7 @@ export default function GuestsPage() {
           <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
             <Users size={18} className="text-gray-400" />
           </div>
-          <p className="mb-1 text-xs text-gray-400">Guest profiles</p>
+          <p className="mb-1 text-xs text-gray-400">Client profiles</p>
           <p className="text-3xl font-light text-gray-900">{clients.length}</p>
         </div>
         <div className="rounded-lg border border-gray-100 bg-white p-6">
@@ -145,7 +145,7 @@ export default function GuestsPage() {
           <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
             <Calendar size={18} className="text-gray-400" />
           </div>
-          <p className="mb-1 text-xs text-gray-400">Active guests</p>
+          <p className="mb-1 text-xs text-gray-400">Active clients</p>
           <p className="text-3xl font-light text-gray-900">{clients.filter((client) => client.status === 'Active').length}</p>
         </div>
       </div>

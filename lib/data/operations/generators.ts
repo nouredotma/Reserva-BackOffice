@@ -70,8 +70,8 @@ export function enrichAndRankClients(parsedClients: unknown[]): ClientRanking[] 
       );
       return {
         id: Number(client.id ?? index + 1),
-        name: (client.name as string) ?? `Guest ${index + 1}`,
-        email: (client.email as string) ?? `guest${index + 1}@email.com`,
+        name: (client.name as string) ?? `Client ${index + 1}`,
+        email: (client.email as string) ?? `client${index + 1}@email.com`,
         phone: (client.phone as string) ?? `+212 6 ${String(20000000 + index * 54321).slice(0, 8)}`,
         status: (client.status as string) ?? "Active",
         address: client.address as string | undefined,

@@ -28,7 +28,7 @@ export interface Appointment {
   date: Date;
   notes?: string;
   bookingMode?: BookingModeType;
-  guestCount?: number;
+  partySize?: number;
   channel?: 'online' | 'direct';
 }
 
@@ -272,4 +272,3 @@ export interface BookableServiceFixture {
   competences: string[];
   multipleProviders: boolean;
 }
-

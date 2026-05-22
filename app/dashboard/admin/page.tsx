@@ -680,7 +680,7 @@ export default function AdminOverviewPage() {
             </div>
           </div>
           <p className="mb-1 text-2xl font-light text-gray-900">{metrics.noShows}</p>
-          <p className="text-xs text-gray-500">Guests absent</p>
+          <p className="text-xs text-gray-500">Clients absent</p>
         </div>
         <div className="rounded-lg border border-gray-100 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">

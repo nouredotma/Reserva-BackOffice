@@ -305,7 +305,7 @@ export default function EstablishmentManagementPage() {
         {/* Row 3 — Contact & publication */}
         <SectionRow
           title="Contact & status"
-          description="Slug, publication state, price level, and guest contact channels."
+          description="Slug, publication state, price level, and client contact channels."
           icon={Mail}
         >
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">

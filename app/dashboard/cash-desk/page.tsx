@@ -75,7 +75,7 @@ export default function CashDeskPage({
 
   // Export CSV
   const exportToCSV = () => {
-    const headers = ['Type', 'Amount', 'Method', 'Guest', 'Resource', 'Date', 'Note'];
+    const headers = ['Type', 'Amount', 'Method', 'Client', 'Resource', 'Date', 'Note'];
     const rows = filteredTransactions.map(tx => [
       tx.type,
       tx.amount,
@@ -363,7 +363,7 @@ export default function CashDeskPage({
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Guest</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Resource</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
@@ -480,8 +480,8 @@ export default function CashDeskPage({
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Guest</label>
-                    <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Guest name" />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
+                    <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Client name" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Resource</label>

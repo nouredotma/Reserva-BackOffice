@@ -134,7 +134,7 @@ export const ownerServices: Service[] = [
     short_description_fr:
       "Menu dégustation intimiste à la table du chef avec accord mets-vins.",
     full_description:
-      "Six-course tasting menu for up to 4 guests. Requires 72h advance booking and full prepayment.",
+      "Six-course tasting menu for up to 4 people. Requires 72h advance booking and full prepayment.",
     full_description_fr:
       "Menu dégustation six services pour 4 convives maximum.",
     service_type: "chefs_table",

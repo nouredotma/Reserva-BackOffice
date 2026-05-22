@@ -590,11 +590,11 @@ const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
           <View style={styles.performanceGrid}>
             {/* Top Clients */}
             <View style={styles.performanceCard}>
-              <Text style={styles.performanceTitle}>Top 5 Guests</Text>
+              <Text style={styles.performanceTitle}>Top 5 Clients</Text>
               <View style={styles.performanceTable}>
                 <View style={styles.performanceTableHeader}>
                   <Text style={styles.performanceCol1}>#</Text>
-                  <Text style={styles.performanceCol2}>Guest</Text>
+                  <Text style={styles.performanceCol2}>Client</Text>
                   <Text style={styles.performanceCol3}>Sales</Text>
                   <Text style={styles.performanceCol4}>Amount</Text>
                 </View>
@@ -682,7 +682,7 @@ const CashDeskPDFDocument: React.FC<CashDeskPrintDocumentProps> = ({
             <Text style={styles.col2}>Type</Text>
             <Text style={styles.col3}>Amount</Text>
             <Text style={styles.col4}>Method</Text>
-            <Text style={styles.col5}>Guest</Text>
+            <Text style={styles.col5}>Client</Text>
             <Text style={styles.col6}>Resource</Text>
             <Text style={styles.col7}>Note</Text>
           </View>

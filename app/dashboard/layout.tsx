@@ -206,9 +206,9 @@ const BookingsSidebar = () => {
 					<Calendar size={14} />
 					All bookings
 				</Link>
-				<Link href="/dashboard/bookings/guests" className={linkClass(pathname === '/dashboard/bookings/guests')}>
+				<Link href="/dashboard/bookings/clients" className={linkClass(pathname === '/dashboard/bookings/clients')}>
 					<FileText size={14} />
-					Guests
+					Clients
 				</Link>
 				<Link href="/dashboard/bookings/reviews" className={linkClass(pathname === '/dashboard/bookings/reviews')}>
 					<UserCheck size={14} />
@@ -250,7 +250,7 @@ const AdminSidebar = () => {
 					<TrendingUp size={14} />
 					Occupancy
 				</Link>
-				<Link href="/dashboard/admin/reservation-trash/cancelled" className={linkClass(pathname === '/dashboard/admin/reservation-trash/cancelled')}>
+				<Link href="/dashboard/admin/cancellations" className={linkClass(pathname === '/dashboard/admin/cancellations')}>
 					<Trash2 size={14} />
 					Cancellations
 				</Link>
@@ -589,7 +589,7 @@ function DashboardSidebar() {
 													<UserCheck size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">New reviews guest</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">New client review</p>
 													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali left a 5-star review for your VIP experience.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 15 minutes</span>
 												</div>
@@ -647,7 +647,7 @@ function DashboardSidebar() {
 													<UserCheck size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">New reviews guest</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">New client review</p>
 													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali left a 5-star review for your VIP experience.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 15 minutes</span>
 												</div>
@@ -695,7 +695,7 @@ function DashboardSidebar() {
 										<Users size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">New guest saved</p>
+										<p className="text-sm font-medium text-gray-900 mb-1">New client saved</p>
 										<p className="text-xs text-gray-500 leading-relaxed mb-2">Karim Alami booked an experience through Reserva.</p>
 										<span className="text-xs text-gray-400 font-light">Hier at 14:15</span>
 									</div>

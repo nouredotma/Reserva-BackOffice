@@ -123,7 +123,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
     }
 
     if (!selectedClient && !isNewClient) {
-      alert('Please select or create a guest');
+      alert('Please select or create a client');
       return;
     }
 
@@ -177,13 +177,13 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
       </div>
 
       <div className="px-8 py-6 space-y-8">
-        {/* Guest Info */}
+        {/* Client Info */}
         <div className="space-y-4">
-          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Guest</h3>
+          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Client</h3>
 
-          {/* Guest Search/Select */}
+          {/* Client Search/Select */}
           <div className="space-y-2">
-            <Label htmlFor="clientSearch">Search for a guest</Label>
+            <Label htmlFor="clientSearch">Search for a client</Label>
             <div className="relative">
               <Input
                 id="clientSearch"
@@ -227,14 +227,14 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                     </div>
                   ) : (
                     <div className="px-4 py-6 text-center">
-                      <p className="text-sm text-gray-500 mb-3">No guest found</p>
+                      <p className="text-sm text-gray-500 mb-3">No client found</p>
                       <button
                         type="button"
-                        onClick={() => window.location.href = '/dashboard/bookings/guests'}
+                        onClick={() => window.location.href = '/dashboard/bookings/clients'}
                         className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-medium rounded-full hover:bg-gray-800 transition-colors"
                       >
                         <Plus size={14} />
-                        Add guest
+                        Add client
                       </button>
                     </div>
                   )}
@@ -243,7 +243,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
             </div>
           </div>
 
-          {/* Show selected guest info or manual entry */}
+          {/* Show selected client info or manual entry */}
           {selectedClient ? (
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <div className="flex items-start justify-between mb-3">
@@ -618,7 +618,7 @@ function BookingDetailModal({
           <div className="flex items-center gap-2 text-gray-700">
             <Clock size={16} className="text-gray-400" />
             {appointment.duration} minutes
-            {appointment.guestCount ? ` · ${appointment.guestCount} guests` : ''}
+            {appointment.partySize ? ` · ${appointment.partySize} people` : ''}
           </div>
           <div className="flex items-center gap-2 text-gray-700">
             <MapPin size={16} className="text-gray-400" />

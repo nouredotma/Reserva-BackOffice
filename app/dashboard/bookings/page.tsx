@@ -45,7 +45,7 @@ export default function BookingsPage() {
       if (statusFilter !== 'all' && booking.status !== statusFilter) return false;
       if (!q) return true;
       return (
-        booking.guestName.toLowerCase().includes(q) ||
+        booking.clientName.toLowerCase().includes(q) ||
         booking.serviceName.toLowerCase().includes(q) ||
         booking.id.toLowerCase().includes(q)
       );
@@ -57,7 +57,7 @@ export default function BookingsPage() {
       <div className="mb-10 pt-20">
         <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Bookings</h1>
         <p className="text-sm text-gray-400">
-          All guest bookings across four modes: appointment, reservation, ticket, and request.
+          All client bookings across four modes: appointment, reservation, ticket, and request.
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export default function BookingsPage() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search guest, service, or ID"
+            placeholder="Search client, service, or ID"
             className="border-0 bg-transparent shadow-none focus-visible:ring-0"
           />
         </div>
@@ -129,7 +129,7 @@ export default function BookingsPage() {
                       {booking.status}
                     </span>
                   </div>
-                  <p className="text-sm font-medium text-gray-900">{booking.guestName}</p>
+                  <p className="text-sm font-medium text-gray-900">{booking.clientName}</p>
                   <p className="mt-1 text-xs text-gray-500">{booking.serviceName}</p>
                   <p className="mt-2 text-xs text-gray-400">
                     {booking.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · {booking.time}
@@ -160,15 +160,15 @@ export default function BookingsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {[
-                  { label: 'Guest', value: selected.guestName },
-                  { label: 'Email', value: selected.guestEmail },
-                  { label: 'Phone', value: selected.guestPhone },
+                  { label: 'Client', value: selected.clientName },
+                  { label: 'Email', value: selected.clientEmail },
+                  { label: 'Phone', value: selected.clientPhone },
                   {
                     label: 'Date & time',
                     value: `${selected.date.toLocaleDateString('en-US')} at ${selected.time}`,
                   },
                   { label: 'Duration', value: `${selected.durationMinutes} min` },
-                  { label: 'Guests', value: String(selected.guestCount) },
+                  { label: 'Party size', value: String(selected.partySize) },
                   { label: 'Channel', value: selected.channel === 'online' ? 'Online' : 'Direct' },
                   {
                     label: 'Total',

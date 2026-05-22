@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: "Reserva Backoffice",
     template: "%s | Reserva Backoffice",
   },
-  description: "Reserva back office for managing reservations, guests, payments, and operations.",
+  description: "Reserva back office for managing reservations, clients, payments, and operations.",
   icons: {
     icon: "/icon.png",
     shortcut: "/favicon.ico",

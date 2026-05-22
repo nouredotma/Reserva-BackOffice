@@ -22,7 +22,7 @@ export const sampleAppointments: Appointment[] = [
     date: daysFromNow(1, 20, 30),
     notes: "Birthday — garden corner, candles requested.",
     bookingMode: "reservation",
-    guestCount: 2,
+    partySize: 2,
     channel: "online",
   },
   {
@@ -38,7 +38,7 @@ export const sampleAppointments: Appointment[] = [
     date: daysFromNow(0, 19, 0),
     notes: "Terrace, party of 2.",
     bookingMode: "reservation",
-    guestCount: 2,
+    partySize: 2,
     channel: "online",
   },
   {
@@ -54,7 +54,7 @@ export const sampleAppointments: Appointment[] = [
     date: daysFromNow(2, 21, 0),
     notes: "Indoor, party of 4.",
     bookingMode: "reservation",
-    guestCount: 4,
+    partySize: 4,
     channel: "direct",
   },
   {
@@ -68,9 +68,9 @@ export const sampleAppointments: Appointment[] = [
     phone: "+212 6 70 92 13 64",
     email: "ahmed.benali@email.com",
     date: daysFromNow(4, 20, 0),
-    notes: "Wine pairing, 3 guests.",
+    notes: "Wine pairing, party of 3.",
     bookingMode: "appointment",
-    guestCount: 3,
+    partySize: 3,
     channel: "direct",
   },
   {
@@ -84,9 +84,9 @@ export const sampleAppointments: Appointment[] = [
     phone: "+212 6 55 12 88 01",
     email: "omar.slaoui@email.com",
     date: daysFromNow(0, 13, 0),
-    notes: "Cancelled by guest.",
+    notes: "Cancelled by client.",
     bookingMode: "reservation",
-    guestCount: 2,
+    partySize: 2,
     channel: "online",
   },
   {
@@ -102,7 +102,7 @@ export const sampleAppointments: Appointment[] = [
     date: daysFromNow(5, 21, 0),
     notes: "4 tickets, center tables.",
     bookingMode: "ticket",
-    guestCount: 4,
+    partySize: 4,
     channel: "online",
   },
   {
@@ -118,7 +118,7 @@ export const sampleAppointments: Appointment[] = [
     date: daysFromNow(3, 14, 0),
     notes: "Awaiting menu approval.",
     bookingMode: "request",
-    guestCount: 6,
+    partySize: 6,
     channel: "online",
   },
 ];

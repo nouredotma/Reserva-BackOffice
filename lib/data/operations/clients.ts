@@ -55,7 +55,7 @@ export const sampleClients: Client[] = [
     nextAppointmentTime: "19:00",
     totalVisits: 12,
     status: "Active",
-    notes: "Regular terrace guest.",
+    notes: "Regular terrace client.",
   },
   {
     id: "4",

@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Trash2, Calendar, Download, Printer, Check } from 'lucide-react';
+import { Trash2, Download, Printer, Check } from 'lucide-react';
 import { CancelledAppointment, generateSampleCancelledAppointments } from '@/lib/mock-data';
 
-export default function CancelledAppointments() {
+export default function CancellationsPage() {
   const [appointments, setAppointments] = useState<CancelledAppointment[]>([]);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function CancelledAppointments() {
 
   const exportData = () => {
     const csvContent = [
-      ['Appointment with', 'Appointment date', 'Guest', 'Booked online', 'Created', 'Cancellation', 'Canceled by guest'].join(','),
+      ['Appointment with', 'Appointment date', 'Client', 'Booked online', 'Created', 'Cancellation', 'Canceled by client'].join(','),
       ...appointments.map(apt =>
         [
           apt.collaborator,
@@ -114,7 +114,7 @@ export default function CancelledAppointments() {
                   Appointment date
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Guest
+                  Client
                 </th>
                 <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Booked online
@@ -126,7 +126,7 @@ export default function CancelledAppointments() {
                   Cancellation
                 </th>
                 <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Canceled by guest
+                  Canceled by client
                 </th>
                 <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions

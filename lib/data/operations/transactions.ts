@@ -58,7 +58,7 @@ export const sampleTransactions: Transaction[] = [
     type: "Sale",
     amount: 620,
     method: "Cash",
-    client: "Walk-in guest",
+    client: "Walk-in client",
     employee: "Garden floor",
     date: daysAgo(4, 14, 20),
     note: "Lunch — terrace",
