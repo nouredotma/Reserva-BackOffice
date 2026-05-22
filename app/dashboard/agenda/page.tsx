@@ -81,22 +81,27 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
     }
   }, []);
 
-  const [clients] = useState<Client[]>(() => {
+  const [clients, setClients] = useState<Client[]>([]);
+
+  useEffect(() => {
     try {
-      if (typeof window === 'undefined') return [];
       const stored = localStorage.getItem('clients');
-      return stored ? (JSON.parse(stored) as Client[]) : sampleClients.map(client => ({
-        id: Number(client.id),
-        name: client.name,
-        email: client.email,
-        phone: client.phone,
-        status: client.status,
-        address: client.address
-      }));
+      if (stored) {
+        setClients(JSON.parse(stored) as Client[]);
+      } else {
+        setClients(sampleClients.map(client => ({
+          id: Number(client.id),
+          name: client.name,
+          email: client.email,
+          phone: client.phone,
+          status: client.status,
+          address: client.address
+        })));
+      }
     } catch {
-      return [];
+      setClients([]);
     }
-  });
+  }, []);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [clientSearch, setClientSearch] = useState('');
   const [isNewClient, setIsNewClient] = useState(false);
@@ -471,7 +476,9 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
       switch (status) {
         case 'confirmed': return 'bg-emerald-50 border-emerald-200 text-emerald-900';
         case 'pending': return 'bg-amber-50 border-amber-200 text-amber-900';
-        case 'cancelled': return 'bg-gray-50 border-gray-200 text-gray-500';
+        case 'completed': return 'bg-blue-50 border-blue-200 text-blue-900';
+        case 'cancelled': return 'bg-rose-50 border-rose-200 text-rose-900';
+        case 'no_show': return 'bg-purple-50 border-purple-200 text-purple-900';
         default: return 'bg-gray-50 border-gray-200 text-gray-900';
       }
     }
@@ -538,11 +545,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
 const AgendaPage = () => {
   const [view, setView] = useState('week'); // day, week, month
-  const [currentDate, setCurrentDate] = useState(() => {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
-    return date;
-  });
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [showNewRDV, setShowNewRDV] = useState(false);
   const [draggedEvent, setDraggedEvent] = useState<Appointment | null>(null);
   const [filterStatus, setFilterStatus] = useState('all');
@@ -556,6 +559,11 @@ const AgendaPage = () => {
   // Load settings and data on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      // Initialize currentDate
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      setCurrentDate(today);
+
       // Load employee agendas
       const storedAgendas = localStorage.getItem('employeeAgendas');
       if (storedAgendas) {
@@ -598,30 +606,27 @@ const AgendaPage = () => {
   }, []);
 
   // Sample appointments data - normalize dates and load from localStorage
-  const [appointments, setAppointments] = useState<Appointment[]>(() => {
-    // Try to load from localStorage first
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('appointments');
-      if (stored) {
-        try {
-          if (legacyAppointmentPattern.test(stored)) {
-            return sampleAppointments;
-          }
-          const parsed = JSON.parse(stored) as Array<Omit<Appointment, 'date'> & { date: string }>;
-          // Convert date strings back to Date objects
-          return parsed.map(apt => ({
-            ...apt,
-            date: new Date(apt.date)
-          }));
-        } catch (e) {
-          console.error('Error loading appointments:', e);
+  const [appointments, setAppointments] = useState<Appointment[]>(sampleAppointments);
+
+  // Hydrate appointments from localStorage after mount
+  useEffect(() => {
+    const stored = localStorage.getItem('appointments');
+    if (stored) {
+      try {
+        if (legacyAppointmentPattern.test(stored)) {
+          setAppointments(sampleAppointments);
+          return;
         }
+        const parsed = JSON.parse(stored) as Array<Omit<Appointment, 'date'> & { date: string }>;
+        setAppointments(parsed.map(apt => ({
+          ...apt,
+          date: new Date(apt.date)
+        })));
+      } catch (e) {
+        console.error('Error loading appointments:', e);
       }
     }
-
-    // Default appointments if nothing in localStorage
-    return sampleAppointments;
-  });
+  }, []);
 
   // Save appointments to localStorage whenever they change
   useEffect(() => {
@@ -634,14 +639,16 @@ const AgendaPage = () => {
 
   // Dispatch event when main calendar date changes to sync sidebar
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent('mainCalendarDateChange', { detail: currentDate }));
+    if (currentDate) {
+      window.dispatchEvent(new CustomEvent('mainCalendarDateChange', { detail: currentDate }));
+    }
   }, [currentDate]);
 
   const timeSlots = Array.from({ length: 15 }, (_, i) => `${(i + 9).toString().padStart(2, '0')}:00`);
 
   // Get week days - normalized
   const getWeekDays = () => {
-    const start = new Date(currentDate);
+    const start = new Date(currentDate!);
     const day = start.getDay();
     const diff = start.getDate() - day + (day === 0 ? -6 : 1);
     start.setDate(diff);
@@ -656,8 +663,8 @@ const AgendaPage = () => {
 
   // Get month days - normalized
   const getMonthDays = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+    const year = currentDate!.getFullYear();
+    const month = currentDate!.getMonth();
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
@@ -675,7 +682,7 @@ const AgendaPage = () => {
   };
 
   const navigateDate = (direction: number) => {
-    const newDate = new Date(currentDate);
+    const newDate = new Date(currentDate!);
     if (view === 'day') {
       newDate.setDate(newDate.getDate() + direction);
     } else if (view === 'week') {
@@ -728,6 +735,10 @@ const AgendaPage = () => {
     }
   }, []);
 
+  // Don't render until currentDate is initialized on the client
+  if (!currentDate) {
+    return <div className="min-h-screen p-0 md:p-0" />;
+  }
 
   return (
     <div suppressHydrationWarning className="min-h-screen p-0 md:p-0">
@@ -1023,9 +1034,11 @@ const AgendaPage = () => {
                   return aptDate.getTime() === compareDate.getTime() &&
                     (filterStatus === 'all' || apt.status === filterStatus);
                 });
-                const confirmedCount = dayAppointments.filter(apt => apt.status === 'confirmed').length;
                 const pendingCount = dayAppointments.filter(apt => apt.status === 'pending').length;
+                const confirmedCount = dayAppointments.filter(apt => apt.status === 'confirmed').length;
+                const completedCount = dayAppointments.filter(apt => apt.status === 'completed').length;
                 const cancelledCount = dayAppointments.filter(apt => apt.status === 'cancelled').length;
+                const noShowCount = dayAppointments.filter(apt => apt.status === 'no_show').length;
                 return (
                   <div
                     key={i}
@@ -1089,22 +1102,34 @@ const AgendaPage = () => {
                     {dayAppointments.length > 0 && (
                       <div className="mt-2 pt-2 border-t border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="flex items-center gap-2 text-[9px] font-medium">
-                          {confirmedCount > 0 && (
-                            <div className="flex items-center gap-1 text-emerald-600">
-                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                              <span>{confirmedCount}</span>
-                            </div>
-                          )}
                           {pendingCount > 0 && (
                             <div className="flex items-center gap-1 text-amber-600">
                               <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
                               <span>{pendingCount}</span>
                             </div>
                           )}
+                          {confirmedCount > 0 && (
+                            <div className="flex items-center gap-1 text-emerald-600">
+                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                              <span>{confirmedCount}</span>
+                            </div>
+                          )}
+                          {completedCount > 0 && (
+                            <div className="flex items-center gap-1 text-blue-600">
+                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                              <span>{completedCount}</span>
+                            </div>
+                          )}
                           {cancelledCount > 0 && (
-                            <div className="flex items-center gap-1 text-gray-500">
-                              <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
+                            <div className="flex items-center gap-1 text-red-600">
+                              <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
                               <span>{cancelledCount}</span>
+                            </div>
+                          )}
+                          {noShowCount > 0 && (
+                            <div className="flex items-center gap-1 text-purple-600">
+                              <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                              <span>{noShowCount}</span>
                             </div>
                           )}
                         </div>

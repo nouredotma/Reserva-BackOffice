@@ -236,10 +236,10 @@ const GestionHoraires = () => {
               {/* Time below title */}
               <div className="flex items-baseline gap-1 mt-2">
                 <span className="text-2xl font-light text-gray-900 tabular-nums tracking-tight">
-                  {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                  {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
                 </span>
                 <span className="text-xs text-gray-400 tabular-nums">
-                  :{currentTime.toLocaleTimeString('en-US', { second: '2-digit' })}
+                  :{currentTime.toLocaleTimeString('en-US', { second: '2-digit', hour12: false })}
                 </span>
               </div>
               {/* Month and year below time */}

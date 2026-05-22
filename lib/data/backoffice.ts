@@ -1,4 +1,4 @@
-﻿// Centralized sample records for the Reserva establishment back office.
+// Centralized sample records for the Reserva establishment back office.
 
 import type {
   Appointment,
@@ -135,7 +135,7 @@ export const sampleAppointments: Appointment[] = [
     service: 'Suite deluxe',
     time: '15:00',
     duration: 60,
-    status: 'confirmed',
+    status: 'completed',
     employee: 'Rooms & stays',
     phone: '+212 6 21 40 76 18',
     email: 'karim.alami@email.com',
@@ -174,7 +174,7 @@ export const sampleAppointments: Appointment[] = [
     service: 'Premium airport transfer',
     time: '09:30',
     duration: 75,
-    status: 'pending',
+    status: 'no_show',
     employee: 'Concierge desk',
     phone: '+212 6 33 29 41 88',
     email: 'nadia.elfassi@email.com',

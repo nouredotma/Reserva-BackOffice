@@ -15,17 +15,17 @@ const menuItems = [
 ];
 
 const AgendaSidebar = () => {
-	const [selectedDate, setSelectedDate] = useState(() => {
-		const date = new Date();
-		date.setHours(0, 0, 0, 0);
-		return date;
-	});
+	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 	const [statusFilter, setStatusFilter] = useState('all');
-	const [currentTime, setCurrentTime] = useState(() => new Date());
-	const monthYear = selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+	const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
 	useEffect(() => {
-		setCurrentTime(new Date());
+		const now = new Date();
+		setCurrentTime(now);
+
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		setSelectedDate(today);
 
 		// Listen for main calendar date changes
 		const handleMainCalendarDateChange = (event: CustomEvent) => {
@@ -44,6 +44,7 @@ const AgendaSidebar = () => {
 	}, []);
 
 	const getDaysInMonth = () => {
+		if (!selectedDate) return [];
 		const year = selectedDate.getFullYear();
 		const month = selectedDate.getMonth();
 		const firstDay = new Date(year, month, 1).getDay();
@@ -61,7 +62,7 @@ const AgendaSidebar = () => {
 	};
 
 	const handleDayClick = (day: number | null) => {
-		if (!day) return;
+		if (!day || !selectedDate) return;
 		const year = selectedDate.getFullYear();
 		const month = selectedDate.getMonth();
 		const newDate = new Date(year, month, day);
@@ -71,12 +72,25 @@ const AgendaSidebar = () => {
 	};
 
 	const changeMonth = (delta: number) => {
+		if (!selectedDate) return;
 		setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + delta, 1));
 	};
 
 	const goToToday = () => {
 		setSelectedDate(new Date());
 	};
+
+	// Don't render until client-side state is initialized
+	if (!selectedDate || !currentTime) {
+		return (
+			<>
+				<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6" />
+				<div className="px-6 pb-5 pt-4 border-t border-white/10" />
+			</>
+		);
+	}
+
+	const monthYear = selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
 	return (
 		<>
@@ -138,9 +152,11 @@ const AgendaSidebar = () => {
 						<div className="flex flex-wrap gap-2">
 							{[
 								{ value: 'all', label: 'All', color: 'gray' },
-								{ value: 'confirmed', label: 'Confirmed', color: 'green' },
 								{ value: 'pending', label: 'Pending', color: 'yellow' },
-								{ value: 'cancelled', label: 'Canceled', color: 'red' }
+								{ value: 'confirmed', label: 'Confirmed', color: 'green' },
+								{ value: 'completed', label: 'Completed', color: 'blue' },
+								{ value: 'cancelled', label: 'Cancelled', color: 'red' },
+								{ value: 'no_show', label: 'No Show', color: 'purple' }
 							].map((status) => (
 								<button
 									key={status.value}
@@ -150,13 +166,7 @@ const AgendaSidebar = () => {
 									}}
 									className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-200 cursor-pointer ${
 										statusFilter === status.value
-											? status.color === 'gray'
-												? 'bg-primary text-primary-foreground'
-												: status.color === 'green'
-												? 'bg-primary text-primary-foreground'
-												: status.color === 'yellow'
-												? 'bg-primary text-primary-foreground'
-												: 'bg-primary text-primary-foreground'
+											? 'bg-primary text-primary-foreground'
 											: 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
 									}`}
 								>
@@ -173,10 +183,10 @@ const AgendaSidebar = () => {
 					<Clock size={15} className="text-primary" />
 					<div className="flex items-baseline gap-1">
 						<span className="text-2xl font-medium text-white tabular-nums tracking-tight">
-							{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+							{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
 						</span>
 						<span className="text-xs font-medium text-white/60 tabular-nums">
-							:{currentTime.toLocaleTimeString('en-US', { second: '2-digit' })}
+							:{currentTime.toLocaleTimeString('en-US', { second: '2-digit', hour12: false })}
 						</span>
 					</div>
 				</div>
@@ -664,10 +674,10 @@ function DashboardSidebar() {
 									key={item.href}
 									href={item.href}
 									aria-current={isActive ? 'page' : undefined}
-									className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full text-sm font-semibold ${
+									className={`inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full text-sm font-semibold cursor-pointer ${
 										isActive
 											? 'bg-primary text-primary-foreground'
-											: 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+											: 'text-gray-600 hover:bg-white hover:text-gray-900'
 									}`}
 								>
 									<Icon size={18} strokeWidth={2.5} />
@@ -743,7 +753,7 @@ function DashboardSidebar() {
 						{mounted && (
 							<button
 								onClick={handleLogout}
-								className="p-2.5 rounded-full text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all ml-1"
+								className="p-2.5 rounded-full text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all ml-1 cursor-pointer"
 								title="Sign out"
 							>
 								<LogOut size={20} strokeWidth={2} />
