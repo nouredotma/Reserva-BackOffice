@@ -80,7 +80,7 @@ export default function AdminProfilePage() {
       </div>
 
       <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[360px_1fr]">
-        <div className="rounded-lg border border-gray-100 bg-white p-6">
+        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
           <div className="flex flex-col items-center text-center">
             <div className="relative mb-5 h-32 w-32 overflow-hidden rounded-full bg-gray-100">
               {avatarPreview ? (
@@ -107,7 +107,7 @@ export default function AdminProfilePage() {
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.label} className="flex items-center justify-between rounded-lg border border-gray-100 p-4">
+                <div key={item.label} className="flex items-center justify-between rounded-xl border-2 border-neutral-200 p-4">
                   <div className="flex items-center gap-3">
                     <Icon size={16} className="text-gray-500" />
                     <span className="text-sm text-gray-500">{item.label}</span>
@@ -120,9 +120,9 @@ export default function AdminProfilePage() {
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-lg border border-gray-100 bg-white p-6">
+          <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <User size={18} className="text-gray-500" />
               </div>
               <div>
@@ -163,9 +163,9 @@ export default function AdminProfilePage() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-100 bg-white p-6">
+          <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <KeyRound size={18} className="text-gray-500" />
               </div>
               <div>

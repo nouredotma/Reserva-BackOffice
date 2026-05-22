@@ -163,7 +163,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
   return (
   <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-    <div className="bg-white rounded-lg  max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+    <div className="bg-white rounded-xl border-2 border-neutral-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
       {/* Header */}
       <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 z-40">
         <div className="flex items-center justify-between">
@@ -197,7 +197,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
               {/* Dropdown with filtered clients */}
               {clientSearch && !selectedClient && (
-                <div className="absolute z-30 w-full mt-1 bg-white border border-gray-200 rounded-lg  max-h-60 overflow-y-auto">
+                <div className="absolute z-30 w-full mt-1 bg-white border-2 border-neutral-200 rounded-xl  max-h-60 overflow-y-auto">
                   {filteredClients.length > 0 ? (
                     <div className="py-2">
                       {filteredClients.map((client) => (
@@ -246,7 +246,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
           {/* Show selected client info or manual entry */}
           {selectedClient ? (
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="p-4 bg-gray-50 rounded-xl border-2 border-neutral-200">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center">
@@ -397,7 +397,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
         <div className="space-y-4">
           <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Resource</h3>
           <Select value={employee} onValueChange={setEmployee}>
-            <SelectTrigger className="rounded-full px-4 py-2 border-gray-200 focus:ring-2 focus:ring-gray-900">
+            <SelectTrigger className="rounded-full px-4 py-2 border-neutral-200 focus:ring-2 focus:ring-gray-900">
               <SelectValue placeholder="Select une ressource" />
             </SelectTrigger>
             <SelectContent>
@@ -418,7 +418,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Add des notes..."
-            className="rounded-lg px-4 py-2 border-gray-200 focus:ring-2 focus:ring-gray-900"
+            className="rounded-xl px-4 py-2 border-neutral-200 focus:ring-2 focus:ring-gray-900"
           />
         </div>
       </div>
@@ -478,7 +478,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         case 'completed': return 'bg-blue-50 border-blue-200 text-blue-900';
         case 'cancelled': return 'bg-rose-50 border-rose-200 text-rose-900';
         case 'no_show': return 'bg-purple-50 border-purple-200 text-purple-900';
-        default: return 'bg-gray-50 border-gray-200 text-gray-900';
+        default: return 'bg-gray-50 border-neutral-200 text-gray-900';
       }
     }
 
@@ -518,7 +518,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         }
       }}
       onDragStart={(e) => onDragStart && onDragStart(e, apt)}
-      className={`${getStatusBg(apt.status)} rounded-lg p-3 cursor-pointer transition-all border ${
+      className={`${getStatusBg(apt.status)} rounded-xl p-3 cursor-pointer transition-all border ${
         isCompact ? 'text-xs' : 'text-sm'
       }`}
       style={showColorInRDV ? getLightColorStyle(color) : {}}
@@ -572,7 +572,7 @@ function BookingDetailModal({
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-lg rounded-xl border-2 border-neutral-200 bg-white p-6 shadow-xl">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-gray-400">
@@ -628,7 +628,7 @@ function BookingDetailModal({
             {appointment.channel ? ` · ${appointment.channel === 'online' ? 'Online' : 'Direct'}` : ''}
           </div>
           {appointment.notes && (
-            <p className="rounded-lg bg-gray-50 p-3 text-gray-600">{appointment.notes}</p>
+            <p className="rounded-xl bg-gray-50 p-3 text-gray-600">{appointment.notes}</p>
           )}
         </div>
 
@@ -636,7 +636,7 @@ function BookingDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-full border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="flex-1 rounded-full border-2 border-neutral-200 bg-white py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
           >
             Close
           </button>
@@ -977,7 +977,7 @@ const AgendaPage = () => {
       {/* Calendar Views */}
       <div key={refreshKey} className=" overflow-hidden animate-fadeIn">
         {view === 'week' && (
-          <div className="overflow-x-auto bg-white rounded-lg border border-gray-100 ">
+          <div className="overflow-x-auto bg-white rounded-xl border-2 border-neutral-200 ">
             <div className="min-w-[1000px]">
               {/* Header */}
               <div className="grid grid-cols-8 border-b border-gray-100">
@@ -1016,7 +1016,7 @@ const AgendaPage = () => {
                     >
                       <button
                         onClick={() => setShowNewRDV(true)}
-                        className="absolute bottom-1 right-1 w-5 h-5 rounded-md bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 flex items-center justify-center opacity-0 group-hover/cell:opacity-100 transition-all z-10"
+                        className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 flex items-center justify-center opacity-0 group-hover/cell:opacity-100 transition-all z-10"
                       >
                         <Plus size={12} />
                       </button>
@@ -1065,13 +1065,13 @@ const AgendaPage = () => {
               {timeSlots.map((time) => (
                 <div
                   key={time}
-                  className="grid bg-white grid-cols-12 gap-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50/50 transition-colors group/time relative"
+                  className="grid bg-white grid-cols-12 gap-4 p-4 border-2 border-neutral-200 rounded-xl hover:bg-gray-50/50 transition-colors group/time relative"
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, time, currentDate)}
                 >
                   <button
                     onClick={() => setShowNewRDV(true)}
-                    className="absolute right-3 top-3 w-6 h-6 rounded-md bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 flex items-center justify-center opacity-0 group-hover/time:opacity-100 transition-all z-10"
+                    className="absolute right-3 top-3 w-6 h-6 rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 flex items-center justify-center opacity-0 group-hover/time:opacity-100 transition-all z-10"
                   >
                     <Plus size={14} />
                   </button>
@@ -1117,7 +1117,7 @@ const AgendaPage = () => {
         )}
 
         {view === 'month' && (
-          <div className="bg-white rounded-lg border border-gray-100  overflow-hidden">
+          <div className="bg-white rounded-xl border-2 border-neutral-200  overflow-hidden">
             {/* Month Header */}
             <div className="grid grid-cols-7 border-b border-gray-100">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
@@ -1162,7 +1162,7 @@ const AgendaPage = () => {
                   >
                     <button
                       onClick={() => setShowNewRDV(true)}
-                      className="absolute bottom-2 right-2 w-5 h-5 rounded-md bg-white border border-gray-200 text-gray-400 hover:bg-gray-50 hover:text-gray-600 hover:border-gray-300 flex items-center justify-center opacity-0 group-hover/date:opacity-100 transition-all z-20 "
+                      className="absolute bottom-2 right-2 w-5 h-5 rounded-full bg-white border-2 border-neutral-200 text-gray-400 hover:bg-gray-50 hover:text-gray-600 hover:border-neutral-300 flex items-center justify-center opacity-0 group-hover/date:opacity-100 transition-all z-20 "
                     >
                       <Plus size={12} />
                     </button>

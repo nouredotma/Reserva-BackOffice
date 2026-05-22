@@ -77,12 +77,12 @@ export default function InvoicesPage() {
         </div>
 
         <div className="mb-8 grid gap-4 md:grid-cols-3 animate-fadeIn">
-          <div className="group rounded-lg border border-gray-100 bg-white p-6 transition-all">
+          <div className="group rounded-xl border-2 border-neutral-200 bg-white p-6 transition-all">
             <div className="mb-6 flex items-start justify-between">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <FileText size={20} className="text-gray-400" />
               </div>
-              <div className="flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-1 text-emerald-600">
+              <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-emerald-600">
                 <TrendingUp size={12} />
                 <span className="text-[10px] font-medium">+2%</span>
               </div>
@@ -90,12 +90,12 @@ export default function InvoicesPage() {
             <p className="mb-1 text-xs font-medium text-gray-500">Total invoices</p>
             <p className="text-3xl font-light text-gray-900">{invoices.length}</p>
           </div>
-          <div className="group rounded-lg border border-gray-100 bg-white p-6 transition-all">
+          <div className="group rounded-xl border-2 border-neutral-200 bg-white p-6 transition-all">
             <div className="mb-6 flex items-start justify-between">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <Calendar size={20} className="text-gray-400" />
               </div>
-              <div className="flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-1 text-emerald-600">
+              <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-emerald-600">
                 <TrendingUp size={12} />
                 <span className="text-[10px] font-medium">+1%</span>
               </div>
@@ -103,12 +103,12 @@ export default function InvoicesPage() {
             <p className="mb-1 text-xs font-medium text-gray-500">Paid invoices</p>
             <p className="text-3xl font-light text-gray-900">{paidCount}/{invoices.length}</p>
           </div>
-          <div className="group rounded-lg border border-gray-100 bg-white p-6 transition-all">
+          <div className="group rounded-xl border-2 border-neutral-200 bg-white p-6 transition-all">
             <div className="mb-6 flex items-start justify-between">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <FileText size={20} className="text-gray-400" />
               </div>
-              <div className="flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-1 text-emerald-600">
+              <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-emerald-600">
                 <TrendingUp size={12} />
                 <span className="text-[10px] font-medium">+0%</span>
               </div>
@@ -128,8 +128,8 @@ export default function InvoicesPage() {
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                className={`rounded-full px-4 py-2 text-sm capitalize transition-all ${
-                  filterStatus === status ? 'bg-primary text-primary-foreground' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                className={`rounded-full border-2 px-4 py-2 text-sm capitalize transition-all ${
+                  filterStatus === status ? 'border-primary bg-primary text-primary-foreground' : 'border-neutral-200 bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
                 {status}
@@ -139,7 +139,7 @@ export default function InvoicesPage() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-gray-100 bg-white animate-slideUp">
+      <div className="overflow-hidden rounded-xl border-2 border-neutral-200 bg-white animate-slideUp">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="border-b border-gray-100 bg-gray-50">

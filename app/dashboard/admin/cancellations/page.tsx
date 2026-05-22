@@ -93,7 +93,7 @@ export default function CancellationsPage() {
               <Printer size={16} />
               Print
             </button>
-            <button className="flex items-center px-4 gap-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition-colors">
+            <button className="flex items-center px-4 gap-2 py-2 text-sm font-medium text-gray-700 bg-white border-2 border-neutral-200 rounded-full hover:bg-gray-50 transition-colors">
               <Trash2 size={16} />
               Vider la corbeille
             </button>
@@ -102,7 +102,7 @@ export default function CancellationsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-gray-100 overflow-hidden animate-slideUp">
+      <div className="bg-white rounded-xl border-2 border-neutral-200 overflow-hidden animate-slideUp">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-100">

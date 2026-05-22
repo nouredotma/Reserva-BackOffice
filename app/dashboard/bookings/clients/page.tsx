@@ -87,7 +87,7 @@ export default function ClientsPage() {
           <button
             type="button"
             onClick={() => setDetailOpen(false)}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50"
+            className="mb-6 inline-flex items-center gap-2 rounded-full border-2 border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:border-neutral-300 hover:bg-gray-50"
           >
             <ArrowLeft size={16} />
             Back to clients
@@ -115,9 +115,9 @@ export default function ClientsPage() {
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-          <section className="rounded-lg border border-gray-100 bg-white p-6">
+          <section className="rounded-xl border-2 border-neutral-200 bg-white p-6">
             <div className="mb-6 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-50">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <Users size={18} className="text-gray-500" />
               </div>
               <div>
@@ -135,7 +135,7 @@ export default function ClientsPage() {
                 { label: 'Client ID', value: selectedClient.id },
                 { label: 'Address', value: selectedClient.address ?? '-' },
               ].map((item) => (
-                <div key={item.label} className="rounded-lg bg-gray-50 p-4">
+                <div key={item.label} className="rounded-xl bg-gray-50 p-4">
                   <p className="text-xs text-gray-400">{item.label}</p>
                   <p className="mt-1 text-sm font-medium text-gray-900">{item.value}</p>
                 </div>
@@ -143,14 +143,14 @@ export default function ClientsPage() {
             </div>
 
             {selectedClient.notes && (
-              <div className="mt-6 rounded-lg border border-gray-100 p-4">
+              <div className="mt-6 rounded-xl border-2 border-neutral-200 p-4">
                 <p className="mb-2 text-xs font-medium text-gray-500">Notes</p>
                 <p className="text-sm text-gray-700">{selectedClient.notes}</p>
               </div>
             )}
           </section>
 
-          <aside className="rounded-lg border border-gray-100 bg-white p-6">
+          <aside className="rounded-xl border-2 border-neutral-200 bg-white p-6">
             <h2 className="mb-5 text-xl font-light text-gray-900">Contact</h2>
             <div className="space-y-3 text-sm text-gray-700">
               <div className="flex items-center gap-2">
@@ -232,7 +232,7 @@ export default function ClientsPage() {
               placeholder="Search clients..."
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              className="w-full rounded-full border border-gray-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-gray-900"
+              className="w-full rounded-full border-2 border-neutral-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -240,8 +240,8 @@ export default function ClientsPage() {
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`rounded-full px-4 py-2 text-xs font-medium transition-all ${
-                  statusFilter === status ? 'bg-primary text-primary-foreground' : 'bg-white text-gray-600 hover:bg-gray-100'
+                className={`rounded-full border-2 px-4 py-2 text-xs font-medium transition-all ${
+                  statusFilter === status ? 'border-primary bg-primary text-primary-foreground' : 'border-neutral-200 bg-white text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 {status === 'all' ? 'All' : status}
@@ -252,21 +252,21 @@ export default function ClientsPage() {
       </div>
 
       <div className="mb-8 grid gap-4 md:grid-cols-3 animate-fadeIn">
-        <div className="rounded-lg border border-gray-100 bg-white p-6">
+        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
           <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
             <Users size={18} className="text-gray-400" />
           </div>
           <p className="mb-1 text-xs text-gray-400">Client profiles</p>
           <p className="text-3xl font-light text-gray-900">{clients.length}</p>
         </div>
-        <div className="rounded-lg border border-gray-100 bg-white p-6">
+        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
           <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
             <Merge size={18} className="text-gray-400" />
           </div>
           <p className="mb-1 text-xs text-gray-400">Detected duplicates</p>
           <p className="text-3xl font-light text-gray-900">{duplicates.length}</p>
         </div>
-        <div className="rounded-lg border border-gray-100 bg-white p-6">
+        <div className="rounded-xl border-2 border-neutral-200 bg-white p-6">
           <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
             <Calendar size={18} className="text-gray-400" />
           </div>
@@ -276,7 +276,7 @@ export default function ClientsPage() {
       </div>
 
       {viewMode === 'all' ? (
-        <div className="overflow-hidden rounded-lg border border-gray-100 bg-white animate-fadeIn">
+        <div className="overflow-hidden rounded-xl border-2 border-neutral-200 bg-white animate-fadeIn">
           <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
             <p className="text-sm font-medium text-gray-900">{filteredClients.length} profiles</p>
             <p className="text-xs text-gray-400">Click a row to open details</p>
@@ -353,7 +353,7 @@ export default function ClientsPage() {
                             event.stopPropagation();
                             deleteClient(client.id);
                           }}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-gray-400 transition-all hover:bg-red-50 hover:text-red-600"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-all hover:bg-red-50 hover:text-red-600"
                           aria-label={`Delete ${client.name}`}
                         >
                           <Trash2 size={14} />
@@ -367,7 +367,7 @@ export default function ClientsPage() {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-gray-100 bg-white animate-fadeIn">
+        <div className="overflow-hidden rounded-xl border-2 border-neutral-200 bg-white animate-fadeIn">
           <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
             <p className="text-sm font-medium text-gray-900">{filteredDuplicates.length} duplicate groups</p>
             <p className="text-xs text-gray-400">Review and merge duplicate profiles</p>

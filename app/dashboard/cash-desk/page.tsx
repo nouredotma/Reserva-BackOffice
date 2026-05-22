@@ -178,42 +178,42 @@ export default function CashDeskPage({
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Sales</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalSales} MAD</p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Cash</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalCash} MAD</p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <CreditCard className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Card</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalCard} MAD</p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <RefreshCcw className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Refunds</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalRefunds} MAD</p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Deposits</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalDeposits} MAD</p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Withdrawals</span>
@@ -232,7 +232,7 @@ export default function CashDeskPage({
               placeholder="Search une transaction..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-full bg-white border border-gray-200 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
+              className="w-full pl-12 pr-4 py-3 rounded-full bg-white border-2 border-neutral-200 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
             />
           </div>
           <button
@@ -269,13 +269,13 @@ export default function CashDeskPage({
       {/* Analytics Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 animate-fadeIn">
         {/* Daily Summary */}
-        <div className="lg:col-span-2 bg-white rounded-lg border border-gray-100 p-6">
+        <div className="lg:col-span-2 bg-white rounded-xl border-2 border-neutral-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-medium text-gray-900">Daily summary</h3>
             <Calendar className="text-gray-400" size={18} />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-4">
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <ArrowUpRight className="text-emerald-600" size={16} />
                 <span className="text-xs text-emerald-700 font-medium">Inflow</span>
@@ -283,7 +283,7 @@ export default function CashDeskPage({
               <p className="text-2xl font-light text-emerald-900">{totalSales + totalDeposits} MAD</p>
               <p className="text-xs text-emerald-600 mt-1">{transactions.filter(t => t.amount > 0).length} transactions</p>
             </div>
-            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-4">
+            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
                 <ArrowDownRight className="text-red-600" size={16} />
                 <span className="text-xs text-red-700 font-medium">Outflow</span>
@@ -303,7 +303,7 @@ export default function CashDeskPage({
         </div>
 
         {/* Payment Methods Distribution */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-medium text-gray-900">Payment breakdown</h3>
             <Wallet className="text-gray-400" size={18} />
@@ -352,7 +352,7 @@ export default function CashDeskPage({
       </div>
 
       {/* Transactions Table */}
-      <div className="bg-white rounded-lg border border-gray-100 overflow-hidden animate-fadeIn">
+      <div className="bg-white rounded-xl border-2 border-neutral-200 overflow-hidden animate-fadeIn">
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="text-sm font-medium text-gray-900">All transactions</h3>
         </div>
@@ -411,7 +411,7 @@ export default function CashDeskPage({
       {/* Modal Add Transaction */}
       {showModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-lg  max-w-lg w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+          <div className="bg-white rounded-xl border-2 border-neutral-200 max-w-lg w-full max-h-[90vh] overflow-y-auto animate-slideUp">
             <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 flex items-center justify-between">
               <h2 className="text-2xl font-light text-gray-900">New transaction</h2>
               <button onClick={() => setShowModal(false)} className="p-2 text-gray-400 hover:text-gray-900 transition-colors">
@@ -424,7 +424,7 @@ export default function CashDeskPage({
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                     <Select value={formData.type} onValueChange={v => setFormData({ ...formData, type: v as any })}>
-                      <SelectTrigger className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm mt-2">
+                      <SelectTrigger className="w-full px-4 py-2.5 rounded-full bg-gray-50 border-2 border-neutral-200 text-sm mt-2">
                         <SelectValue placeholder="Select le type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -450,7 +450,7 @@ export default function CashDeskPage({
                         type="number"
                         value={formData.amount}
                         onChange={e => setFormData({ ...formData, amount: Number(e.target.value) })}
-                        className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm text-center no-arrows"
+                        className="w-full px-4 py-2.5 rounded-full bg-gray-50 border-2 border-neutral-200 text-sm text-center no-arrows"
                         required
                         placeholder="Amount en MAD"
                         min={0}
@@ -468,7 +468,7 @@ export default function CashDeskPage({
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Method</label>
                     <Select value={formData.method} onValueChange={v => setFormData({ ...formData, method: v as any })}>
-                      <SelectTrigger className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm mt-2">
+                      <SelectTrigger className="w-full px-4 py-2.5 rounded-full bg-gray-50 border-2 border-neutral-200 text-sm mt-2">
                         <SelectValue placeholder="Select method" />
                       </SelectTrigger>
                       <SelectContent>
@@ -481,15 +481,15 @@ export default function CashDeskPage({
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
-                    <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Client name" />
+                    <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border-2 border-neutral-200 text-sm" placeholder="Client name" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Resource</label>
-                    <input type="text" value={formData.employee} onChange={e => setFormData({ ...formData, employee: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Resource name" />
+                    <input type="text" value={formData.employee} onChange={e => setFormData({ ...formData, employee: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border-2 border-neutral-200 text-sm" placeholder="Resource name" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
-                    <input type="text" value={formData.note} onChange={e => setFormData({ ...formData, note: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm" placeholder="Add a note (optional)" />
+                    <input type="text" value={formData.note} onChange={e => setFormData({ ...formData, note: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border-2 border-neutral-200 text-sm" placeholder="Add a note (optional)" />
                   </div>
                 </div>
               </div>

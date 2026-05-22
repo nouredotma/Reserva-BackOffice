@@ -235,7 +235,7 @@ const StatistiquesPage = () => {
             <div className="flex items-center gap-2">
               <Filter size={14} className="text-gray-400" />
               <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-                <SelectTrigger className="w-[200px] rounded-full border-gray-200 text-sm">
+                <SelectTrigger className="w-[200px] rounded-full border-neutral-200 text-sm">
                   <SelectValue placeholder="All resources" />
                 </SelectTrigger>
                 <SelectContent>
@@ -250,7 +250,7 @@ const StatistiquesPage = () => {
             </div>
 
             <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="w-[160px] rounded-full border-gray-200 text-sm">
+              <SelectTrigger className="w-[160px] rounded-full border-neutral-200 text-sm">
                 <SelectValue placeholder="All hours" />
               </SelectTrigger>
               <SelectContent>
@@ -266,12 +266,12 @@ const StatistiquesPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <TrendingUp size={20} className="text-gray-400" />
             </div>
-            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
               <TrendingUp size={12} />
               <span className="text-[10px] font-medium">Moyenne</span>
             </div>
@@ -282,12 +282,12 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <Activity size={20} className="text-gray-400" />
             </div>
-            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
               <TrendingUp size={12} />
               <span className="text-[10px] font-medium">Pic</span>
             </div>
@@ -298,12 +298,12 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <Calendar size={20} className="text-gray-400" />
             </div>
-            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
               <TrendingUp size={12} />
               <span className="text-[10px] font-medium">Day Pic</span>
             </div>
@@ -314,12 +314,12 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 p-6  transition-all group">
+        <div className="bg-white rounded-xl border-2 border-neutral-200 p-6  transition-all group">
           <div className="flex items-start justify-between mb-6">
             <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
               <BarChart3 size={20} className="text-gray-400" />
             </div>
-            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
               <TrendingUp size={12} />
               <span className="text-[10px] font-medium">Time Pic</span>
             </div>
@@ -332,7 +332,7 @@ const StatistiquesPage = () => {
       </div>
 
       {/* Heatmap */}
-      <div className="bg-white rounded-lg border border-gray-100  overflow-hidden animate-slideUp">
+      <div className="bg-white rounded-xl border-2 border-neutral-200  overflow-hidden animate-slideUp">
         {/* Title Bar */}
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="text-sm font-medium text-gray-900">
@@ -373,7 +373,7 @@ const StatistiquesPage = () => {
                         onDrop={() => handleDrop(day, time)}
                         className={`
                           ${getColorClass(value)}
-                          rounded-lg p-4 text-center font-medium text-sm
+                          rounded-xl p-4 text-center font-medium text-sm
                           cursor-move
                           transition-all duration-200
                           flex items-center justify-center
