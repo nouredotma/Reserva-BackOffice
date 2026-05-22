@@ -80,8 +80,8 @@ const AgendaSidebar = () => {
 	if (!selectedDate || !currentTime) {
 		return (
 			<>
-				<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6" />
-				<div className="px-6 pb-5 pt-4 border-t border-white/10" />
+				<div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6" />
+				<div className="px-4 pb-5 pt-4 border-t border-white/10" />
 			</>
 		);
 	}
@@ -90,7 +90,7 @@ const AgendaSidebar = () => {
 
 	return (
 		<>
-			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6" suppressHydrationWarning>
+			<div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6" suppressHydrationWarning>
 				<div className="space-y-6">
 					<div className="bg-transparent">
 						<div className="flex items-center justify-between mb-4">
@@ -174,7 +174,7 @@ const AgendaSidebar = () => {
 				</div>
 			</div>
 
-			<div className="px-6 pb-5 pt-4 border-t border-white/10">
+			<div className="px-4 pb-5 pt-4 border-t border-white/10">
 				<div className="flex items-center justify-center gap-2 text-center">
 					<Clock size={15} className="text-primary" />
 					<div className="flex items-baseline gap-1">
@@ -200,7 +200,7 @@ const ClientsSidebar = () => {
 		}`;
 
 	return (
-		<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
+		<div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6">
 			<div className="space-y-3">
 				<Link href="/dashboard/clients/guests" className={linkClass(pathname === '/dashboard/clients/guests')}>
 					<FileText size={14} />
@@ -224,7 +224,7 @@ const AdminSidebar = () => {
 		}`;
 
 	return (
-		<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
+		<div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6">
 			<div className="space-y-3">
 				<Link href="/dashboard/admin" className={linkClass(pathname === '/dashboard/admin')}>
 					<BarChart3 size={14} />
@@ -275,7 +275,7 @@ const CashDeskSidebar = ({
   setSelectedPeriod: (v: string) => void;
 }) => {
   return (
-    <div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
+    <div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6">
       <div className="space-y-6">
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-white/60 flex items-center gap-2">
@@ -505,7 +505,7 @@ function DashboardSidebar() {
 
 			{/* Sidebar */}
 			<aside className="fixed left-0 top-0 w-66 bg-[#0a0a0a] h-screen flex flex-col border-r border-white/10 z-50">
-				<div className="p-6 pb-4">
+				<div className="px-4 pb-4 pt-6">
 					<div className="flex items-center justify-center w-full">
 						<img src="/logo.png" alt="Reserva" className="h-9 w-auto object-contain brightness-0 invert" />
 					</div>

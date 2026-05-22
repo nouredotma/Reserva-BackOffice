@@ -3,6 +3,7 @@
 import { useMemo, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import {
   Building2,
+  Check,
   CheckCircle2,
   FileImage,
   Globe2,
@@ -17,7 +18,6 @@ import {
   Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -390,21 +390,36 @@ export default function EstablishmentManagementPage() {
             <div className="mt-6">
               <label className="mb-3 block text-sm font-medium text-gray-700">Subcategories</label>
               <div className="grid gap-3 md:grid-cols-2">
-                {availableSubcategories.map((subcategory) => (
-                  <button
-                    key={subcategory}
-                    type="button"
-                    onClick={() => toggleSubcategory(subcategory)}
-                    className={`flex items-center gap-3 rounded-lg border p-3 text-left text-sm transition-all ${
-                      form.subcategoryValues.includes(subcategory)
+                {availableSubcategories.map((subcategory) => {
+                  const selected = form.subcategoryValues.includes(subcategory);
+
+                  return (
+                    <label
+                      key={subcategory}
+                      className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 text-left text-sm transition-all ${
+                        selected
                         ? 'border-primary bg-primary/10 text-gray-900'
                         : 'border-gray-100 text-gray-600 hover:border-gray-200'
-                    }`}
-                  >
-                    <Checkbox checked={form.subcategoryValues.includes(subcategory)} onCheckedChange={() => undefined} />
-                    {subcategory}
-                  </button>
-                ))}
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => toggleSubcategory(subcategory)}
+                        className="sr-only"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                          selected ? 'border-primary bg-primary text-primary-foreground' : 'border-gray-300 bg-white'
+                        }`}
+                      >
+                        {selected ? <Check size={12} strokeWidth={3} /> : null}
+                      </span>
+                      <span>{subcategory}</span>
+                    </label>
+                  );
+                })}
               </div>
             </div>
 
