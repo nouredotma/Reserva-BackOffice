@@ -219,7 +219,7 @@ export default function GuestsPage() {
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-900">{duplicate.name}</h3>
-                    <p className="mt-1 text-sm text-gray-500">{duplicate.email} â?¬â?? {duplicate.phone}</p>
+                    <p className="mt-1 text-sm text-gray-500">{duplicate.email} â€” {duplicate.phone}</p>
                   </div>
                 </div>
                 <button
