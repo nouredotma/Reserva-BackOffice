@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 
 export default function ClientsPage() {
   const router = useRouter();
-  
+
   useEffect(() => {
-    router.replace('/dashboard/clients/fichier-client/gestion');
+    router.replace('/dashboard/clients/guest-files/management');
   }, [router]);
 
   return null;

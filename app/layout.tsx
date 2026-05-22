@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: "Reserva Backoffice",
     template: "%s | Reserva Backoffice",
   },
-  description: "Back office Reserva pour la gestion des reservations, clients, paiements et operations.",
+  description: "Reserva back office for managing reservations, guests, payments, and operations.",
   icons: {
     icon: "/icon.png",
     shortcut: "/favicon.ico",
@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" data-scroll-behavior="smooth">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className={`${figtree.variable} font-sans antialiased`}>
         <AuthProvider>{children}</AuthProvider>
       </body>

@@ -8,14 +8,13 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 
 const menuItems = [
-	{ name: 'Agenda', href: '/dashboard/rendez-vous', icon: Home },
-	{ name: 'Clients', href: '/dashboard/clients/fichier-client/gestion', icon: Users },
-	{ name: 'Caisse', href: '/dashboard/caisse', icon: CreditCard },
-	{ name: 'Admin', href: '/dashboard/admin/param-agenda/gestion-de-prestations', icon: Settings2 },
+	{ name: 'Agenda', href: '/dashboard/agenda', icon: Home },
+	{ name: 'Clients', href: '/dashboard/clients/guest-files/management', icon: Users },
+	{ name: 'Cash Desk', href: '/dashboard/cash-desk', icon: CreditCard },
+	{ name: 'Admin', href: '/dashboard/admin/agenda-settings/services', icon: Settings2 },
 ];
 
-// Sidebar content components remain the same
-const RendezVousSidebar = () => {
+const AgendaSidebar = () => {
 	const [mounted, setMounted] = useState(false);
 	const [selectedDate, setSelectedDate] = useState(() => {
 		const date = new Date();
@@ -24,25 +23,31 @@ const RendezVousSidebar = () => {
 	});
 	const [statusFilter, setStatusFilter] = useState('all');
 	const [monthYear, setMonthYear] = useState('');
+	const [currentTime, setCurrentTime] = useState(() => new Date());
 
 	useEffect(() => {
 		setMounted(true);
+		setCurrentTime(new Date());
 
 		// Listen for main calendar date changes
 		const handleMainCalendarDateChange = (event: CustomEvent) => {
 			setSelectedDate(new Date(event.detail));
 		};
+		const timer = window.setInterval(() => {
+			setCurrentTime(new Date());
+		}, 1000);
 
 		window.addEventListener('mainCalendarDateChange', handleMainCalendarDateChange as EventListener);
 
 		return () => {
+			window.clearInterval(timer);
 			window.removeEventListener('mainCalendarDateChange', handleMainCalendarDateChange as EventListener);
 		};
 	}, []);
 
 	useEffect(() => {
 		if (mounted) {
-			setMonthYear(selectedDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }));
+			setMonthYear(selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
 		}
 	}, [selectedDate, mounted]);
 
@@ -83,7 +88,7 @@ const RendezVousSidebar = () => {
 
 	if (!mounted) {
 		return (
-			<div className="flex-1 overflow-y-auto p-4">
+			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-4">
 				<div className="space-y-4">
 					<div className="animate-pulse bg-gray-200 h-64 rounded-xl"></div>
 				</div>
@@ -92,121 +97,129 @@ const RendezVousSidebar = () => {
 	}
 
 	return (
-		<div className="flex-1 overflow-y-auto p-6">
-			<div className="space-y-6">
-				<div className="bg-transparent">
-					<div className="flex items-center justify-between mb-4">
-						<button
-							onClick={() => changeMonth(-1)}
-							className="p-1 hover:bg-white/10 rounded transition-all"
-						>
-							<ChevronDown size={16} className="rotate-90 text-zinc-400" />
-						</button>
-						<h3 className="text-sm font-semibold text-white">
-							{monthYear}
-						</h3>
-						<button
-							onClick={() => changeMonth(1)}
-							className="p-1 hover:bg-white/10 rounded transition-all"
-						>
-							<ChevronDown size={16} className="-rotate-90 text-zinc-400" />
-						</button>
-					</div>
-					<div className="grid grid-cols-7 gap-1 mb-2">
-						{['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, i) => (
-							<div key={i} className="text-center text-xs font-medium text-zinc-500 py-1">
-								{day}
-							</div>
-						))}
-					</div>
-					<div className="grid grid-cols-7 gap-1">
-						{getDaysInMonth().map((day, i) => {
-							const isSelected = day === selectedDate.getDate();
+		<>
+			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
+				<div className="space-y-6">
+					<div className="bg-transparent">
+						<div className="flex items-center justify-between mb-4">
+							<button
+								onClick={() => changeMonth(-1)}
+								className="p-1 rounded-full hover:bg-white/10 transition-all cursor-pointer"
+							>
+								<ChevronDown size={16} className="rotate-90 text-white/70" />
+							</button>
+							<h3 className="text-sm font-medium text-white">
+								{monthYear}
+							</h3>
+							<button
+								onClick={() => changeMonth(1)}
+								className="p-1 rounded-full hover:bg-white/10 transition-all cursor-pointer"
+							>
+								<ChevronDown size={16} className="-rotate-90 text-white/70" />
+							</button>
+						</div>
+						<div className="grid grid-cols-7 gap-1 mb-2">
+							{['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, i) => (
+								<div key={i} className="text-center text-xs font-medium text-white/50 py-1">
+									{day}
+								</div>
+							))}
+						</div>
+						<div className="grid grid-cols-7 gap-1">
+							{getDaysInMonth().map((day, i) => {
+								const isSelected = day === selectedDate.getDate();
 
-							return day ? (
+								return day ? (
+									<button
+										key={i}
+										onClick={() => handleDayClick(day)}
+										className={`aspect-square rounded-full text-xs font-medium transition-all cursor-pointer ${
+											isSelected
+												? 'bg-primary text-primary-foreground'
+												: 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
+										}`}
+									>
+										{day}
+									</button>
+								) : (
+									<div key={i} className="aspect-square"></div>
+								);
+							})}
+						</div>
+					</div>
+
+					<div className="space-y-3">
+						<h3 className="text-xs font-medium text-white/60 flex items-center gap-2">
+							<Filter size={14} />
+							Status
+						</h3>
+						<div className="flex flex-wrap gap-2">
+							{[
+								{ value: 'all', label: 'All', color: 'gray' },
+								{ value: 'confirmed', label: 'Confirmed', color: 'green' },
+								{ value: 'pending', label: 'Pending', color: 'yellow' },
+								{ value: 'cancelled', label: 'Canceled', color: 'red' }
+							].map((status) => (
 								<button
-									key={i}
-									onClick={() => handleDayClick(day)}
-									className={`aspect-square rounded-md text-xs font-medium transition-all ${
-										isSelected
-											? 'bg-primary text-primary-foreground'
-											: 'text-zinc-300 hover:bg-white/10'
+									key={status.value}
+									onClick={() => {
+										setStatusFilter(status.value);
+										window.dispatchEvent(new CustomEvent('statusFilterChange', { detail: status.value }));
+									}}
+									className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors duration-200 cursor-pointer ${
+										statusFilter === status.value
+											? status.color === 'gray'
+												? 'bg-primary text-primary-foreground'
+												: status.color === 'green'
+												? 'bg-primary text-primary-foreground'
+												: status.color === 'yellow'
+												? 'bg-primary text-primary-foreground'
+												: 'bg-primary text-primary-foreground'
+											: 'bg-white/5 text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
 									}`}
 								>
-									{day}
+									{status.label}
 								</button>
-							) : (
-								<div key={i} className="aspect-square"></div>
-							);
-						})}
-					</div>
-				</div>
-
-
-				<div className="space-y-3">
-					<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2">
-						<Filter size={14} />
-						Statut
-					</h3>
-					<div className="flex flex-wrap gap-2">
-						{[
-							{ value: 'all', label: 'Tous', color: 'gray' },
-							{ value: 'confirmed', label: 'Confirmé', color: 'green' },
-							{ value: 'pending', label: 'En attente', color: 'yellow' },
-							{ value: 'cancelled', label: 'Annulé', color: 'red' }
-						].map((status) => (
-							<button
-								key={status.value}
-								onClick={() => {
-									setStatusFilter(status.value);
-									// Dispatch event for the rendez-vous page to listen to
-									window.dispatchEvent(new CustomEvent('statusFilterChange', { detail: status.value }));
-								}}
-								className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors duration-200 ${
-									statusFilter === status.value
-										? status.color === 'gray'
-											? 'bg-primary text-primary-foreground'
-											: status.color === 'green'
-											? 'bg-primary text-primary-foreground'
-											: status.color === 'yellow'
-											? 'bg-primary text-primary-foreground'
-											: 'bg-primary text-primary-foreground'
-										: 'bg-white/5 text-zinc-300 hover:bg-white/10'
-								}`}
-							>
-								{status.label}
-							</button>
-						))}
+							))}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+
+			<div className="px-6 pb-5 pt-4 border-t border-white/10">
+				<div className="flex items-center justify-center gap-2 text-center">
+					<Clock size={15} className="text-primary" />
+					<div className="flex items-baseline gap-1">
+						<span className="text-2xl font-medium text-white tabular-nums tracking-tight">
+							{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+						</span>
+						<span className="text-xs font-medium text-white/60 tabular-nums">
+							:{currentTime.toLocaleTimeString('en-US', { second: '2-digit' })}
+						</span>
+					</div>
+				</div>
+			</div>
+		</>
 	);
 };
 
 const ClientsSidebar = () => {
 	const [mounted, setMounted] = useState(false);
 	const [showFichierClient, setShowFichierClient] = useState(true);
-	const [showMesAvis, setShowMesAvis] = useState(false);
-	const [showStatistiquesClients, setShowStatistiquesClients] = useState(false);
+	const [showMesReviews, setShowMesReviews] = useState(false);
 	const pathname = usePathname();
 
 	const menuItems = {
 		fichier: [
-			{ label: 'Profils invités', path: '/dashboard/clients/fichier-client/gestion' },
-			{ label: 'Doublons invités', path: '/dashboard/clients/fichier-client/doublons' }
+			{ label: 'Guest profiles', path: '/dashboard/clients/guest-files/management' },
+			{ label: 'Duplicate guests', path: '/dashboard/clients/guest-files/duplicates' }
 		],
-		avis: [
-			{ label: 'Avis à modérer', path: '/dashboard/clients/mes-avis/avis-a-moderer' },
-			{ label: 'Avis publiés', path: '/dashboard/clients/mes-avis/avis-moderes' },
-			{ label: 'Avis masqués', path: '/dashboard/clients/mes-avis/avis-refuses' },
-			{ label: 'Règles de modération', path: '/dashboard/clients/mes-avis/regles-moderation' },
-			{ label: 'Statistiques avis', path: '/dashboard/clients/mes-avis/statistiques-avis' }
-		],
-		stats: [
-			{ label: 'Meilleurs invités', path: '/dashboard/clients/statistiques/meilleurs-clients' },
-			{ label: 'Nouveaux invités', path: '/dashboard/clients/statistiques/nouveaux-clients' },
-			{ label: 'Fréquences de réservation', path: '/dashboard/clients/statistiques/frequences-globales' }
+		reviews: [
+			{ label: 'Pending reviews', path: '/dashboard/clients/reviews/pending' },
+			{ label: 'Published reviews', path: '/dashboard/clients/reviews/published' },
+			{ label: 'Hidden reviews', path: '/dashboard/clients/reviews/hidden' },
+			{ label: 'Moderation rules', path: '/dashboard/clients/reviews/moderation-rules' },
+			{ label: 'Review statistics', path: '/dashboard/clients/reviews/statistics' }
 		]
 	};
 
@@ -216,7 +229,7 @@ const ClientsSidebar = () => {
 
 	if (!mounted) {
 		return (
-			<div className="flex-1 overflow-y-auto p-6">
+			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
 				<div className="space-y-6">
 					<div className="animate-pulse bg-gray-200 h-64 rounded-xl"></div>
 				</div>
@@ -225,19 +238,19 @@ const ClientsSidebar = () => {
 	}
 
 	return (
-		<div className="flex-1 overflow-y-auto p-6">
+		<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
 			<div className="space-y-6">
 				{/* Fichier Client */}
 				<div className="space-y-3">
 					<button
 						onClick={() => setShowFichierClient(!showFichierClient)}
-						className="w-full flex items-center justify-between group"
+						className="w-full flex items-center justify-between group cursor-pointer"
 					>
-						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
 							<FileText size={14} />
-							Profils invités
+							Guest profiles
 						</h3>
-						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showFichierClient ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showFichierClient ? 'rotate-180' : ''}`} />
 					</button>
 					{showFichierClient && (
 						<div className="space-y-1 animate-fadeIn">
@@ -245,8 +258,8 @@ const ClientsSidebar = () => {
 								<Link
 									key={item.path}
 									href={item.path}
-									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
+									className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
 									}`}
 								>
 									{item.label}
@@ -256,55 +269,26 @@ const ClientsSidebar = () => {
 					)}
 				</div>
 
-				{/* Mes Avis */}
+				{/* Reviews */}
 				<div className="space-y-3">
 					<button
-						onClick={() => setShowMesAvis(!showMesAvis)}
-						className="w-full flex items-center justify-between group"
+						onClick={() => setShowMesReviews(!showMesReviews)}
+						className="w-full flex items-center justify-between group cursor-pointer"
 					>
-						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
 							<UserCheck size={14} />
-							Mes Avis
+							Reviews
 						</h3>
-						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showMesAvis ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showMesReviews ? 'rotate-180' : ''}`} />
 					</button>
-					{showMesAvis && (
+					{showMesReviews && (
 						<div className="space-y-1 animate-fadeIn">
-							{menuItems.avis.map((item) => (
+							{menuItems.reviews.map((item) => (
 								<Link
 								key={item.path}
 									href={item.path}
-									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
-									}`}
-								>
-									{item.label}
-								</Link>
-							))}
-						</div>
-					)}
-				</div>
-
-				{/* Statistiques Clients */}
-				<div className="space-y-3">
-					<button
-						onClick={() => setShowStatistiquesClients(!showStatistiquesClients)}
-						className="w-full flex items-center justify-between group"
-					>
-						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
-							<TrendingUp size={14} />
-							Statistiques invités
-						</h3>
-						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showStatistiquesClients ? 'rotate-180' : ''}`} />
-					</button>
-					{showStatistiquesClients && (
-						<div className="space-y-1 animate-fadeIn">
-							{menuItems.stats.map((item) => (
-								<Link
-								key={item.path}
-									href={item.path}
-									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
+									className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
 									}`}
 								>
 									{item.label}
@@ -321,36 +305,36 @@ const ClientsSidebar = () => {
 const AdminSidebar = () => {
 	const [mounted, setMounted] = useState(false);
 	const [showParamAgenda, setShowParamAgenda] = useState(true);
-	const [showParamEtablissement, setShowParamEtablissement] = useState(false);
+	const [showEstablishmentSettings, setShowEstablishmentSettings] = useState(false);
 	const [showFichClient, setShowFichClient] = useState(false);
 	const [showStatistiquesRDV, setShowStatistiquesRDV] = useState(false);
-	const [showTauxOccupation, setShowTauxOccupation] = useState(false);
+	const [showTauxOccupancy, setShowTauxOccupancy] = useState(false);
 	const [showCorbeilleRDV, setShowCorbeilleRDV] = useState(false);
-	const [showMesFactures, setShowMesFactures] = useState(false);
+	const [showMesInvoices, setShowMesInvoices] = useState(false);
 	const pathname = usePathname();
 
-	const paramAgendaLinks = [
-	    { label: 'Offres réservables', path: '/dashboard/admin/param-agenda/gestion-de-prestations' },
-		{ label: 'Ressources & capacités', path: '/dashboard/admin/param-agenda/gestion-des-agendas' },
-		{ label: 'Affichage réservations', path: '/dashboard/admin/param-agenda/gestion-affichage-rdv' },
+	const agendaSettingsLinks = [
+	    { label: 'Bookable offers', path: '/dashboard/admin/agenda-settings/services' },
+		{ label: 'Resources & capacity', path: '/dashboard/admin/agenda-settings/resources' },
+		{ label: 'Reservation display', path: '/dashboard/admin/agenda-settings/reservation-display' },
 	];
 
-	const paramEtablissementLinks = [
-		{ label: 'Gestion photos', path: '/dashboard/admin/param-etablissement/gestion-photos' },
-		{ label: 'Descriptif établissement', path: '/dashboard/admin/param-etablissement/descriptif-etablissement' },
-		{ label: 'Notifications réservations', path: '/dashboard/admin/param-etablissement/notifications-rdv-web' },
-		{ label: 'Horaires & délais', path: '/dashboard/admin/param-etablissement/gestion-horaires-delais' },
-		{ label: 'Message établissement', path: '/dashboard/admin/param-etablissement/gestion-message' },
-		{ label: 'Liste d’attente', path: '/dashboard/admin/param-etablissement/gestion-liste-attente' },
+	const establishmentSettingsLinks = [
+		{ label: 'Photo management', path: '/dashboard/admin/establishment-settings/photos' },
+		{ label: 'Establishment description', path: '/dashboard/admin/establishment-settings/description' },
+		{ label: 'Reservation notifications', path: '/dashboard/admin/establishment-settings/web-notifications' },
+		{ label: 'Hours & timing', path: '/dashboard/admin/establishment-settings/hours-delays' },
+		{ label: 'Establishment message', path: '/dashboard/admin/establishment-settings/message' },
+		{ label: 'Waitlist', path: '/dashboard/admin/establishment-settings/waitlist' },
 	];
 
-	const statistiquesRDVLinks = [
-	    { label: 'Indicateurs clés', path: '/dashboard/admin/statistiques-rdv/indicateurs-cles' },
-	    { label: 'Autres indicateurs', path: '/dashboard/admin/statistiques-rdv/autres' },
-	    { label: 'Offres', path: '/dashboard/admin/statistiques-rdv/Prestations' },
-	    { label: 'Ressources', path: '/dashboard/admin/statistiques-rdv/collaborateurs' },
-	    { label: 'Réservations', path: '/dashboard/admin/statistiques-rdv/rdv' },
-	    { label: 'No-shows', path: '/dashboard/admin/statistiques-rdv/rdv-pas-venus' },
+	const reservationStatsLinks = [
+	    { label: 'Key metrics', path: '/dashboard/admin/reservation-stats/key-metrics' },
+	    { label: 'Other metrics', path: '/dashboard/admin/reservation-stats/other' },
+	    { label: 'Offers', path: '/dashboard/admin/reservation-stats/services' },
+	    { label: 'Resources', path: '/dashboard/admin/reservation-stats/collaborators' },
+	    { label: 'Reservations', path: '/dashboard/admin/reservation-stats/reservations' },
+	    { label: 'No-shows', path: '/dashboard/admin/reservation-stats/no-shows' },
 	];
 
 	useEffect(() => {
@@ -359,7 +343,7 @@ const AdminSidebar = () => {
 
 	if (!mounted) {
 		return (
-			<div className="flex-1 overflow-y-auto p-6">
+			<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
 				<div className="space-y-6">
 					<div className="animate-pulse bg-gray-200 h-64 rounded-xl"></div>
 				</div>
@@ -368,28 +352,28 @@ const AdminSidebar = () => {
 	}
 
 	return (
-		<div className="flex-1 overflow-y-auto p-6">
+		<div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
 			<div className="space-y-6">
-				{/* Paramétrage Agenda */}
+				{/* Agenda setup */}
 				<div className="space-y-3">
 					<button
 						onClick={() => setShowParamAgenda(!showParamAgenda)}
-						className="w-full flex items-center justify-between group"
+						className="w-full flex items-center justify-between group cursor-pointer"
 					>
-						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
 							<Settings2 size={14} />
-							Offres & agenda
+							Offers & agenda
 						</h3>
-						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showParamAgenda ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showParamAgenda ? 'rotate-180' : ''}`} />
 					</button>
 					{showParamAgenda && (
 						<div className="space-y-1 animate-fadeIn">
-							{paramAgendaLinks.map((item) => (
+							{agendaSettingsLinks.map((item) => (
 								<Link
 									key={item.path}
 									href={item.path}
-									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
+									className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
 									}`}
 								>
 									{item.label}
@@ -399,26 +383,26 @@ const AdminSidebar = () => {
 					)}
 				</div>
 
-				{/* Paramètre Établissement */}
+				{/* Establishment settings */}
 				<div className="space-y-3">
 					<button
-						onClick={() => setShowParamEtablissement(!showParamEtablissement)}
-						className="w-full flex items-center justify-between group"
+						onClick={() => setShowEstablishmentSettings(!showEstablishmentSettings)}
+						className="w-full flex items-center justify-between group cursor-pointer"
 					>
-						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
 							<Settings2 size={14} />
-							Établissement
+							Establishment
 						</h3>
-						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showParamEtablissement ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showEstablishmentSettings ? 'rotate-180' : ''}`} />
 					</button>
-					{showParamEtablissement && (
+					{showEstablishmentSettings && (
 						<div className="space-y-1 animate-fadeIn">
-							{paramEtablissementLinks.map((item) => (
+							{establishmentSettingsLinks.map((item) => (
 								<Link
 									key={item.path}
 									href={item.path}
-									className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${
-										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'
+									className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${
+										pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
 									}`}
 								>
 									{item.label}
@@ -432,21 +416,21 @@ const AdminSidebar = () => {
 				<div className="space-y-3">
 					<button
 						onClick={() => setShowFichClient(!showFichClient)}
-						className="w-full flex items-center justify-between group"
+						className="w-full flex items-center justify-between group cursor-pointer"
 					>
-						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
 							<FileText size={14} />
-							Fiche invité
+							Guest profile
 						</h3>
-						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showFichClient ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showFichClient ? 'rotate-180' : ''}`} />
 					</button>
 					{showFichClient && (
 						<div className="space-y-1 animate-fadeIn">
 							<Link
-								href="/dashboard/admin/fiche-clients/gestion-fiche-clients"
-								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/fiche-clients/gestion-fiche-clients' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
+								href="/dashboard/admin/client-records/management"
+								className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/client-records/management' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
 							>
-								Champs fiche invité
+								Guest profile fields
 							</Link>
 						</div>
 					)}
@@ -456,21 +440,21 @@ const AdminSidebar = () => {
 				<div className="space-y-3">
                     <button
                         onClick={() => setShowStatistiquesRDV(!showStatistiquesRDV)}
-                        className="w-full flex items-center justify-between group"
+                        className="w-full flex items-center justify-between group cursor-pointer"
                     >
-                        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+                        <h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
                             <BarChart3 size={14} />
-                            Statistiques réservations
+                            Reservation statistics
                         </h3>
-                        <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showStatistiquesRDV ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showStatistiquesRDV ? 'rotate-180' : ''}`} />
                     </button>
                     {showStatistiquesRDV && (
                         <div className="space-y-1 animate-fadeIn">
-                            {statistiquesRDVLinks.map((item) => (
+                            {reservationStatsLinks.map((item) => (
                                 <Link
                                     key={item.path}
                                     href={item.path}
-                                    className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
+                                    className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === item.path ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
                                 >
                                     {item.label}
                                 </Link>
@@ -479,91 +463,91 @@ const AdminSidebar = () => {
                     )}
                 </div>
 
-                {/* Occupation Section */}
+                {/* Occupancy Section */}
                 <div className="space-y-3">
                     <button
-                        onClick={() => setShowTauxOccupation(!showTauxOccupation)}
-                        className="w-full flex items-center justify-between group"
+                        onClick={() => setShowTauxOccupancy(!showTauxOccupancy)}
+                        className="w-full flex items-center justify-between group cursor-pointer"
                     >
-                        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+                        <h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
                             <TrendingUp size={14} />
-                            Occupation
+                            Occupancy
                         </h3>
-                        <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showTauxOccupation ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showTauxOccupancy ? 'rotate-180' : ''}`} />
                     </button>
-                    {showTauxOccupation && (
+                    {showTauxOccupancy && (
                         <div className="space-y-1 animate-fadeIn">
                             <Link
-                                href="/dashboard/admin/taux-occupation/vue-ensemble"
-                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/vue-ensemble' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
+                                href="/dashboard/admin/occupancy/overview"
+                                className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/occupancy/overview' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
                             >
-                                Vue d'ensemble
+                                Overview
                             </Link>
                             <Link
-                                href="/dashboard/admin/taux-occupation/collaborateurs"
-                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/collaborateurs' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
+                                href="/dashboard/admin/occupancy/collaborators"
+                                className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/occupancy/collaborators' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
                             >
-                                Ressources
+                                Resources
                             </Link>
                             <Link
-                                href="/dashboard/admin/taux-occupation/prestations"
-                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/taux-occupation/prestations' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
+                                href="/dashboard/admin/occupancy/services"
+                                className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/occupancy/services' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
                             >
-                                Offres
+                                Offers
                             </Link>
                         </div>
                     )}
                 </div>
 
-                {/* Annulations Section */}
+                {/* Cancellations Section */}
                 <div className="space-y-3">
                     <button
                         onClick={() => setShowCorbeilleRDV(!showCorbeilleRDV)}
-                        className="w-full flex items-center justify-between group"
+                        className="w-full flex items-center justify-between group cursor-pointer"
                     >
-                        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+                        <h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
                             <Trash2 size={14} />
-                            Annulations
+                            Cancellations
                         </h3>
-                        <ChevronDown size={14} className={`text-zinc-400 transition-transform ${showCorbeilleRDV ? 'rotate-180' : ''}`} />
+                        <ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showCorbeilleRDV ? 'rotate-180' : ''}`} />
                     </button>
                     {showCorbeilleRDV && (
                         <div className="space-y-1 animate-fadeIn">
                             <Link
-                                href="/dashboard/admin/corbeille-rdv/rdv-annules"
-                                className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/corbeille-rdv/rdv-annules' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
+                                href="/dashboard/admin/reservation-trash/cancelled"
+                                className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/reservation-trash/cancelled' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
                             >
-                                Réservations annulées
+                                Canceled reservations
                             </Link>
                         </div>
                     )}
                 </div>
 
-				{/* Facturation Section */}
+				{/* Billing Section */}
 				<div className="space-y-3">
 					<button
-						onClick={() => setShowMesFactures && setShowMesFactures((prev: boolean) => !prev)}
-						className="w-full flex items-center justify-between group"
+						onClick={() => setShowMesInvoices && setShowMesInvoices((prev: boolean) => !prev)}
+						className="w-full flex items-center justify-between group cursor-pointer"
 					>
-						<h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2 group-hover:text-white transition-colors">
+						<h3 className="text-sm font-medium text-white/60 flex items-center gap-2 group-hover:text-white transition-colors">
 							<File size={14} />
-							Facturation
+							Billing
 						</h3>
-						<ChevronDown size={14} className={`text-zinc-400 transition-transform ${showMesFactures ? 'rotate-180' : ''}`} />
+						<ChevronDown size={14} className={`text-white/60 transition-transform group-hover:text-white ${showMesInvoices ? 'rotate-180' : ''}`} />
 					</button>
-					{showMesFactures && (
+					{showMesInvoices && (
 						<div className="space-y-1 animate-fadeIn">
 							<Link
-								href="/dashboard/admin/mes-factures/moyen-de-paiement"
-								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/mes-factures/moyen-de-paiement' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
+								href="/dashboard/admin/invoices/payment-methods"
+								className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/invoices/payment-methods' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
 							>
-								Moyen de paiement
+								Payment method
 							</Link>
 							<Link
-								href="/dashboard/admin/mes-factures/liste-des-factures"
-								className={`block w-full px-3 py-2 text-left text-sm rounded-full transition-all ${pathname === '/dashboard/admin/mes-factures/liste-des-factures' ? 'bg-primary text-primary-foreground' : 'text-zinc-300 hover:bg-white/10'}`}
+								href="/dashboard/admin/invoices/list"
+								className={`block w-full cursor-pointer px-3 py-2 text-left text-sm font-medium rounded-full transition-all ${pathname === '/dashboard/admin/invoices/list' ? 'bg-primary text-primary-foreground' : 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'}`}
 							>
-								Liste des factures
+								Invoices
 							</Link>
 						</div>
 					)}
@@ -573,7 +557,7 @@ const AdminSidebar = () => {
 	);
 };
 
-const CaisseSidebar = ({
+const CashDeskSidebar = ({
   methodFilter,
   setMethodFilter,
   typeFilter,
@@ -589,53 +573,53 @@ const CaisseSidebar = ({
   setSelectedPeriod: (v: string) => void;
 }) => {
   return (
-    <div className="flex-1 overflow-y-auto p-6">
+    <div className="sidebar-scrollbar flex-1 overflow-y-auto p-6">
       <div className="space-y-6">
         <div className="space-y-3">
-          <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wide flex items-center gap-2">
+          <h3 className="text-sm font-medium text-white/60 flex items-center gap-2">
             <CreditCard size={14} />
-            Filtres Caisse
+            Cash Desk filters
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-zinc-400 mb-2">Méthode</label>
+              <label className="block text-sm font-medium text-white/60 mb-2">Method</label>
               <Select value={methodFilter} onValueChange={setMethodFilter}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
-                  <SelectValue placeholder="Sélectionner la méthode" />
+                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
+                  <SelectValue placeholder="Select method" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Toutes</SelectItem>
-                  <SelectItem value="Espèces">Espèces</SelectItem>
-                  <SelectItem value="Carte">Carte</SelectItem>
-                  <SelectItem value="Virement">Virement</SelectItem>
-                  <SelectItem value="Chèque">Chèque</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="Cash">Cash</SelectItem>
+                  <SelectItem value="Card">Card</SelectItem>
+                  <SelectItem value="Transfer">Transfer</SelectItem>
+                  <SelectItem value="Check">Check</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-2">Type</label>
+              <label className="block text-sm font-medium text-white/60 mb-2">Type</label>
               <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
-                  <SelectValue placeholder="Sélectionner le type" />
+                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
+                  <SelectValue placeholder="Select le type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tous</SelectItem>
-                  <SelectItem value="Vente">Vente</SelectItem>
-                  <SelectItem value="Remboursement">Remboursement</SelectItem>
-                  <SelectItem value="Dépôt">Dépôt</SelectItem>
-                  <SelectItem value="Retrait">Retrait</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="Sale">Sale</SelectItem>
+                  <SelectItem value="Refund">Refund</SelectItem>
+                  <SelectItem value="Deposit">Deposit</SelectItem>
+                  <SelectItem value="Withdrawal">Withdrawal</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="block text-xs text-zinc-400 mb-2">Période</label>
+              <label className="block text-sm font-medium text-white/60 mb-2">Period</label>
               <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm mt-2">
-                  <SelectValue placeholder="Sélectionner la période" />
+                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
+                  <SelectValue placeholder="Select period" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="day">Aujourd'hui</SelectItem>
-                  <SelectItem value="week">Cette semaine</SelectItem>
+                  <SelectItem value="day">Today</SelectItem>
+                  <SelectItem value="week">This week</SelectItem>
                   <SelectItem value="month">Ce mois</SelectItem>
                   <SelectItem value="all">Tout</SelectItem>
                 </SelectContent>
@@ -653,9 +637,9 @@ function DashboardSidebar() {
 	const { logout, user } = useAuth();
 	const [mounted, setMounted] = useState(false);
 	const router = useRouter();
-	const [caisseMethodFilter, setCaisseMethodFilter] = useState('all');
-	const [caisseTypeFilter, setCaisseTypeFilter] = useState('all');
-	const [caissePeriod, setCaissePeriod] = useState('all');
+	const [caisseMethodFilter, setCashDeskMethodFilter] = useState('all');
+	const [caisseTypeFilter, setCashDeskTypeFilter] = useState('all');
+	const [caissePeriod, setCashDeskPeriod] = useState('all');
 
 	// Notification sidebar state
 	const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
@@ -689,23 +673,23 @@ function DashboardSidebar() {
 	const getSidebarContent = () => {
 		if (pathname?.startsWith('/dashboard/admin')) {
 			return <AdminSidebar />;
-		} else if (pathname === '/dashboard' || pathname === '/dashboard/rendez-vous') {
-			return <RendezVousSidebar />;
+		} else if (pathname === '/dashboard' || pathname === '/dashboard/agenda') {
+			return <AgendaSidebar />;
 		} else if (pathname?.startsWith('/dashboard/clients')) {
 			return <ClientsSidebar />;
-		} else if (pathname?.startsWith('/dashboard/caisse')) {
+		} else if (pathname?.startsWith('/dashboard/cash-desk')) {
 			return (
-				<CaisseSidebar
+				<CashDeskSidebar
 					methodFilter={caisseMethodFilter}
-					setMethodFilter={setCaisseMethodFilter}
+					setMethodFilter={setCashDeskMethodFilter}
 					typeFilter={caisseTypeFilter}
-					setTypeFilter={setCaisseTypeFilter}
+					setTypeFilter={setCashDeskTypeFilter}
 					selectedPeriod={caissePeriod}
-					setSelectedPeriod={setCaissePeriod}
+					setSelectedPeriod={setCashDeskPeriod}
 				/>
 			);
 		}
-		return <RendezVousSidebar />;
+		return <AgendaSidebar />;
 	};
 
 	return (
@@ -718,10 +702,10 @@ function DashboardSidebar() {
 						{menuItems.map((item) => {
 							const Icon = item.icon;
 							const isActive =
-								(item.href === '/dashboard/rendez-vous' && (pathname === '/dashboard' || pathname?.startsWith('/dashboard/rendez-vous'))) ||
-								(item.href === '/dashboard/clients/fichier-client/gestion' && pathname?.startsWith('/dashboard/clients')) ||
-								(item.href === '/dashboard/caisse' && pathname?.startsWith('/dashboard/caisse')) ||
-								(item.href === '/dashboard/admin/param-agenda/gestion-de-prestations' && pathname?.startsWith('/dashboard/admin')) ||
+								(item.href === '/dashboard/agenda' && (pathname === '/dashboard' || pathname?.startsWith('/dashboard/agenda'))) ||
+								(item.href === '/dashboard/clients/guest-files/management' && pathname?.startsWith('/dashboard/clients')) ||
+								(item.href === '/dashboard/cash-desk' && pathname?.startsWith('/dashboard/cash-desk')) ||
+								(item.href === '/dashboard/admin/agenda-settings/services' && pathname?.startsWith('/dashboard/admin')) ||
 								pathname === item.href;
 							return (
 								<Link
@@ -744,7 +728,7 @@ function DashboardSidebar() {
 					{/* Right Section - Actions & Profile */}
 					<div className="flex items-center gap-3">
 						{/* Support */}
-						<button className="relative p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all" title="Support">
+						<button className="relative p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all cursor-pointer" title="Support">
 							<span className="w-5 h-5 flex items-center justify-center">
 								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-help-circle">
 								  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -755,7 +739,7 @@ function DashboardSidebar() {
 							</span>
 						</button>
 						{/* Notifications */}
-						<button className="relative p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all" onClick={() => setShowNotificationSidebar(true)}>
+						<button className="relative p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all cursor-pointer" onClick={() => setShowNotificationSidebar(true)}>
 							<Bell size={20} strokeWidth={2} />
 							<span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
 						</button>
@@ -808,7 +792,7 @@ function DashboardSidebar() {
 							<button
 								onClick={handleLogout}
 								className="p-2.5 rounded-full text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all ml-1"
-								title="Se déconnecter"
+								title="Sign out"
 							>
 								<LogOut size={20} strokeWidth={2} />
 							</button>
@@ -843,7 +827,7 @@ function DashboardSidebar() {
 						</div>
 						<button
 							onClick={() => setShowNotificationSidebar(false)}
-							className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
+							className="p-2 text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
 						>
 							<X size={20} />
 						</button>
@@ -855,14 +839,14 @@ function DashboardSidebar() {
 							className={`px-4 py-1.5 text-xs font-medium transition-colors ${notificationTab === 'all' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
 							onClick={() => setNotificationTab('all')}
 						>
-							Toutes
+							All
 						</button>
 						<span className="text-gray-300">/</span>
 						<button
 							className={`px-4 py-1.5 text-xs font-medium transition-colors ${notificationTab === 'unread' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
 							onClick={() => setNotificationTab('unread')}
 						>
-							Non lues
+							No lues
 						</button>
 					</div>
 				</div>
@@ -871,7 +855,7 @@ function DashboardSidebar() {
 				<div className="flex-1 overflow-y-auto">
 					{/* Today Section */}
 					<div className="px-8 py-6">
-						<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Aujourd'hui</p>
+						<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Today</p>
 						{/* Only show unread if tab is 'unread', else show all */}
 						{(notificationTab === 'all' || notificationTab === 'unread') && (
 							<>
@@ -885,8 +869,8 @@ function DashboardSidebar() {
 													<Calendar size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Nouvelle réservation confirmée</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Yasmine Alaoui a confirmé une table pour Le Jardin demain à 20h30.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">New reservation confirmed</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Yasmine Alaoui confirmed a table at Le Jardin tomorrow at 8:30 PM.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 2 minutes</span>
 												</div>
 											</div>
@@ -899,8 +883,8 @@ function DashboardSidebar() {
 													<UserCheck size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Nouvel avis invité</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali a laissé un avis 5 étoiles sur votre expérience VIP.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">New reviews guest</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali left a 5-star review for your VIP experience.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 15 minutes</span>
 												</div>
 											</div>
@@ -913,8 +897,8 @@ function DashboardSidebar() {
 													<Calendar size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Réservation annulée</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi a annulé son day pass prévu aujourd’hui à 16h00.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Reservation canceled</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi canceled her day pass scheduled for today at 4:00 PM.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 1 heure</span>
 												</div>
 											</div>
@@ -926,9 +910,9 @@ function DashboardSidebar() {
 													<CreditCard size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Paiement reçu</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Acompte de 450 MAD reçu pour la réservation de Fatima Zahra.</p>
-													<span className="text-xs text-gray-400 font-light">Il y a 3 heures</span>
+													<p className="text-sm font-medium text-gray-900 mb-1">Payment received</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">450 MAD deposit received for Fatima Zahra's reservation.</p>
+													<span className="text-xs text-gray-400 font-light">3 hours ago</span>
 												</div>
 											</div>
 										</div>
@@ -944,8 +928,8 @@ function DashboardSidebar() {
 													<Calendar size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Nouvelle réservation confirmée</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Yasmine Alaoui a confirmé une table pour Le Jardin demain à 20h30.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">New reservation confirmed</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Yasmine Alaoui confirmed a table at Le Jardin tomorrow at 8:30 PM.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 2 minutes</span>
 												</div>
 											</div>
@@ -957,8 +941,8 @@ function DashboardSidebar() {
 													<UserCheck size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Nouvel avis invité</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali a laissé un avis 5 étoiles sur votre expérience VIP.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">New reviews guest</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali left a 5-star review for your VIP experience.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 15 minutes</span>
 												</div>
 											</div>
@@ -970,8 +954,8 @@ function DashboardSidebar() {
 													<Calendar size={16} className="text-gray-600" />
 												</div>
 												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Réservation annulée</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi a annulé son day pass prévu aujourd’hui à 16h00.</p>
+													<p className="text-sm font-medium text-gray-900 mb-1">Reservation canceled</p>
+													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi canceled her day pass scheduled for today at 4:00 PM.</p>
 													<span className="text-xs text-gray-400 font-light">Il y a 1 heure</span>
 												</div>
 											</div>
@@ -992,9 +976,9 @@ function DashboardSidebar() {
 										<TrendingUp size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Rapport mensuel disponible</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Votre rapport statistique du mois de novembre est maintenant disponible.</p>
-										<span className="text-xs text-gray-400 font-light">Hier à 18:30</span>
+										<p className="text-sm font-medium text-gray-900 mb-1">Monthly report available</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">Your November statistics report is now available.</p>
+										<span className="text-xs text-gray-400 font-light">Hier at 18:30</span>
 									</div>
 								</div>
 							</div>
@@ -1005,9 +989,9 @@ function DashboardSidebar() {
 										<Users size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Nouvel invité enregistré</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Karim Alami a réservé une expérience via Reserva.</p>
-										<span className="text-xs text-gray-400 font-light">Hier à 14:15</span>
+										<p className="text-sm font-medium text-gray-900 mb-1">New guest saved</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">Karim Alami booked an experience through Reserva.</p>
+										<span className="text-xs text-gray-400 font-light">Hier at 14:15</span>
 									</div>
 								</div>
 							</div>
@@ -1018,9 +1002,9 @@ function DashboardSidebar() {
 										<Bell size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Demandes à confirmer</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">5 réservations demandent une validation avant demain.</p>
-										<span className="text-xs text-gray-400 font-light">Hier à 09:00</span>
+										<p className="text-sm font-medium text-gray-900 mb-1">Demandes at confirmer</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">5 reservations demandent une validation avant tomorrow.</p>
+										<span className="text-xs text-gray-400 font-light">Hier at 09:00</span>
 									</div>
 								</div>
 							</div>
@@ -1029,7 +1013,7 @@ function DashboardSidebar() {
 					{/* This Week Section */}
 					{notificationTab === 'all' && (
 						<div className="px-8 py-6 border-t border-gray-100">
-							<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Cette semaine</p>
+							<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">This week</p>
 
 							<div className="group relative bg-white border border-gray-100 rounded-lg p-4 mb-2 hover:border-gray-200  transition-all cursor-pointer opacity-60 hover:opacity-100">
 								<div className="flex gap-4">
@@ -1037,8 +1021,8 @@ function DashboardSidebar() {
 										<FileText size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Nouveau relevé disponible</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Le relevé des paiements Reserva a été généré automatiquement.</p>
+										<p className="text-sm font-medium text-gray-900 mb-1">New statement available</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">The Reserva payment statement was generated automatically.</p>
 										<span className="text-xs text-gray-400 font-light">Il y a 3 jours</span>
 									</div>
 								</div>
@@ -1050,8 +1034,8 @@ function DashboardSidebar() {
 										<Building size={16} className="text-gray-600" />
 									</div>
 									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Mise à jour système</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Nouvelles options disponibles dans la section Admin.</p>
+										<p className="text-sm font-medium text-gray-900 mb-1">System update</p>
+										<p className="text-xs text-gray-500 leading-relaxed mb-2">News options disponibles dans la section Admin.</p>
 										<span className="text-xs text-gray-400 font-light">Il y a 5 jours</span>
 									</div>
 								</div>
@@ -1062,8 +1046,8 @@ function DashboardSidebar() {
 
 				{/* Footer Actions */}
 				<div className="border-t border-gray-100 p-6">
-					<button className="w-full py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-						Marquer tout comme lu
+					<button className="w-full py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors cursor-pointer">
+						Tuequer tout comme lu
 					</button>
 				</div>
 			</div>
@@ -1076,7 +1060,6 @@ function DashboardSidebar() {
 		</>
 	);
 }
-
 
 export default function DashboardLayout({
   children,

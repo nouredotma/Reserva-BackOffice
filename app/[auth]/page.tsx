@@ -9,15 +9,15 @@ import { useAuth } from '@/lib/mock-auth';
 // Animated Text Component
 const AnimatedText = ({ className = "" }: { className?: string }) => {
   const messages = [
-    { title: "Gestion simplifiée de votre établissement", subtitle: "Pilotez votre activité en toute sérénité et gagnez du temps chaque jour et à long terme." },
-    { title: "Gérez vos réservations efficacement", subtitle: "Planifiez, suivez et optimisez vos réservations sans effort en un clin d'œil." },
-    { title: "Optimisez votre temps et vos ressources", subtitle: "Automatisez les tâches répétitives et concentrez-vous sur ce qui compte vraiment." },
-    { title: "Restez organisé à tout moment", subtitle: "Accédez à vos outils où que vous soyez, sur tous vos appareils en toute simplicité." }
+    { title: "Simple establishment management", subtitle: "Run your business calmly and save time every day, now and over the long term." },
+    { title: "Manage reservations efficiently", subtitle: "Plan, track, and optimize reservations effortlessly." },
+    { title: "Optimize your time and resources", subtitle: "Automate repetitive tasks and focus on what really matters." },
+    { title: "Stay organized at every moment", subtitle: "Access your tools wherever you are, on every device." }
   ];
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setIsAnimating(true);
@@ -26,13 +26,13 @@ const AnimatedText = ({ className = "" }: { className?: string }) => {
         setIsAnimating(false);
       }, 500);
     }, 4000);
-    
+
     return () => clearInterval(interval);
   }, []);
-  
+
   return (
     <div className={`min-h-[140px] flex flex-col justify-center text-left pl-2 lg:pl-0 ${className}`}>
-      <div className={`transition-all duration-500 pr-0 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}> 
+      <div className={`transition-all duration-500 pr-0 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
         <h2 className="text-2xl lg:text-2xl font-medium text-white mb-4 leading-tight text-left">
           {messages[currentIndex].title}
         </h2>
@@ -46,8 +46,8 @@ const AnimatedText = ({ className = "" }: { className?: string }) => {
           <div
             key={index}
             className={`h-1.5 rounded-full transition-all duration-500 ${
-              index === currentIndex 
-                ? 'w-8 bg-white' 
+              index === currentIndex
+                ? 'w-8 bg-white'
                 : 'w-1.5 bg-white/30'
             }`}
           />
@@ -86,7 +86,7 @@ export default function AuthPage({ params }: { params: Params }) {
   const [resetEmail, setResetEmail] = useState('');
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [resetError, setResetError] = useState('');
-  
+
   const { login, isAuthenticated, signup } = useAuth();
   const router = useRouter();
 
@@ -94,18 +94,18 @@ export default function AuthPage({ params }: { params: Params }) {
   const handlePasswordReset = (e: React.FormEvent) => {
     e.preventDefault();
     setResetError('');
-    
+
     if (!resetEmail.trim()) {
       setResetError('Veuillez entrer votre adresse email');
       return;
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(resetEmail)) {
       setResetError('Veuillez entrer une adresse email valide');
       return;
     }
-    
+
     // Simulate sending reset email
     setResetEmailSent(true);
   };
@@ -121,51 +121,51 @@ export default function AuthPage({ params }: { params: Params }) {
     if (e) e.preventDefault();
     setError('');
     setFieldErrors({});
-    
+
     const errors: {[key: string]: string} = {};
-    
+
     if (mode === 'signup') {
       // Validation for signup
-      if (!firstName.trim()) errors.firstName = 'Le prénom est requis';
+      if (!firstName.trim()) errors.firstName = 'First name is required';
       if (!lastName.trim()) errors.lastName = 'Le nom est requis';
       if (!email.trim()) errors.email = 'L\'email est requis';
-      if (!password) errors.password = 'Le mot de passe est requis';
-      if (!confirmPassword) errors.confirmPassword = 'Veuillez confirmer votre mot de passe';
-      
+      if (!password) errors.password = 'Le password est requis';
+      if (!confirmPassword) errors.confirmPassword = 'Veuillez confirmer votre password';
+
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors);
         return;
       }
-      
+
       if (password !== confirmPassword) {
         setError('Les mots de passe ne correspondent pas');
         return;
       }
       if (password.length < 8) {
-        setError('Le mot de passe doit contenir au moins 8 caractères');
+        setError('Password must contain at least 8 characters');
         return;
       }
       if (!acceptTerms) {
         setError('Veuillez accepter les conditions d\'utilisation');
         return;
       }
-      
+
       const success = signup(email, password, `${firstName} ${lastName}`);
       if (!success) {
-        setError('Cet email est déjà utilisé pour un autre compte');
+        setError('This email is already used by another account');
       }
     } else {
       // Login validation
       if (!email.trim()) errors.email = 'L\'email est requis';
-      if (!password) errors.password = 'Le mot de passe est requis';
-      
+      if (!password) errors.password = 'Le password est requis';
+
       if (Object.keys(errors).length > 0) {
         setFieldErrors(errors);
         return;
       }
       const success = login(email, password);
       if (!success) {
-        setError('Email ou mot de passe invalide');
+        setError('Email ou password invalide');
       }
     }
   };
@@ -179,7 +179,7 @@ export default function AuthPage({ params }: { params: Params }) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/dashboard/rendez-vous');
+      router.replace('/dashboard/agenda');
     }
   }, [isAuthenticated, router]);
 
@@ -200,11 +200,11 @@ export default function AuthPage({ params }: { params: Params }) {
                   <AnimatedText className="text-white w-full max-w-[620px] pl-0" />
                 </div>
               </div>
-              
+
               {/* Decorative background tile */}
-              <img 
-                src="/tile.webp" 
-                alt="" 
+              <img
+                src="/tile.webp"
+                alt=""
                 className="absolute -bottom-20 -right-20 w-[400px] h-auto rotate-12 brightness-0 invert pointer-events-none select-none"
               />
             </div>
@@ -214,17 +214,17 @@ export default function AuthPage({ params }: { params: Params }) {
         {/* Right Side - Login Form */}
         <div className="flex-1 bg-white flex items-center justify-center p-6 lg:p-12 overflow-y-auto relative">
           <div className="w-full max-w-md pt-0 lg:pt-2">
-            
+
             {/* Header */}
             <div className="mt-1 lg:mt-2 mb-4 lg:mb-5">
               <h1 className="text-3xl lg:text-4xl font-medium text-[#000000] mb-1.5 lg:mb-2">
-                {showForgotPassword ? 'Mot de passe oublié ?' : 'Bienvenue !'}
+                {showForgotPassword ? 'Forgot password?' : 'Welcome!'}
               </h1>
               {/* Mode Toggle Links */}
               <div className="mt-1 text-left">
                 {showForgotPassword ? (
                   <p className="text-gray-600 font-medium text-xs lg:text-sm">
-                    Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+                    Enter your email address and we will send you a link to reset your password.
                   </p>
                 ) : (
                   <p className="text-gray-600 font-medium text-xs lg:text-sm">
@@ -241,13 +241,13 @@ export default function AuthPage({ params }: { params: Params }) {
                       </>
                     ) : (
                       <>
-                        Vous avez déjà un compte ?{' '}
+                        Already have an account?{' '}
                         <button
                           type="button"
                           onClick={() => handleModeSwitch('login')}
                           className="text-[#000000] font-medium hover:underline cursor-pointer"
                         >
-                          Se connecter
+                          Sign in
                         </button>
                       </>
                     )}
@@ -263,7 +263,7 @@ export default function AuthPage({ params }: { params: Params }) {
                   <form onSubmit={handlePasswordReset} className="space-y-2.5 lg:space-y-3" noValidate>
                     <div>
                       <label htmlFor="resetEmail" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1">
-                        Adresse email
+                        Email address
                       </label>
                       <input
                         id="resetEmail"
@@ -280,12 +280,12 @@ export default function AuthPage({ params }: { params: Params }) {
                     </div>
 
                     <div className="bg-white border border-gray-200 rounded-2xl p-3 lg:p-4 text-left">
-                      <p className="text-xs lg:text-sm text-gray-900 font-medium mb-1.5 lg:mb-2">Prochaines étapes :</p>
+                      <p className="text-xs lg:text-sm text-gray-900 font-medium mb-1.5 lg:mb-2">Next steps:</p>
                       <ol className="text-xs lg:text-sm text-gray-900 space-y-1 lg:space-y-1.5 ml-4 list-decimal">
-                        <li>Vérifiez votre boîte de réception</li>
-                        <li>Cliquez sur le lien de réinitialisation</li>
-                        <li>Créez un nouveau mot de passe</li>
-                        <li>Connectez-vous avec votre nouveau mot de passe</li>
+                        <li>Check your inbox</li>
+                        <li>Click the reset link</li>
+                        <li>Create a new password</li>
+                        <li>Connectez-vous avec votre nouveau password</li>
                       </ol>
                     </div>
 
@@ -300,7 +300,7 @@ export default function AuthPage({ params }: { params: Params }) {
                         '--hover-text': '#000000',
                       } as React.CSSProperties}
                     >
-                      <span>Envoyer le lien de réinitialisation</span>
+                      <span>Send reset link</span>
                     </button>
 
                     <button
@@ -308,7 +308,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       onClick={closeForgotPasswordModal}
                       className="w-full text-gray-600 py-2.5 lg:py-3 rounded-full font-medium text-xs lg:text-sm hover:text-gray-900 transition-colors cursor-pointer"
                     >
-                      Retour à la connexion
+                      Back to sign in
                     </button>
                   </form>
                 ) : (
@@ -319,20 +319,20 @@ export default function AuthPage({ params }: { params: Params }) {
                       </svg>
                     </div>
                     <h2 className="text-2xl lg:text-3xl font-medium text-[#000000]">
-                      Email envoyé !
+                      Email sent!
                     </h2>
                     <p className="text-gray-600 text-xs lg:text-sm leading-relaxed">
-                      Nous avons envoyé un lien de réinitialisation à <span className="text-[#000000] font-medium">{resetEmail}</span>. 
-                      Veuillez vérifier votre boîte de réception et suivre les instructions.
+                      We sent a reset link to <span className="text-[#000000] font-medium">{resetEmail}</span>.
+                      Please check your inbox and follow the instructions.
                     </p>
-                    
+
                     <p className="text-[10px] lg:text-xs text-gray-500">
-                      Vous n&apos;avez pas reçu l&apos;email ? Vérifiez votre dossier spam ou{' '}
+                      Did not receive the email? Check your spam folder or{' '}
                       <button
                         onClick={() => setResetEmailSent(false)}
                         className="text-primary font-medium hover:underline cursor-pointer"
                       >
-                        réessayez
+                        try again
                       </button>
                     </p>
 
@@ -340,7 +340,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       onClick={closeForgotPasswordModal}
                       className="w-full bg-[#000000] text-white py-2.5 lg:py-3.5 rounded-full font-medium text-xs lg:text-base hover:bg-[#000000] transition-colors duration-200   cursor-pointer"
                     >
-                      Retour à la connexion
+                      Back to sign in
                     </button>
                   </div>
                 )}
@@ -353,7 +353,7 @@ export default function AuthPage({ params }: { params: Params }) {
                 <div className="grid grid-cols-2 gap-2.5 lg:gap-3">
                   <div>
                     <label htmlFor="firstName" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1">
-                      Prénom
+                      First name
                     </label>
                     <input
                       id="firstName"
@@ -369,7 +369,7 @@ export default function AuthPage({ params }: { params: Params }) {
                   </div>
                   <div>
                     <label htmlFor="lastName" className="block text-xs lg:text-sm font-medium text-gray-900 mb-1">
-                      Nom
+                      Name
                     </label>
                     <input
                       id="lastName"
@@ -412,7 +412,7 @@ export default function AuthPage({ params }: { params: Params }) {
               {/* Password Input */}
               <div>
                 <label htmlFor="password" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1">
-                  Mot de passe
+                  Password
                 </label>
                 <div className="relative">
                   <input
@@ -427,7 +427,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                    aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                    aria-label={showPassword ? 'Masquer le password' : 'Afficher le password'}
                   >
                     {showPassword ? (
                       <EyeOff className="h-[18px] w-[18px] lg:h-[22px] lg:w-[22px]" />
@@ -445,7 +445,7 @@ export default function AuthPage({ params }: { params: Params }) {
               {mode === 'signup' && (
                 <div>
                   <label htmlFor="confirmPassword" className="block text-xs lg:text-sm font-medium text-[#000000] mb-1">
-                    Confirmer le mot de passe
+                    Confirmer le password
                   </label>
                   <div className="relative">
                     <input
@@ -460,7 +460,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                      aria-label={showConfirmPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                      aria-label={showConfirmPassword ? 'Masquer le password' : 'Afficher le password'}
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-[18px] w-[18px] lg:h-[22px] lg:w-[22px]" />
@@ -493,7 +493,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       className="w-4 h-4 lg:w-5 lg:h-5 ml-1 rounded-full border-2 bg-white border-gray-300 text-[#000000] cursor-pointer"
                     />
                     <span className="ml-2 text-xs lg:text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                      Rester connecté
+                      Stay signed in
                     </span>
                   </label>
                   <button
@@ -501,7 +501,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     onClick={() => setShowForgotPassword(true)}
                     className="text-xs lg:text-sm font-medium text-[#000000] hover:underline cursor-pointer"
                   >
-                    Mot de passe oublié ?
+                    Forgot password?
                   </button>
                 </div>
               ) : (
@@ -520,7 +520,7 @@ export default function AuthPage({ params }: { params: Params }) {
                       </a>{' '}
                       et la{' '}
                       <a href="#" className="text-[#000000] hover:underline cursor-pointer">
-                        politique de confidentialité
+                        privacy policy
                       </a>
                     </span>
                   </label>
@@ -539,7 +539,7 @@ export default function AuthPage({ params }: { params: Params }) {
                     '--hover-text': '#0A0A0A',
                   } as React.CSSProperties}
                 >
-                  <span>{mode === 'login' ? 'Se connecter' : 'Créer un compte'}</span>
+                  <span>{mode === 'login' ? 'Sign in' : 'Create account'}</span>
                 </button>
               </form>
             )}
@@ -572,11 +572,11 @@ export default function AuthPage({ params }: { params: Params }) {
                       <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.018 0-9.309-3.083-11.101-7.456l-6.522 5.025C9.686 39.997 16.39 44 24 44z" />
                       <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z" />
                     </svg>
-                    Se connecter avec Google
+                    Sign in avec Google
                   </span>
                 </button>
                 <div className="w-full text-center mt-2.5 lg:mt-3">
-                  <span className="text-[10px] lg:text-xs text-gray-400 font-medium">SSL Connexion sécurisée et privée</span>
+                  <span className="text-[10px] lg:text-xs text-gray-400 font-medium">Secure and private SSL sign in</span>
                 </div>
               </>
             )}

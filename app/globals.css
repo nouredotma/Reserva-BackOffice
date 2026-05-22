@@ -208,6 +208,24 @@
   scrollbar-color: var(--reserva-yellow) #ffffff;
 }
 
+.sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--reserva-yellow) #0a0a0a;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: #0a0a0a !important;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--reserva-yellow) !important;
+  border-color: #0a0a0a !important;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--reserva-yellow-hover) !important;
+}
+
 .ai-chat-scrollbar::-webkit-scrollbar {
   width: 6px !important;
 }

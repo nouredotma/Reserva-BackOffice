@@ -10,7 +10,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/dashboard/rendez-vous');
+      router.push('/dashboard/agenda');
     } else {
       router.push('/login');
     }

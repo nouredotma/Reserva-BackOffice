@@ -1,0 +1,508 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { TrendingUp, Users, Calendar, Clock, BarChart3, Download, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+
+export default function IndicateursPage() {
+  const [mounted, setMounted] = useState(false);
+  const [timeFilter, setTimeFilter] = useState<'week' | 'month' | 'year'>('month');
+  const [chartViews, setChartViews] = useState<{[key: string]: 'graphe' | 'tableau'}>({});
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'Jun', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleView = (chartId: string) => {
+    setChartViews(prev => ({
+      ...prev,
+      [chartId]: prev[chartId] === 'tableau' ? 'graphe' : 'tableau'
+    }));
+  };
+
+  const getView = (chartId: string) => {
+    return chartViews[chartId] || 'graphe';
+  };
+
+  // Data for different metrics
+  const employees = [
+    'Restaurant floor',
+    'Wellness suites',
+    'Pool & beach',
+    'Concierge desk',
+  ];
+
+  const services = [
+    'Table VIP - Le Jardin',
+    'Brunch signature',
+    'Suite deluxe',
+    'Full color',
+    'Balayage highlights',
+    'Brazilian blowout',
+    'Day pass rooftop pool',
+    'Rituel hammam & massage',
+    'Premium airport transfer',
+    'Rasage Traditionnel',
+    'Cabine duo spa',
+    'Nettoyage de Peau Profond',
+    'Pose Vernis Semi-Permanent',
+    'Private cabana',
+    'Custom request',
+    'Hammam + Gommage',
+    'Brow waxing',
+    'Full leg waxing',
+    'Brazilian bikini waxing',
+  ];
+
+  // Example: distribute values for demo (replace with real stats if available)
+  const rdvPrisData = [
+    { name: 'Pris en direct', value: 40, color: '#10b981' },
+    { name: 'Pris en ligne', value: 60, color: '#d1d5db' },
+  ];
+
+  const offresDirectData = [
+    { name: employees[0], value: 35, color: '#3B82F6' },
+    { name: employees[1], value: 25, color: '#EC4899' },
+    { name: employees[2], value: 20, color: '#8B5CF6' },
+    { name: employees[3], value: 20, color: '#10B981' },
+  ]; // total 100
+
+  const offresLigneData = [
+    { name: employees[0], value: 30, color: '#3B82F6' },
+    { name: employees[1], value: 30, color: '#EC4899' },
+    { name: employees[2], value: 25, color: '#8B5CF6' },
+    { name: employees[3], value: 15, color: '#10B981' },
+  ]; // total 100
+
+  const totalOffersData = [
+    { name: employees[0], value: 32.5, color: '#3B82F6' },
+    { name: employees[1], value: 27.5, color: '#EC4899' },
+    { name: employees[2], value: 22.5, color: '#8B5CF6' },
+    { name: employees[3], value: 17.5, color: '#10B981' },
+  ]; // total 100
+
+  const rdvDirectParOffreData = [
+    { name: services[0], value: 33, color: '#3B82F6' },
+    { name: services[1], value: 25, color: '#EC4899' },
+    { name: services[2], value: 17, color: '#8B5CF6' },
+    { name: services[3], value: 13, color: '#10B981' },
+    { name: services[4], value: 7, color: '#F59E0B' },
+    { name: services[5], value: 5, color: '#EF4444' },
+  ]; // total 100
+
+  const rdvLigneParOffreData = [
+    { name: services[0], value: 30, color: '#3B82F6' },
+    { name: services[1], value: 20, color: '#EC4899' },
+    { name: services[2], value: 18, color: '#8B5CF6' },
+    { name: services[3], value: 15, color: '#10B981' },
+    { name: services[4], value: 10, color: '#F59E0B' },
+    { name: services[5], value: 7, color: '#EF4444' },
+  ]; // total 100
+
+  const totalRdvParOffreData = [
+    { name: services[0], value: 31, color: '#3B82F6' },
+    { name: services[1], value: 22, color: '#EC4899' },
+    { name: services[2], value: 17, color: '#8B5CF6' },
+    { name: services[3], value: 15, color: '#10B981' },
+    { name: services[4], value: 9, color: '#F59E0B' },
+    { name: services[5], value: 6, color: '#EF4444' },
+  ]; // total 100
+
+  const DonutChart = ({ data, title, subtitle, chartId }: { data: any[], title: string, subtitle?: string, chartId: string }) => {
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+    const currentView = getView(chartId);
+
+    return (
+      <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all">
+        <div className="mb-4">
+          <h3 className="text-sm font-medium text-gray-900 mb-1">{title}</h3>
+          {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
+        </div>
+
+        {currentView === 'graphe' ? (
+          <>
+            <div className="relative">
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie
+                    data={data}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={70}
+                    outerRadius={90}
+                    paddingAngle={2}
+                    dataKey="value"
+                    startAngle={90}
+                    endAngle={450}
+                  >
+                    {data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-white px-3 py-2 rounded-lg  border border-gray-100">
+                            <p className="text-xs font-medium text-gray-900">{payload[0].name}</p>
+                            <p className="text-xs text-gray-500">{payload[0].value}%</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+
+              {/* Center text */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                <p className="text-3xl font-light text-gray-900">{total.toFixed(0)}%</p>
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="mt-6 space-y-2">
+              {data.map((item, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-xs text-gray-600 truncate">{item.name}</span>
+                  </div>
+                  <span className="text-xs font-medium text-gray-900 ml-2">{item.value}%</span>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="mt-4">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Valeur
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {data.map((item, index) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span className="text-xs text-gray-900">{item.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-3 text-right">
+                      <span className="text-sm font-medium text-gray-900">{item.value}%</span>
+                    </td>
+                  </tr>
+                ))}
+                <tr className="bg-gray-50 font-medium">
+                  <td className="px-3 py-3">
+                    <span className="text-xs text-gray-900">Total</span>
+                  </td>
+                  <td className="px-3 py-3 text-right">
+                    <span className="text-sm font-medium text-gray-900">{total.toFixed(1)}%</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* View Toggle */}
+        <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-center gap-6">
+          <button
+            onClick={() => toggleView(chartId)}
+            className={`text-xs font-medium transition-colors ${
+              currentView === 'graphe' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            Graphe
+          </button>
+          <span className="text-gray-300">|</span>
+          <button
+            onClick={() => toggleView(chartId)}
+            className={`text-xs font-medium transition-colors ${
+              currentView === 'tableau' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            Tableau
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="bg-gray-200 h-12 rounded-xl w-1/3"></div>
+          <div className="bg-gray-200 h-96 rounded-2xl"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen p-0">
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+        .animate-slideUp { animation: slideUp 0.4s ease-out; }
+        .accent-color { color: #0A0A0A; }
+      `}</style>
+
+      {/* Header */}
+      <div className="mb-12 pt-20 animate-slideUp">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-5xl font-light text-gray-900 tracking-tight mb-2">Indicateurs</h1>
+            <p className="text-sm text-gray-400">Detailed performance analysis by resource</p>
+          </div>
+          <div className="flex items-center gap-6">
+            {/* Date Navigation - same design as vue-ensemble */}
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setSelectedMonth(prev => (prev === 0 ? 11 : prev - 1))}
+                className="p-1.5 text-gray-400 hover:text-gray-900 transition-colors"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span className="text-lg font-light text-gray-900 min-w-[180px] text-center">
+                {monthNames[selectedMonth]} {selectedYear}
+              </span>
+              <button
+                onClick={() => setSelectedMonth(prev => (prev === 11 ? 0 : prev + 1))}
+                className="p-1.5 text-gray-400 hover:text-gray-900 transition-colors"
+              >
+                <ChevronRight size={16} />
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedMonth(new Date().getMonth());
+                  setSelectedYear(new Date().getFullYear());
+                }}
+                className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
+              >
+                Today
+              </button>
+            </div>
+            {/* Time Filter */}
+            <div className="flex items-center gap-2">
+              {(['week', 'month', 'year'] as const).map((period) => (
+                <button
+                  key={period}
+                  onClick={() => setTimeFilter(period)}
+                  className={`px-4 py-2 text-xs font-medium transition-all ${
+                    timeFilter === period
+                      ? 'accent-color'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  {period === 'week' ? '7j' : period === 'month' ? '30j' : '1an'}
+                </button>
+              ))}
+            </div>
+            <div className="h-8 w-px bg-gray-200"></div>
+            {/* Export Button */}
+            <button className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-600 hover:text-gray-900 transition-colors">
+              <Download size={14} />
+              Exporter
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-4 gap-4 mb-8 animate-fadeIn">
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
+          <div className="flex items-start justify-between mb-8">
+            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
+              <Calendar size={18} className="text-gray-400" />
+            </div>
+            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+              <TrendingUp size={12} />
+              <span className="text-[10px] font-medium">+12%</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 mb-1">Total reservations</p>
+            <p className="text-3xl font-light text-gray-900">165</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
+          <div className="flex items-start justify-between mb-8">
+            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
+              <Users size={18} className="text-gray-400" />
+            </div>
+            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+              <TrendingUp size={12} />
+              <span className="text-[10px] font-medium">+8%</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 mb-1">Resources actives</p>
+            <p className="text-3xl font-light text-gray-900">4</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
+          <div className="flex items-start justify-between mb-8">
+            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
+              <BarChart3 size={18} className="text-gray-400" />
+            </div>
+            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+              <TrendingUp size={12} />
+              <span className="text-[10px] font-medium">+15%</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 mb-1">Offers</p>
+            <p className="text-3xl font-light text-gray-900">23</p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-100 p-6  transition-all group">
+          <div className="flex items-start justify-between mb-8">
+            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
+              <Clock size={18} className="text-gray-400" />
+            </div>
+            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+              <TrendingUp size={12} />
+              <span className="text-[10px] font-medium">+5%</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 mb-1">Duration moyenne</p>
+            <p className="text-3xl font-light text-gray-900">52min</p>
+          </div>
+        </div>
+      </div>
+
+      {/* First Row - 3 Charts */}
+      <div className="grid grid-cols-3 gap-6 mb-6 animate-fadeIn">
+        <DonutChart
+          data={rdvPrisData}
+          title="reservations pris"
+          subtitle="Breakdown par canal"
+          chartId="rdv-pris"
+        />
+        <DonutChart
+          data={offresDirectData}
+          title="Namebre d'offres en direct par ressource"
+          subtitle="Distribution par praticien"
+          chartId="offres-direct"
+        />
+        <DonutChart
+          data={offresLigneData}
+          title="Namebre d'offres en ligne par ressource"
+          subtitle="Reservations en ligne"
+          chartId="offres-ligne"
+        />
+      </div>
+
+      {/* Second Row - 3 Charts */}
+      <div className="grid grid-cols-3 gap-6 mb-6 animate-fadeIn">
+        <DonutChart
+          data={totalOffersData}
+          title="Namebre total d'offres par ressource"
+          subtitle="Volume global"
+          chartId="total-offres"
+        />
+        <DonutChart
+          data={rdvDirectParOffreData}
+          title="Namebre de reservations pris en direct par offre"
+          subtitle="Services en direct"
+          chartId="rdv-direct-offre"
+        />
+        <DonutChart
+          data={rdvLigneParOffreData}
+          title="Namebre de reservations pris en ligne par offre"
+          subtitle="Services en ligne"
+          chartId="rdv-ligne-offre"
+        />
+      </div>
+
+      {/* Third Row - 1 Chart */}
+      <div className="grid grid-cols-3 gap-6 mb-6 animate-fadeIn">
+        <DonutChart
+          data={totalRdvParOffreData}
+          title="Namebre total de reservations par offre"
+          subtitle="Complete service distribution"
+          chartId="total-rdv-offre"
+        />
+
+        {/* Performance Summary */}
+        <div className="col-span-2 bg-white rounded-lg border border-gray-100 p-6">
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-gray-900 mb-1">Performance par ressource</h3>
+            <p className="text-xs text-gray-400">Classement du mois</p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              { name: 'Restaurant floor', rdv: 65, offres: 35, taux: 62, avatar: 'YE' },
+              { name: 'Wellness suites', rdv: 55, offres: 25, taux: 55, avatar: 'SB' },
+              { name: 'Pool & beach', rdv: 45, offres: 20, taux: 44, avatar: 'KA' },
+              { name: 'Concierge desk', rdv: 35, offres: 20, taux: 38, avatar: 'NK' },
+            ].map((collab, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-medium text-gray-700">{collab.avatar}</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{collab.name}</p>
+                    <p className="text-xs text-gray-400">{collab.offres} offres</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-8">
+                  <div className="text-center">
+                    <p className="text-xs text-gray-400 mb-1">reservations</p>
+                    <p className="text-lg font-medium text-gray-900">{collab.rdv}</p>
+                  </div>
+
+                  <div className="text-center">
+                    <p className="text-xs text-gray-400 mb-1">Taux en ligne</p>
+                    <p className="text-lg font-medium text-emerald-600">{collab.taux}%</p>
+                  </div>
+
+                  <ChevronRight size={16} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+}
