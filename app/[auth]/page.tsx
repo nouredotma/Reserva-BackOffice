@@ -227,11 +227,15 @@ export default function AuthPage({ params }: { params: Params }) {
         <div
           className={`flex-1 bg-white flex justify-center overflow-y-auto relative ${
             mode === 'signup'
-              ? 'items-start px-6 py-8 lg:px-12 lg:py-10'
+              ? 'items-start px-6 pt-32 pb-8 lg:px-12 lg:pt-16 lg:pb-10'
               : 'items-center p-6 lg:p-12'
           }`}
         >
-          <div className="w-full max-w-md pt-0 lg:pt-2">
+          <div
+            className={`w-full max-w-md ${
+              mode === 'signup' ? 'pt-4 lg:pt-8' : 'pt-0 lg:pt-2'
+            }`}
+          >
 
             {/* Header */}
             <div className="mt-1 lg:mt-2 mb-4 lg:mb-5">
