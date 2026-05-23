@@ -56,15 +56,7 @@ export default function AdminProfilePage() {
 
   return (
     <div className="min-h-screen">
-      <style>{`
-        @keyframes slideUp {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        .animate-slideUp { animation: slideUp 0.4s ease-out; }
-      `}</style>
-
-      <div className="mb-10 pt-20 animate-slideUp">
+      <div className="mb-10 pt-20">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Admin profile</h1>

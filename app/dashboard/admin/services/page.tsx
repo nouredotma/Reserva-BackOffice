@@ -1,18 +1,14 @@
 'use client';
 
-import { useMemo, useState, type ChangeEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import {
   ArrowLeft,
-  Calendar,
-  CheckCircle2,
   Clock,
   Copy,
   CreditCard,
   FileImage,
   Image as ImageIcon,
-  List,
   Plus,
-  Save,
   Search,
   Settings2,
   Star,
@@ -26,6 +22,74 @@ import { ownerServices } from '@/lib/mock-data';
 import type { Service } from '@/lib/reserva-types';
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+type ServiceStatusFilter = 'all' | Service['status'];
+
+const statusFilterOptions: { value: ServiceStatusFilter; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'active', label: 'Active' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'inactive', label: 'Inactive' },
+  { value: 'archived', label: 'Archived' },
+];
+
+function ServiceStatusFilterControl({
+  value,
+  onChange,
+}: {
+  value: ServiceStatusFilter;
+  onChange: (value: ServiceStatusFilter) => void;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  const updateIndicator = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const activeButton = container.querySelector<HTMLButtonElement>(`[data-status="${value}"]`);
+    if (!activeButton) return;
+    setIndicatorStyle({
+      left: activeButton.offsetLeft,
+      width: activeButton.offsetWidth,
+    });
+  }, [value]);
+
+  useEffect(() => {
+    updateIndicator();
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [updateIndicator]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative inline-flex h-10 max-w-full items-center overflow-x-auto rounded-full bg-neutral-200 p-1"
+      role="tablist"
+      aria-label="Service status"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1 bottom-1 rounded-full bg-white transition-[left,width] duration-300 ease-out"
+        style={{ left: indicatorStyle.left, width: indicatorStyle.width }}
+      />
+      {statusFilterOptions.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          role="tab"
+          aria-selected={value === option.value}
+          data-status={option.value}
+          onClick={() => onChange(option.value)}
+          className={`relative z-10 flex h-8 cursor-pointer items-center whitespace-nowrap rounded-full px-4 text-xs font-medium transition-colors ${
+            value === option.value ? 'text-gray-900' : 'text-neutral-500 hover:text-neutral-700'
+          }`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 type ServiceEditor = {
   id: string;
@@ -184,8 +248,8 @@ function SectionRow({
 }
 
 export default function ServicesManagementPage() {
-  const [saved, setSaved] = useState(false);
   const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<ServiceStatusFilter>('all');
   const [services, setServices] = useState<ServiceEditor[]>(buildInitialServices);
   const [selectedId, setSelectedId] = useState<string | null>(ownerServices[0]?.id ?? null);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -194,13 +258,15 @@ export default function ServicesManagementPage() {
 
   const filteredServices = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) return services;
-    return services.filter((service) =>
-      [service.name, service.slug, service.serviceType, service.status].some((value) =>
+    return services.filter((service) => {
+      const matchesStatus = statusFilter === 'all' || service.status === statusFilter;
+      if (!matchesStatus) return false;
+      if (!normalizedQuery) return true;
+      return [service.name, service.slug, service.serviceType, service.status].some((value) =>
         value.toLowerCase().includes(normalizedQuery),
-      ),
-    );
-  }, [query, services]);
+      );
+    });
+  }, [query, services, statusFilter]);
 
   const stats = useMemo(() => {
     const active = services.filter((service) => service.status === 'active').length;
@@ -208,11 +274,7 @@ export default function ServicesManagementPage() {
     const avgPrice = Math.round(
       services.reduce((sum, service) => sum + service.price, 0) / Math.max(services.length, 1),
     );
-    const totalCapacity = services.reduce(
-      (sum, service) => sum + Number(service.capacityPerSlot || 0),
-      0,
-    );
-    return { active, avgPrice, featured, totalCapacity };
+    return { active, avgPrice, featured };
   }, [services]);
 
   const updateService = <K extends keyof ServiceEditor>(field: K, value: ServiceEditor[K]) => {
@@ -302,23 +364,13 @@ export default function ServicesManagementPage() {
     );
   };
 
-  const saveServices = () => {
+  useEffect(() => {
     localStorage.setItem('establishment_services_settings', JSON.stringify(services));
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 2200);
-  };
+  }, [services]);
 
   return (
     <div className="min-h-screen">
-      <style>{`
-        @keyframes slideUp {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        .animate-slideUp { animation: slideUp 0.4s ease-out; }
-      `}</style>
-
-      <div className="mb-10 pt-20 animate-slideUp">
+      <div className="mb-10 pt-20">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Services</h1>
@@ -326,31 +378,36 @@ export default function ServicesManagementPage() {
               Bookable units for Le Jardin — table reservations, private dining, and experiences.
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            {saved && (
-              <span className="flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
-                <CheckCircle2 size={16} />
-                Saved
-              </span>
-            )}
-            <Button type="button" variant="outline" onClick={addService}>
-              <Plus size={16} />
-              New service
-            </Button>
-            <Button type="button" size="lg" onClick={saveServices}>
-              <Save size={16} />
-              Save services
-            </Button>
+          <button
+            type="button"
+            onClick={addService}
+            className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-primary bg-primary px-4 text-xs font-medium text-primary-foreground transition-colors hover:border-[var(--reserva-ink)] hover:bg-[var(--reserva-ink)] hover:text-white md:text-sm"
+          >
+            <Plus size={14} />
+            New service
+          </button>
+        </div>
+        <div className="mt-6 flex items-center gap-3">
+          <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
+            <Search size={16} className="shrink-0 text-gray-400" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search services"
+              className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+            />
+          </div>
+          <div className="shrink-0">
+            <ServiceStatusFilterControl value={statusFilter} onChange={setStatusFilter} />
           </div>
         </div>
       </div>
 
-      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-8 grid gap-4 md:grid-cols-3">
         {[
           { icon: Settings2, label: 'Active services', value: stats.active.toString() },
           { icon: Star, label: 'Featured', value: stats.featured.toString() },
           { icon: CreditCard, label: 'Average price', value: `${stats.avgPrice.toLocaleString()} MAD` },
-          { icon: Calendar, label: 'Slot capacity', value: stats.totalCapacity.toString() },
         ].map((item) => {
           const Icon = item.icon;
           return (
@@ -367,38 +424,21 @@ export default function ServicesManagementPage() {
 
       {!detailOpen ? (
         <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 px-5 py-4">
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-              <List size={16} />
-              Your services ({services.length})
-            </div>
-            <div className="flex min-w-[260px] items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2">
-              <Search size={16} className="text-gray-400" />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search services"
-                className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
-              />
-            </div>
-          </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[920px] border-separate border-spacing-0 text-left">
-              <thead>
-                <tr className="bg-gray-50/70 text-xs font-medium uppercase tracking-wider text-gray-400">
-                  <th className="px-5 py-3">Service</th>
-                  <th className="px-5 py-3">Type</th>
-                  <th className="px-5 py-3">Availability</th>
-                  <th className="px-5 py-3">Capacity</th>
-                  <th className="px-5 py-3">Price</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Featured</th>
+            <table className="w-full min-w-[920px]">
+              <thead className="border-b border-gray-100 bg-gray-50">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Service</th>
+                  <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Type</th>
+                  <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Availability</th>
+                  <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Capacity</th>
+                  <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Price</th>
+                  <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Featured</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm">
-                {filteredServices.map((service) => {
-                  const isActive = service.id === selectedId;
-                  return (
+                {filteredServices.map((service) => (
                     <tr
                       key={service.id}
                       role="button"
@@ -414,11 +454,7 @@ export default function ServicesManagementPage() {
                           setDetailOpen(true);
                         }
                       }}
-                      className={`cursor-pointer border-l-4 transition-colors ${
-                        isActive
-                          ? 'border-l-primary bg-primary/10 outline outline-1 outline-primary/30'
-                          : 'border-l-transparent hover:bg-gray-50'
-                      }`}
+                      className="cursor-pointer transition-colors hover:bg-gray-50"
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
@@ -458,8 +494,7 @@ export default function ServicesManagementPage() {
                       </td>
                       <td className="px-5 py-4 text-gray-600">{service.isFeatured ? 'Yes' : 'No'}</td>
                     </tr>
-                  );
-                })}
+                ))}
               </tbody>
             </table>
           </div>

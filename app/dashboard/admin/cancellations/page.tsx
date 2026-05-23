@@ -30,7 +30,7 @@ export default function CancellationsPage() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `rdv-annules-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `canceled-appointments-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
   };
 
@@ -42,29 +42,13 @@ export default function CancellationsPage() {
   return (
     <div className="min-h-screen p-0 md:p-0">
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slideUp {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes slideDown {
-          from { transform: translateY(-20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
-        .animate-slideUp { animation: slideUp 0.3s ease-out; }
-        .animate-slideDown { animation: slideDown 0.3s ease-out; }
-
         @media print {
           .no-print { display: none !important; }
         }
       `}</style>
 
       {/* Header */}
-      <div className="mb-8 animate-slideDown pt-20">
+      <div className="mb-8 pt-20">
         <div className="flex items-center justify-between mb-6">
           {/* Left: Title */}
           <div className="flex items-center gap-8">
@@ -84,7 +68,7 @@ export default function CancellationsPage() {
               className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
             >
               <Download size={14} />
-              Exporter
+              Export
             </button>
             <button
               type="button"
@@ -94,40 +78,40 @@ export default function CancellationsPage() {
               <Printer size={14} />
               Print
             </button>
-            <button className="flex items-center px-4 gap-2 py-2 text-sm font-medium text-gray-700 bg-white border border-neutral-200 rounded-full hover:bg-gray-50 transition-colors">
-              <Trash2 size={16} />
-              Vider la corbeille
+            <button
+              type="button"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            >
+              <Trash2 size={14} />
+              Empty trash
             </button>
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden animate-slideUp">
+      <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">
                   Appointment date
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">
                   Client
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-center text-xs font-normal tracking-wider text-gray-500">
                   Booked online
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">
                   Created
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">
                   Cancellation
                 </th>
-                <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-center text-xs font-normal tracking-wider text-gray-500">
                   Canceled by client
-                </th>
-                <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
                 </th>
               </tr>
             </thead>
@@ -163,11 +147,6 @@ export default function CancellationsPage() {
                     {apt.cancelledByClient && (
                       <Check size={18} className="text-gray-600 mx-auto" />
                     )}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <button className="text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors underline">
-                      Restaurer
-                    </button>
                   </td>
                 </tr>
               ))}

@@ -430,25 +430,13 @@ export default function AdminOverviewPage() {
 
   return (
     <div className="min-h-screen p-0">
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slideUp {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
-        .animate-slideUp { animation: slideUp 0.4s ease-out; }
-        .accent-color { color: #0A0A0A; }
-      `}</style>
+      <style>{`.accent-color { color: #0A0A0A; }`}</style>
 
-      <div className="mb-8 pt-20 animate-slideUp">
+      <div className="mb-8 pt-20">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Admin overview</h1>
-            <p className="text-sm text-neutral-500">Overview des performances</p>
+            <p className="text-sm text-neutral-500">Performance overview</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <PeriodSegmentedControl value={timeFilter} onChange={setTimeFilter} />
@@ -463,7 +451,7 @@ export default function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5 animate-fadeIn">
+      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <KpiCard icon={Calendar} label="Online bookings" value={currentData.onlineBookings.toString()} trend="+12%" />
         <KpiCard icon={Users} label="Total bookings" value={currentData.totalBookings.toString()} trend="+8%" />
         <KpiCard icon={BarChart3} label="Online rate" value={`${currentData.onlineRate}%`} trend="+15%" />
@@ -471,7 +459,7 @@ export default function AdminOverviewPage() {
         <KpiCard icon={CreditCard} label="Revenue" value={formatMoney(metrics.totalRevenue)} trend="+9%" />
       </div>
 
-      <div className="mb-8 rounded-xl border border-neutral-200 bg-white p-6 animate-fadeIn">
+      <div className="mb-8 rounded-xl border border-neutral-200 bg-white p-6">
         <div className="mb-6">
           <h2 className="mb-1 text-xl font-light text-gray-900">Bookings over time</h2>
           <p className="text-xs text-gray-400">Daily trend</p>
@@ -498,7 +486,7 @@ export default function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="mb-8 grid gap-6 xl:grid-cols-3 animate-fadeIn">
+      <div className="mb-8 grid gap-6 xl:grid-cols-3">
         <div className="rounded-xl border border-neutral-200 bg-white p-6 xl:col-span-2">
           <div className="mb-6">
             <h3 className="mb-1 text-sm font-medium text-gray-900">Revenue</h3>
@@ -537,7 +525,7 @@ export default function AdminOverviewPage() {
 
         <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-6">
-            <h3 className="mb-1 text-sm font-medium text-gray-900">Services populaires</h3>
+            <h3 className="mb-1 text-sm font-medium text-gray-900">Popular services</h3>
             <p className="text-xs text-gray-400">Breakdown by service</p>
           </div>
           <div className="space-y-4">
@@ -562,12 +550,12 @@ export default function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="mb-8 grid gap-6 md:grid-cols-2 animate-fadeIn">
+      <div className="mb-8 grid gap-6 md:grid-cols-2">
         <DonutChartCard data={directVsOnlineData} subtitle="By channel" title="Bookings taken" />
         <DonutChartCard data={serviceBookingData} subtitle="Complete service distribution" title="Total bookings by service" />
       </div>
 
-      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4 animate-fadeIn">
+      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">Cancellation rate</p>
@@ -603,7 +591,7 @@ export default function AdminOverviewPage() {
         </div>
         <div className="rounded-xl border border-neutral-200 bg-white p-6">
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-xs text-gray-400">Occupancy rate moyen</p>
+            <p className="text-xs text-gray-400">Average occupancy rate</p>
             <div className="flex items-center gap-1 text-emerald-600">
               <ArrowUpRight size={12} />
               <span className="text-[10px] font-medium">+12%</span>

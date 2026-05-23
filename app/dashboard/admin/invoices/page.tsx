@@ -4,11 +4,16 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Calendar, Download, FileText, Printer, TrendingUp } from 'lucide-react';
+import { Calendar, Download, FileText, Plus, Printer, TrendingUp } from 'lucide-react';
 
+type Invoice = {
+  id: string;
+  date: string;
+  amount: number;
+  status: 'paid' | 'pending';
+};
 
-
-const invoices = [
+const initialInvoices: Invoice[] = [
 
   { id: 'F1363585', date: '20 November 2024', amount: 82.8, status: 'paid' },
 
@@ -57,6 +62,10 @@ const exportButtonClass =
 const printButtonClass =
 
   'flex h-10 cursor-pointer items-center gap-2 rounded-full border border-blue-500 bg-blue-50 px-4 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-600 hover:text-white';
+
+const createInvoiceButtonClass =
+
+  'flex h-10 cursor-pointer items-center gap-2 rounded-full border border-primary bg-primary px-4 text-xs font-medium text-primary-foreground transition-colors hover:border-[var(--reserva-ink)] hover:bg-[var(--reserva-ink)] hover:text-white';
 
 function InvoiceStatusFilter({
 
@@ -178,13 +187,43 @@ export default function InvoicesPage() {
 
   const [filterStatus, setFilterStatus] = useState<InvoiceStatus>('all');
 
+  const [invoiceList, setInvoiceList] = useState(initialInvoices);
 
 
-  const filteredInvoices = filterStatus === 'all' ? invoices : invoices.filter((invoice) => invoice.status === filterStatus);
 
-  const totalAmount = invoices.reduce((sum, invoice) => sum + invoice.amount, 0);
+  const filteredInvoices =
 
-  const paidCount = invoices.filter((invoice) => invoice.status === 'paid').length;
+    filterStatus === 'all' ? invoiceList : invoiceList.filter((invoice) => invoice.status === filterStatus);
+
+  const totalAmount = invoiceList.reduce((sum, invoice) => sum + invoice.amount, 0);
+
+  const paidCount = invoiceList.filter((invoice) => invoice.status === 'paid').length;
+
+
+
+  const createInvoice = () => {
+
+    const nextId = `F${String(Date.now()).slice(-7)}`;
+
+    const date = new Date().toLocaleDateString('en-GB', {
+
+      day: 'numeric',
+
+      month: 'long',
+
+      year: 'numeric',
+
+    });
+
+    setInvoiceList((current) => [
+
+      { id: nextId, date, amount: 82.8, status: 'pending' },
+
+      ...current,
+
+    ]);
+
+  };
 
 
 
@@ -227,38 +266,14 @@ export default function InvoicesPage() {
     <div className="min-h-screen p-0">
 
       <style>{`
-
-        @keyframes fadeIn {
-
-          from { opacity: 0; }
-
-          to { opacity: 1; }
-
-        }
-
-        @keyframes slideUp {
-
-          from { transform: translateY(20px); opacity: 0; }
-
-          to { transform: translateY(0); opacity: 1; }
-
-        }
-
-        .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
-
-        .animate-slideUp { animation: slideUp 0.3s ease-out; }
-
         @media print {
-
           .no-print { display: none !important; }
-
         }
-
       `}</style>
 
 
 
-      <div className="mb-8 pt-20 animate-slideUp">
+      <div className="mb-8 pt-20">
 
         <div className="mb-6 flex flex-wrap items-center justify-between gap-6">
 
@@ -272,13 +287,21 @@ export default function InvoicesPage() {
 
           <div className="flex flex-wrap items-center gap-3 no-print">
 
+            <button type="button" onClick={createInvoice} className={createInvoiceButtonClass}>
+
+              <Plus size={14} />
+
+              Create invoice
+
+            </button>
+
             <InvoiceStatusFilter value={filterStatus} onChange={setFilterStatus} />
 
             <button type="button" onClick={exportData} className={exportButtonClass}>
 
               <Download size={14} />
 
-              Exporter
+              Export
 
             </button>
 
@@ -296,7 +319,7 @@ export default function InvoicesPage() {
 
 
 
-        <div className="mb-8 grid gap-4 md:grid-cols-3 animate-fadeIn">
+        <div className="mb-8 grid gap-4 md:grid-cols-3">
 
           <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
 
@@ -320,7 +343,7 @@ export default function InvoicesPage() {
 
             <p className="mb-1 text-xs font-medium text-gray-500">Total invoices</p>
 
-            <p className="text-3xl font-light text-gray-900">{invoices.length}</p>
+            <p className="text-3xl font-light text-gray-900">{invoiceList.length}</p>
 
           </div>
 
@@ -346,7 +369,7 @@ export default function InvoicesPage() {
 
             <p className="mb-1 text-xs font-medium text-gray-500">Paid invoices</p>
 
-            <p className="text-3xl font-light text-gray-900">{paidCount}/{invoices.length}</p>
+            <p className="text-3xl font-light text-gray-900">{paidCount}/{invoiceList.length}</p>
 
           </div>
 
@@ -382,7 +405,7 @@ export default function InvoicesPage() {
 
 
 
-      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white animate-slideUp">
+      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
 
         <div className="overflow-x-auto">
 
@@ -392,15 +415,15 @@ export default function InvoicesPage() {
 
               <tr>
 
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Number</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Number</th>
 
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Date</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Date</th>
 
-                <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Amount incl. tax</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Amount incl. tax</th>
 
-                <th className="px-6 py-4 text-center text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
+                <th className="px-6 py-4 text-center text-xs font-normal tracking-wider text-gray-500">Status</th>
 
-                <th className="px-6 py-4 text-center text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
+                <th className="px-6 py-4 text-center text-xs font-normal tracking-wider text-gray-500">Actions</th>
 
               </tr>
 

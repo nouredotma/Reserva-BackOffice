@@ -355,22 +355,12 @@ const StatistiquesPage = () => {
   return (
     <div className="min-h-screen p-0 md:p-0">
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slideUp {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
-        .animate-slideUp { animation: slideUp 0.3s ease-out; }
         @media print {
           .no-print { display: none !important; }
         }
       `}</style>
 
-      <div className="mb-8 animate-slideDown pt-20">
+      <div className="mb-8 pt-20">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-6">
           <div>
             <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Occupancy</h1>
@@ -382,7 +372,7 @@ const StatistiquesPage = () => {
           <div className="flex flex-wrap items-center gap-3 no-print">
             <button type="button" onClick={exportData} className={exportButtonClass}>
               <Download size={14} />
-              Exporter
+              Export
             </button>
             <button type="button" onClick={printReport} className={printButtonClass}>
               <Printer size={14} />
@@ -434,7 +424,7 @@ const StatistiquesPage = () => {
         </div>
       </div>
 
-      <div className="mb-8 grid grid-cols-4 gap-4 animate-fadeIn">
+      <div className="mb-8 grid grid-cols-4 gap-4">
         <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
           <div className="mb-6 flex items-start justify-between">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
@@ -445,7 +435,7 @@ const StatistiquesPage = () => {
               <span className="text-[10px] font-medium">Average</span>
             </div>
           </div>
-          <p className="mb-1 text-xs font-medium text-gray-500">Occupancy rate moyen</p>
+          <p className="mb-1 text-xs font-medium text-gray-500">Average occupancy rate</p>
           <p className="text-3xl font-light text-gray-900">{stats.average}%</p>
         </div>
 
@@ -492,7 +482,7 @@ const StatistiquesPage = () => {
         </div>
       </div>
 
-      <div className="animate-slideUp overflow-hidden rounded-xl border border-neutral-200 bg-white">
+      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
         <div className="border-b border-gray-100 px-6 py-4">
           <h3 className="text-sm font-medium text-gray-900">{heatmapTitle}</h3>
         </div>
@@ -551,7 +541,7 @@ const StatistiquesPage = () => {
         </div>
       </div>
 
-      <div className="animate-fadeIn mt-6 flex items-center justify-center gap-6 text-xs text-gray-500 no-print">
+      <div className="mt-6 flex items-center justify-center gap-6 text-xs text-gray-500 no-print">
         <div className="flex items-center gap-2">
           <div className="h-4 w-4 rounded bg-gray-100" />
           <span>0%</span>
