@@ -21,6 +21,20 @@ import {
   sampleReviewPeriodStats,
 } from '@/lib/mock-data';
 
+const filterTrackClass = 'inline-flex h-10 shrink-0 items-center rounded-full bg-neutral-200 p-1';
+
+const filterPillClass = (active: boolean) =>
+  `flex h-8 cursor-pointer items-center whitespace-nowrap rounded-full px-4 text-xs font-medium transition-colors ${
+    active ? 'bg-white text-gray-900' : 'text-neutral-500 hover:text-neutral-700'
+  }`;
+
+const reviewStatusOptions = [
+  { value: 'all' as const, label: 'All' },
+  { value: 'pending' as const, label: 'Pending' },
+  { value: 'published' as const, label: 'Published' },
+  { value: 'hidden' as const, label: 'Hidden' },
+];
+
 type ReviewStatus = 'pending' | 'published' | 'hidden';
 
 type UnifiedReview = {
@@ -42,7 +56,15 @@ function renderStars(rating: number) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
-        <Star key={star} size={14} className={star <= rating ? 'fill-primary text-foreground' : 'text-gray-300'} />
+        <Star
+          key={star}
+          size={14}
+          className={
+            star <= rating
+              ? 'fill-primary text-primary stroke-primary'
+              : 'fill-none text-gray-300 stroke-gray-300'
+          }
+        />
       ))}
     </div>
   );
@@ -98,24 +120,9 @@ export default function ReviewsPage() {
       `}</style>
 
       <div className="mb-8 pt-20 animate-slideUp">
-        <div className="flex flex-wrap items-center justify-between gap-6">
-          <div>
-            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Reviews</h1>
-            <p className="text-sm text-gray-400">Moderation, published feedback, hidden reviews, rules, and statistics in one place.</p>
-          </div>
-          <div className="flex items-center gap-0.5">
-            {(['all', 'pending', 'published', 'hidden'] as const).map((status) => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
-                  statusFilter === status ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                {status}
-              </button>
-            ))}
-          </div>
+        <div>
+          <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Reviews</h1>
+          <p className="text-sm text-neutral-500">Moderation, published feedback, hidden reviews, rules, and statistics in one place.</p>
         </div>
       </div>
 
@@ -140,15 +147,28 @@ export default function ReviewsPage() {
         })}
       </div>
 
-      <div className="mb-6 animate-fadeIn">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+      <div className="mb-6 flex flex-wrap items-center gap-3 animate-fadeIn">
+        <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
+          <Search size={16} className="shrink-0 text-gray-400" />
           <input
+            type="text"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search reviews..."
-            className="w-full rounded-full border border-neutral-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-700 placeholder-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-1 focus:ring-gray-900"
+            placeholder="Search reviews"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
           />
+        </div>
+        <div className={filterTrackClass} role="group" aria-label="Review status">
+          {reviewStatusOptions.map((status) => (
+            <button
+              key={status.value}
+              type="button"
+              onClick={() => setStatusFilter(status.value)}
+              className={filterPillClass(statusFilter === status.value)}
+            >
+              {status.label}
+            </button>
+          ))}
         </div>
       </div>
 

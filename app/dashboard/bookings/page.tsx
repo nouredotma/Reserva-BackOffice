@@ -8,7 +8,6 @@ import {
   type BookingRecord,
 } from '@/lib/mock-data';
 import type { BookingMode } from '@/lib/reserva-types';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -16,6 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+
+const selectFilterClassName =
+  'h-10 w-[180px] cursor-pointer rounded-full border border-neutral-200 bg-white px-4 text-xs font-medium';
 
 const modeIcons: Record<BookingMode, typeof Calendar> = {
   appointment: Clock,
@@ -48,7 +50,7 @@ export default function BookingsPage() {
   const [query, setQuery] = useState('');
   const [modeFilter, setModeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedId, setSelectedId] = useState<string | null>(sampleBookings[0]?.id ?? null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
   const selected = useMemo(
@@ -214,65 +216,75 @@ export default function BookingsPage() {
       </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">
-        <div className="flex min-w-[240px] flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-2">
-          <Search size={16} className="text-gray-400" />
-          <Input
+        <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
+          <Search size={16} className="shrink-0 text-gray-400" />
+          <input
+            type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search client, service, email, or ID"
-            className="border-0 bg-transparent shadow-none focus-visible:ring-0"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
           />
         </div>
         <Select value={modeFilter} onValueChange={setModeFilter}>
-          <SelectTrigger className="w-[180px] rounded-full">
+          <SelectTrigger className={selectFilterClassName}>
             <SelectValue placeholder="Mode" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All modes</SelectItem>
+            <SelectItem value="all" className="cursor-pointer">
+              All modes
+            </SelectItem>
             {(Object.keys(bookingModeLabels) as BookingMode[]).map((mode) => (
-              <SelectItem key={mode} value={mode}>
+              <SelectItem key={mode} value={mode} className="cursor-pointer">
                 {bookingModeLabels[mode]}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[160px] rounded-full">
+          <SelectTrigger className={`${selectFilterClassName} w-[160px]`}>
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="confirmed">Confirmed</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="cancelled">Cancelled</SelectItem>
-            <SelectItem value="no_show">No show</SelectItem>
+            <SelectItem value="all" className="cursor-pointer">
+              All statuses
+            </SelectItem>
+            <SelectItem value="pending" className="cursor-pointer">
+              Pending
+            </SelectItem>
+            <SelectItem value="confirmed" className="cursor-pointer">
+              Confirmed
+            </SelectItem>
+            <SelectItem value="completed" className="cursor-pointer">
+              Completed
+            </SelectItem>
+            <SelectItem value="cancelled" className="cursor-pointer">
+              Cancelled
+            </SelectItem>
+            <SelectItem value="no_show" className="cursor-pointer">
+              No show
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-          <p className="text-sm font-medium text-gray-900">{filtered.length} bookings</p>
-          <p className="text-xs text-gray-400">Click a row to open details</p>
-        </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[880px] border-separate border-spacing-0 text-left">
-            <thead>
-              <tr className="bg-gray-50/70 text-xs font-medium uppercase tracking-wider text-gray-400">
-                <th className="px-5 py-3">Booking</th>
-                <th className="px-5 py-3">Client</th>
-                <th className="px-5 py-3">Mode</th>
-                <th className="px-5 py-3">Date</th>
-                <th className="px-5 py-3">Guests</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3 text-right">Total</th>
+          <table className="w-full min-w-[920px]">
+            <thead className="border-b border-gray-100 bg-gray-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Booking</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Client</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Mode</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Date</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Guests</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Status</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Total</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-sm">
               {filtered.map((booking) => {
                 const ModeIcon = modeIcons[booking.mode];
-                const isActive = selectedId === booking.id;
 
                 return (
                   <tr
@@ -286,11 +298,7 @@ export default function BookingsPage() {
                         openDetail(booking);
                       }
                     }}
-                    className={`cursor-pointer border-l-4 transition-colors ${
-                      isActive
-                        ? 'border-l-primary bg-primary/10 outline outline-1 outline-primary/30'
-                        : 'border-l-transparent hover:bg-gray-50'
-                    }`}
+                    className="cursor-pointer transition-colors hover:bg-primary/10"
                   >
                     <td className="px-5 py-4">
                       <p className="font-medium text-gray-900">{booking.serviceName}</p>
@@ -318,8 +326,8 @@ export default function BookingsPage() {
                         {formatStatus(booking.status)}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-right font-medium text-gray-900">
-                      {booking.totalPrice > 0 ? `${booking.totalPrice.toLocaleString()} ${booking.currency}` : '-'}
+                    <td className="px-5 py-4 font-medium text-gray-900">
+                      {booking.totalPrice > 0 ? `${booking.totalPrice.toLocaleString()} ${booking.currency}` : '—'}
                     </td>
                   </tr>
                 );

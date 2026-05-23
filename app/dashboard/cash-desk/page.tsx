@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { DollarSign, CreditCard, RefreshCcw, Download, Plus, Search, Calendar, X, Wallet, Receipt, Printer, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { DollarSign, CreditCard, RefreshCcw, Download, Plus, Search, Calendar, X, Wallet, Receipt, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
-import { generateCashDeskPDF } from '@/components/CaissePrintDocument';
 import { useCashDeskFilters, type CashDeskPeriodFilter } from '@/lib/cash-desk-filters';
-import { sampleTransactions } from '@/lib/mock-data';
+import { sampleBookings, sampleClients, sampleTransactions } from '@/lib/mock-data';
 import type { Transaction } from '@/lib/types';
 
 const isWithinSelectedPeriod = (date: Date, selectedPeriod: CashDeskPeriodFilter) => {
@@ -40,6 +39,17 @@ export default function CashDeskPage() {
   const { methodFilter, typeFilter, selectedPeriod } = useCashDeskFilters();
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
+
+  const clientOptions = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...sampleClients.map((client) => client.name),
+          ...sampleBookings.map((booking) => booking.clientName),
+        ]),
+      ).sort((a, b) => a.localeCompare(b)),
+    [],
+  );
   const [formData, setFormData] = useState({
     type: 'Sale' as Transaction['type'],
     amount: 0,
@@ -115,17 +125,9 @@ export default function CashDeskPage() {
     setFormData({ type: 'Sale', amount: 0, method: 'Cash', client: '', note: '' });
   };
 
-  // Print handler
-  const handlePrint = () => {
-    generateCashDeskPDF({
-      transactions: filteredTransactions,
-      totalSales,
-      totalCash,
-      totalCard,
-      totalRefunds,
-      totalDeposits,
-      totalWithdrawals,
-    });
+  const openTransactionModal = (type: Transaction['type']) => {
+    setFormData((prev) => ({ ...prev, type }));
+    setShowModal(true);
   };
 
   return (
@@ -164,19 +166,21 @@ export default function CashDeskPage() {
             <h1 className="text-5xl font-light text-gray-900 tracking-tight mb-2">Cash Desk</h1>
             <p className="text-sm text-gray-400">Manage transactions and cash flow</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
+              type="button"
               onClick={exportToCSV}
-              className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-[var(--reserva-ink)] hover:text-white cursor-pointer transition-colors flex items-center gap-2"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
             >
-              <Download size={16} />
+              <Download size={14} />
               Exporter
             </button>
             <button
-              onClick={() => setShowModal(true)}
-              className="px-5 py-2 bg-emerald-600 text-white text-sm font-medium rounded-full hover:bg-emerald-700 transition-colors flex items-center gap-2"
+              type="button"
+              onClick={() => openTransactionModal('Sale')}
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full bg-primary px-4 text-xs font-medium text-primary-foreground transition-colors hover:bg-[var(--reserva-ink)] hover:text-white"
             >
-              <Plus size={16} />
+              <Plus size={14} />
               Add
             </button>
           </div>
@@ -226,50 +230,6 @@ export default function CashDeskPage() {
             <span className="text-xs text-gray-400">Withdrawals</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalWithdrawals} MAD</p>
-        </div>
-      </div>
-
-      {/* Search & Quick Actions */}
-      <div className="mb-6 animate-fadeIn">
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input
-              type="text"
-              placeholder="Search une transaction..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-full bg-white border border-neutral-200 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
-            />
-          </div>
-          <button
-            onClick={() => { setFormData({ ...formData, type: 'Sale' }); setShowModal(true); }}
-            className="px-4 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
-          >
-            <Plus size={14} />
-            New sale
-          </button>
-          <button
-            onClick={() => { setFormData({ ...formData, type: 'Refund' }); setShowModal(true); }}
-            className="px-4 py-3 bg-red-50 hover:bg-red-100 text-red-700 rounded-full text-xs font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
-          >
-            <RefreshCcw size={14} />
-            Refund
-          </button>
-          <button
-            onClick={() => { setFormData({ ...formData, type: 'Deposit' }); setShowModal(true); }}
-            className="px-4 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full text-xs font-medium transition-colors flex items-center gap-2 whitespace-nowrap"
-          >
-            <Wallet size={14} />
-            Deposit
-          </button>
-          <button
-            onClick={handlePrint}
-            className="px-4 py-3 bg-gray-50 hover:bg-gray-100 text-gray-700 rounded-full text-xs font-medium transition-colors flex items-center gap-2"
-            title="Print le rapport"
-          >
-            <Printer size={14} />
-          </button>
         </div>
       </div>
 
@@ -358,48 +318,67 @@ export default function CashDeskPage() {
         </div>
       </div>
 
-      {/* Transactions Table */}
-      <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden animate-fadeIn">
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-medium text-gray-900">All transactions</h3>
+      {/* Search */}
+      <div className="mb-4 flex animate-fadeIn">
+        <div className="flex h-10 min-w-0 w-full items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
+          <Search size={16} className="shrink-0 text-gray-400" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search transactions"
+            className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
+          />
         </div>
+      </div>
+
+      {/* Transactions Table */}
+      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white animate-fadeIn">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-100">
+            <thead className="border-b border-gray-100 bg-gray-50">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Type</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Amount</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Method</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Client</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Date</th>
+                <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Note</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredTransactions.map(tx => (
-                <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
+              {filteredTransactions.map((tx) => (
+                <tr key={tx.id} className="transition-colors hover:bg-gray-50/30">
                   <td className="px-6 py-4">
-                    <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
-                      tx.type === 'Sale' ? 'bg-emerald-50 text-emerald-700' :
-                      tx.type === 'Refund' ? 'bg-red-50 text-red-700' :
-                      tx.type === 'Deposit' ? 'bg-blue-50 text-blue-700' : 'bg-gray-100 text-gray-700'
-                    }`}>
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
+                        tx.type === 'Sale'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : tx.type === 'Refund'
+                            ? 'bg-red-100 text-red-700'
+                            : tx.type === 'Deposit'
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
                       {tx.type}
                     </span>
                   </td>
-                  <td className={`px-6 py-4 font-light text-lg ${tx.amount < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-                    {tx.amount} MAD
+                  <td className="px-6 py-4">
+                    <span className={`text-sm font-semibold ${tx.amount < 0 ? 'text-red-600' : 'text-gray-900'}`}>
+                      {tx.amount} MAD
+                    </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-sm text-gray-700">
                       {tx.method === 'Cash' && <Wallet size={14} className="text-gray-400" />}
                       {tx.method === 'Card' && <CreditCard size={14} className="text-gray-400" />}
-                      <span className="text-sm text-gray-600">{tx.method}</span>
+                      <span>{tx.method}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{tx.client || '-'}</td>
-                  <td className="px-6 py-4 text-xs text-gray-400">{tx.date.toLocaleString('en-US')}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{tx.note || '-'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{tx.client || '—'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{tx.date.toLocaleString('en-US')}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{tx.note || '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -407,8 +386,8 @@ export default function CashDeskPage() {
         </div>
         {filteredTransactions.length === 0 && (
           <div className="py-12 text-center">
-            <Receipt className="mx-auto text-gray-300 mb-3" size={48} />
-                        <p className="text-gray-500">No transactions found</p>
+            <Receipt className="mx-auto mb-3 text-gray-300" size={48} />
+            <p className="text-sm text-gray-500">No transactions found</p>
           </div>
         )}
       </div>
@@ -419,7 +398,11 @@ export default function CashDeskPage() {
           <div className="bg-white rounded-xl border border-neutral-200 max-w-lg w-full max-h-[90vh] overflow-y-auto animate-slideUp">
             <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 flex items-center justify-between">
               <h2 className="text-2xl font-light text-gray-900">New transaction</h2>
-              <button onClick={() => setShowModal(false)} className="p-2 text-gray-400 hover:text-gray-900 transition-colors">
+              <button
+                type="button"
+                onClick={() => setShowModal(false)}
+                className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
+              >
                 <X size={20} />
               </button>
             </div>
@@ -429,7 +412,7 @@ export default function CashDeskPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                     <Select value={formData.type} onValueChange={v => setFormData({ ...formData, type: v as Transaction['type'] })}>
-                      <SelectTrigger className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-neutral-200 text-sm mt-2">
+                      <SelectTrigger className="mt-2 w-full cursor-pointer rounded-full border border-neutral-200 bg-gray-50 px-4 py-2.5 text-sm">
                         <SelectValue placeholder="Select le type" />
                       </SelectTrigger>
                       <SelectContent>
@@ -445,9 +428,9 @@ export default function CashDeskPage() {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        className="px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        className="cursor-pointer rounded-full bg-gray-100 px-4 py-2 text-gray-600 transition-colors hover:bg-gray-200"
                         onClick={() => setFormData({ ...formData, amount: Math.max(0, Number(formData.amount) - 10) })}
-                        aria-label="Decrease le montant"
+                        aria-label="Decrease amount"
                       >
                         -
                       </button>
@@ -462,9 +445,9 @@ export default function CashDeskPage() {
                       />
                       <button
                         type="button"
-                        className="px-4 py-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        className="cursor-pointer rounded-full bg-gray-100 px-4 py-2 text-gray-600 transition-colors hover:bg-gray-200"
                         onClick={() => setFormData({ ...formData, amount: Number(formData.amount) + 10 })}
-                        aria-label="Augmenter le montant"
+                        aria-label="Increase amount"
                       >
                         +
                       </button>
@@ -473,7 +456,7 @@ export default function CashDeskPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Method</label>
                     <Select value={formData.method} onValueChange={v => setFormData({ ...formData, method: v as Transaction['method'] })}>
-                      <SelectTrigger className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-neutral-200 text-sm mt-2">
+                      <SelectTrigger className="mt-2 w-full cursor-pointer rounded-full border border-neutral-200 bg-gray-50 px-4 py-2.5 text-sm">
                         <SelectValue placeholder="Select method" />
                       </SelectTrigger>
                       <SelectContent>
@@ -486,7 +469,24 @@ export default function CashDeskPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
-                    <input type="text" value={formData.client} onChange={e => setFormData({ ...formData, client: e.target.value })} className="w-full px-4 py-2.5 rounded-full bg-gray-50 border border-neutral-200 text-sm" placeholder="Client name" />
+                    <Select
+                      value={formData.client || '__none__'}
+                      onValueChange={(v) => setFormData({ ...formData, client: v === '__none__' ? '' : v })}
+                    >
+                      <SelectTrigger className="mt-2 w-full cursor-pointer rounded-full border border-neutral-200 bg-gray-50 px-4 py-2.5 text-sm">
+                        <SelectValue placeholder="Select a client" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__none__" className="cursor-pointer">
+                          No client
+                        </SelectItem>
+                        {clientOptions.map((name) => (
+                          <SelectItem key={name} value={name} className="cursor-pointer">
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
@@ -495,7 +495,13 @@ export default function CashDeskPage() {
                 </div>
               </div>
               <div className="sticky bottom-0 bg-white border-t border-gray-100 -mx-8 px-8 py-4 mt-6 flex gap-3">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Annuler</button>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="flex-1 cursor-pointer rounded-full border border-red-200 bg-red-50 px-6 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
+                >
+                  Cancel
+                </button>
                 <button type="submit" className="flex-1 px-6 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-[var(--reserva-ink)] hover:text-white cursor-pointer transition-colors">Add</button>
               </div>
             </form>

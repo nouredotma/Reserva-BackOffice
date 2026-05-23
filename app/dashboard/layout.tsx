@@ -4,9 +4,27 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, Trash2, Users, File, BarChart3, LogOut, Settings2, Calendar, Clock, Filter, UserCheck, Building, TrendingUp, FileText, ChevronDown, Bell, CreditCard, X, HelpCircle, Mail, MessageCircle, Phone } from 'lucide-react';
 import { useAuth } from '@/lib/mock-auth';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { CashDeskFiltersProvider, useCashDeskFilters, type CashDeskMethodFilter, type CashDeskPeriodFilter, type CashDeskTypeFilter } from '@/lib/cash-desk-filters';
+import {
+	dashboardNotifications,
+	notificationSections,
+	sectionLabels,
+	type DashboardNotification,
+	type NotificationIcon,
+} from '@/lib/data/notifications';
+
+const notificationIconMap: Record<NotificationIcon, typeof Calendar> = {
+	calendar: Calendar,
+	'user-check': UserCheck,
+	'credit-card': CreditCard,
+	'trending-up': TrendingUp,
+	users: Users,
+	bell: Bell,
+	'file-text': FileText,
+	building: Building,
+};
 
 const menuItems = [
 	{ name: 'Agenda', href: '/dashboard/agenda', icon: Home },
@@ -23,17 +41,6 @@ const AgendaSidebar = () => {
 		const today = new Date();
 		today.setHours(0, 0, 0, 0);
 		setSelectedDate(today);
-
-		// Listen for main calendar date changes
-		const handleMainCalendarDateChange = (event: CustomEvent) => {
-			setSelectedDate(new Date(event.detail));
-		};
-
-		window.addEventListener('mainCalendarDateChange', handleMainCalendarDateChange as EventListener);
-
-		return () => {
-			window.removeEventListener('mainCalendarDateChange', handleMainCalendarDateChange as EventListener);
-		};
 	}, []);
 
 	const getDaysInMonth = () => {
@@ -52,16 +59,6 @@ const AgendaSidebar = () => {
 			days.push(i);
 		}
 		return days;
-	};
-
-	const handleDayClick = (day: number | null) => {
-		if (!day || !selectedDate) return;
-		const year = selectedDate.getFullYear();
-		const month = selectedDate.getMonth();
-		const newDate = new Date(year, month, day);
-		newDate.setHours(0, 0, 0, 0);
-		setSelectedDate(newDate);
-		window.dispatchEvent(new CustomEvent('sidebarDateChange', { detail: newDate }));
 	};
 
 	const changeMonth = (delta: number) => {
@@ -108,22 +105,24 @@ const AgendaSidebar = () => {
 					</div>
 					<div className="grid grid-cols-7 gap-1">
 						{getDaysInMonth().map((day, i) => {
-							const isSelected = day === selectedDate.getDate();
+							const today = new Date();
+							const isToday =
+								!!day &&
+								selectedDate.getFullYear() === today.getFullYear() &&
+								selectedDate.getMonth() === today.getMonth() &&
+								day === today.getDate();
 
 							return day ? (
-								<button
+								<div
 									key={i}
-									onClick={() => handleDayClick(day)}
-									className={`aspect-square rounded-full text-xs font-medium transition-all cursor-pointer ${
-										isSelected
-											? 'bg-primary text-primary-foreground'
-											: 'text-white/70 hover:bg-white/10 hover:text-white cursor-pointer'
+									className={`flex aspect-square items-center justify-center rounded-full text-xs font-medium ${
+										isToday ? 'bg-primary text-primary-foreground' : 'text-white/70'
 									}`}
 								>
 									{day}
-								</button>
+								</div>
 							) : (
-								<div key={i} className="aspect-square"></div>
+								<div key={i} className="aspect-square" />
 							);
 						})}
 					</div>
@@ -304,44 +303,44 @@ const CashDeskSidebar = () => {
             <div>
               <label className="block text-sm font-medium text-white/60 mb-2">Method</label>
               <Select value={methodFilter} onValueChange={handleMethodFilterChange}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
+                <SelectTrigger className="mt-2 flex h-10 w-full cursor-pointer items-center rounded-full border border-white/10 bg-white/5 px-4 text-xs font-medium text-white">
                   <SelectValue placeholder="Select method" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="Cash">Cash</SelectItem>
-                  <SelectItem value="Card">Card</SelectItem>
-                  <SelectItem value="Transfer">Transfer</SelectItem>
-                  <SelectItem value="Check">Check</SelectItem>
+                  <SelectItem value="all" className="cursor-pointer">All</SelectItem>
+                  <SelectItem value="Cash" className="cursor-pointer">Cash</SelectItem>
+                  <SelectItem value="Card" className="cursor-pointer">Card</SelectItem>
+                  <SelectItem value="Transfer" className="cursor-pointer">Transfer</SelectItem>
+                  <SelectItem value="Check" className="cursor-pointer">Check</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
               <label className="block text-sm font-medium text-white/60 mb-2">Type</label>
               <Select value={typeFilter} onValueChange={handleTypeFilterChange}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
+                <SelectTrigger className="mt-2 flex h-10 w-full cursor-pointer items-center rounded-full border border-white/10 bg-white/5 px-4 text-xs font-medium text-white">
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="Sale">Sale</SelectItem>
-                  <SelectItem value="Refund">Refund</SelectItem>
-                  <SelectItem value="Deposit">Deposit</SelectItem>
-                  <SelectItem value="Withdrawal">Withdrawal</SelectItem>
+                  <SelectItem value="all" className="cursor-pointer">All</SelectItem>
+                  <SelectItem value="Sale" className="cursor-pointer">Sale</SelectItem>
+                  <SelectItem value="Refund" className="cursor-pointer">Refund</SelectItem>
+                  <SelectItem value="Deposit" className="cursor-pointer">Deposit</SelectItem>
+                  <SelectItem value="Withdrawal" className="cursor-pointer">Withdrawal</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
               <label className="block text-sm font-medium text-white/60 mb-2">Period</label>
               <Select value={selectedPeriod} onValueChange={handlePeriodFilterChange}>
-                <SelectTrigger className="w-full px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white text-sm font-medium mt-2">
+                <SelectTrigger className="mt-2 flex h-10 w-full cursor-pointer items-center rounded-full border border-white/10 bg-white/5 px-4 text-xs font-medium text-white">
                   <SelectValue placeholder="Select period" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="day">Today</SelectItem>
-                  <SelectItem value="week">This week</SelectItem>
-                  <SelectItem value="month">This month</SelectItem>
-                  <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="day" className="cursor-pointer">Today</SelectItem>
+                  <SelectItem value="week" className="cursor-pointer">This week</SelectItem>
+                  <SelectItem value="month" className="cursor-pointer">This month</SelectItem>
+                  <SelectItem value="all" className="cursor-pointer">All time</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -358,13 +357,23 @@ function DashboardSidebar() {
 	const [mounted, setMounted] = useState(false);
 	const router = useRouter();
 
-	// Notification sidebar state
-	const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
+	const [showNotificationModal, setShowNotificationModal] = useState(false);
 	const [notificationTab, setNotificationTab] = useState<'all' | 'unread'>('all');
-	const notificationSidebarRef = useRef<HTMLDivElement>(null);
+	const [notifications, setNotifications] = useState<DashboardNotification[]>(dashboardNotifications);
 
 	const [profileImage, setProfileImage] = useState<string | null>(null);
 	const [showSupportModal, setShowSupportModal] = useState(false);
+
+	const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
+
+	const visibleNotifications = useMemo(() => {
+		if (notificationTab === 'unread') return notifications.filter((n) => !n.read);
+		return notifications;
+	}, [notifications, notificationTab]);
+
+	const handleMarkAllRead = () => {
+		setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+	};
 
 	useEffect(() => {
 		setMounted(true);
@@ -378,19 +387,6 @@ function DashboardSidebar() {
 			setProfileImage(null);
 		}
 	}, []);
-
-	useEffect(() => {
-		if (!showNotificationSidebar) return;
-		function handleClickOutside(event: MouseEvent) {
-			if (notificationSidebarRef.current && !notificationSidebarRef.current.contains(event.target as Node)) {
-				setShowNotificationSidebar(false);
-			}
-		}
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	}, [showNotificationSidebar]);
 
 	const handleLogout = () => {
 		logout();
@@ -457,9 +453,15 @@ function DashboardSidebar() {
 							</span>
 						</button>
 						{/* Notifications */}
-						<button className="relative p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all cursor-pointer" onClick={() => setShowNotificationSidebar(true)}>
+						<button
+							type="button"
+							className="relative p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all cursor-pointer"
+							onClick={() => setShowNotificationModal(true)}
+						>
 							<Bell size={20} strokeWidth={2} />
-							<span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+							{unreadCount > 0 && (
+								<span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-500" aria-hidden />
+							)}
 						</button>
 
 						{/* Divider */}
@@ -516,20 +518,31 @@ function DashboardSidebar() {
 			</aside>
 
 			{showSupportModal && (
-				<div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/35 p-4">
-					<div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl">
+				<div
+					className="fixed inset-0 z-[70] flex items-center justify-center bg-black/35 p-4"
+					onClick={() => setShowSupportModal(false)}
+					role="presentation"
+				>
+					<div
+						className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl"
+						onClick={(e) => e.stopPropagation()}
+						role="dialog"
+						aria-labelledby="support-modal-title"
+					>
 						<div className="mb-5 flex items-start justify-between gap-4">
 							<div>
-								<p className="mb-1 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-gray-400">
+								<p className="mb-1 flex items-center gap-2 text-xs font-medium tracking-wide text-gray-400">
 									<HelpCircle size={14} />
 									Support
 								</p>
-								<h2 className="text-2xl font-light text-gray-900">Reserva help desk</h2>
+								<h2 id="support-modal-title" className="text-2xl font-light text-gray-900">
+									Reserva help desk
+								</h2>
 							</div>
 							<button
 								type="button"
 								onClick={() => setShowSupportModal(false)}
-								className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
+								className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
 							>
 								<X size={18} />
 							</button>
@@ -537,22 +550,52 @@ function DashboardSidebar() {
 
 						<div className="space-y-3">
 							{[
-								{ icon: Mail, label: 'Email', value: 'support@reserva.ma' },
-								{ icon: Phone, label: 'Phone', value: '+212 5 22 00 00 00' },
-								{ icon: MessageCircle, label: 'WhatsApp', value: '+212 6 00 00 00 00' },
-								{ icon: Clock, label: 'Hours', value: 'Mon-Fri, 09:00-18:00' },
-								{ icon: UserCheck, label: 'Account', value: mounted ? user?.email || 'admin@example.com' : 'admin@example.com' },
+								{ icon: Mail, label: 'Email', value: 'support@reserva.ma', href: 'mailto:support@reserva.ma' },
+								{ icon: Phone, label: 'Phone', value: '+212 5 22 00 00 00', href: 'tel:+212522000000' },
+								{
+									icon: MessageCircle,
+									label: 'WhatsApp',
+									value: '+212 6 00 00 00 00',
+									href: 'https://wa.me/212600000000',
+									external: true,
+								},
+								{ icon: Clock, label: 'Hours', value: 'Mon–Fri, 09:00–18:00' },
+								{
+									icon: UserCheck,
+									label: 'Account',
+									value: mounted ? user?.email || 'admin@example.com' : 'admin@example.com',
+								},
 							].map((item) => {
 								const Icon = item.icon;
+								const rowContent = (
+									<>
+										<div className="flex items-center gap-3">
+											<div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 transition-colors group-hover:bg-primary/20">
+												<Icon size={16} className="text-gray-500 transition-colors group-hover:text-primary" />
+											</div>
+											<span className="text-sm text-gray-500 transition-colors group-hover:text-primary">{item.label}</span>
+										</div>
+										<span className="text-right text-sm font-medium text-gray-900 transition-colors group-hover:text-primary">{item.value}</span>
+									</>
+								);
+
+								if (item.href) {
+									return (
+										<a
+											key={item.label}
+											href={item.href}
+											target={item.external ? '_blank' : undefined}
+											rel={item.external ? 'noopener noreferrer' : undefined}
+											className="group flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-neutral-200 p-3 transition-colors hover:border-primary hover:bg-primary/10"
+										>
+											{rowContent}
+										</a>
+									);
+								}
+
 								return (
 									<div key={item.label} className="flex items-center justify-between gap-4 rounded-xl border border-neutral-200 p-3">
-										<div className="flex items-center gap-3">
-											<div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50">
-												<Icon size={16} className="text-gray-500" />
-											</div>
-											<span className="text-sm text-gray-500">{item.label}</span>
-										</div>
-										<span className="text-right text-sm font-medium text-gray-900">{item.value}</span>
+										{rowContent}
 									</div>
 								);
 							})}
@@ -561,7 +604,7 @@ function DashboardSidebar() {
 						<button
 							type="button"
 							onClick={() => setShowSupportModal(false)}
-							className="mt-5 w-full rounded-full bg-primary py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-[var(--reserva-ink)] hover:text-white"
+							className="mt-5 w-full cursor-pointer rounded-full bg-primary py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-[var(--reserva-ink)] hover:text-white"
 						>
 							Close
 						</button>
@@ -569,247 +612,126 @@ function DashboardSidebar() {
 				</div>
 			)}
 
-			{/* Notification Sidebar (right) */}
-	{showNotificationSidebar && (
-		<>
-
-
-			<div ref={notificationSidebarRef} className="fixed top-0 right-0 h-screen w-[480px] border-l-2 border-neutral-200 bg-white  z-50 transition-transform duration-300 animate-slideIn flex flex-col">
-				{/* Header - Ultra Minimalist */}
-				<div className="px-8 py-8 border-b border-gray-100">
-					<div className="flex items-start justify-between mb-6">
-						<div>
-							<h2 className="text-3xl font-light text-gray-900 tracking-tight">Notifications</h2>
-							<p className="text-sm text-gray-400 mt-1 font-light">3 non lues</p>
-						</div>
-						<button
-							onClick={() => setShowNotificationSidebar(false)}
-							className="p-2 text-gray-400 hover:text-gray-900 transition-colors cursor-pointer"
-						>
-							<X size={20} />
-						</button>
-					</div>
-
-					{/* Tabs */}
-					<div className="flex items-center gap-1">
-						<button
-							className={`px-4 py-1.5 text-xs font-medium transition-colors ${notificationTab === 'all' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
-							onClick={() => setNotificationTab('all')}
-						>
-							All
-						</button>
-						<span className="text-gray-300">/</span>
-						<button
-							className={`px-4 py-1.5 text-xs font-medium transition-colors ${notificationTab === 'unread' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
-							onClick={() => setNotificationTab('unread')}
-						>
-							No lues
-						</button>
-					</div>
-				</div>
-
-				{/* Notifications List */}
-				<div className="flex-1 overflow-y-auto">
-					{/* Today Section */}
-					<div className="px-8 py-6">
-						<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Today</p>
-						{/* Only show unread if tab is 'unread', else show all */}
-						{(notificationTab === 'all' || notificationTab === 'unread') && (
-							<>
-								{notificationTab === 'all' && (
-									<>
-										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
-											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
-											<div className="flex gap-4 pr-4">
-												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-													<Calendar size={16} className="text-gray-600" />
-												</div>
-												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">New reservation confirmed</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Yasmine Alaoui confirmed a table at Le Jardin tomorrow at 8:30 PM.</p>
-													<span className="text-xs text-gray-400 font-light">Il y a 2 minutes</span>
-												</div>
-											</div>
-										</div>
-										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
-											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
-											<div className="flex gap-4 pr-4">
-												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-													<UserCheck size={16} className="text-gray-600" />
-												</div>
-												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">New client review</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali left a 5-star review for your VIP experience.</p>
-													<span className="text-xs text-gray-400 font-light">Il y a 15 minutes</span>
-												</div>
-											</div>
-										</div>
-										{/* Notification Item - Unread */}
-										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
-											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
-											<div className="flex gap-4 pr-4">
-												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-													<Calendar size={16} className="text-gray-600" />
-												</div>
-												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Reservation canceled</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi canceled her day pass scheduled for today at 4:00 PM.</p>
-													<span className="text-xs text-gray-400 font-light">Il y a 1 heure</span>
-												</div>
-											</div>
-										</div>
-										{/* Read Notification */}
-										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
-											<div className="flex gap-4">
-												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-													<CreditCard size={16} className="text-gray-600" />
-												</div>
-												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Payment received</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">450 MAD deposit received for Fatima Zahra's reservation.</p>
-													<span className="text-xs text-gray-400 font-light">3 hours ago</span>
-												</div>
-											</div>
-										</div>
-									</>
-								)}
-								{notificationTab === 'unread' && (
-									<>
-										{/* Only show unread notifications (those with blue dot) */}
-										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
-											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
-											<div className="flex gap-4 pr-4">
-												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-													<Calendar size={16} className="text-gray-600" />
-												</div>
-												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">New reservation confirmed</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Yasmine Alaoui confirmed a table at Le Jardin tomorrow at 8:30 PM.</p>
-													<span className="text-xs text-gray-400 font-light">Il y a 2 minutes</span>
-												</div>
-											</div>
-										</div>
-										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
-											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
-											<div className="flex gap-4 pr-4">
-												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-													<UserCheck size={16} className="text-gray-600" />
-												</div>
-												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">New client review</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Ahmed Benali left a 5-star review for your VIP experience.</p>
-													<span className="text-xs text-gray-400 font-light">Il y a 15 minutes</span>
-												</div>
-											</div>
-										</div>
-										<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer">
-											<div className="absolute top-4 right-4 w-1.5 h-1.5 bg-primary rounded-full"></div>
-											<div className="flex gap-4 pr-4">
-												<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-													<Calendar size={16} className="text-gray-600" />
-												</div>
-												<div className="flex-1 min-w-0">
-													<p className="text-sm font-medium text-gray-900 mb-1">Reservation canceled</p>
-													<p className="text-xs text-gray-500 leading-relaxed mb-2">Leila Tazi canceled her day pass scheduled for today at 4:00 PM.</p>
-													<span className="text-xs text-gray-400 font-light">Il y a 1 heure</span>
-												</div>
-											</div>
-										</div>
-									</>
-								)}
-							</>
-						)}
-					</div>
-					{/* Yesterday Section */}
-					{notificationTab === 'all' && (
-						<div className="px-8 py-6 border-t border-gray-100">
-							<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">Hier</p>
-
-							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
-								<div className="flex gap-4">
-									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-										<TrendingUp size={16} className="text-gray-600" />
-									</div>
-									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Monthly report available</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Your November statistics report is now available.</p>
-										<span className="text-xs text-gray-400 font-light">Hier at 18:30</span>
-									</div>
+			{showNotificationModal && (
+				<div
+					className="fixed inset-0 z-[70] flex items-center justify-center bg-black/35 p-4"
+					onClick={() => setShowNotificationModal(false)}
+					role="presentation"
+				>
+					<div
+						className="flex w-full max-w-lg max-h-[min(85vh,640px)] flex-col rounded-xl border border-neutral-200 bg-white shadow-xl"
+						onClick={(e) => e.stopPropagation()}
+						role="dialog"
+						aria-labelledby="notifications-modal-title"
+					>
+						<div className="border-b border-gray-100 p-6 pb-4">
+							<div className="mb-4 flex items-start justify-between gap-4">
+								<div>
+									<p className="mb-1 flex items-center gap-2 text-xs font-medium tracking-wide text-gray-400">
+										<Bell size={14} />
+										Notifications
+									</p>
+									<h2 id="notifications-modal-title" className="text-2xl font-light text-gray-900">
+										Activity
+									</h2>
+									<p className="mt-1 text-sm text-gray-400">
+										{unreadCount === 0
+											? 'All caught up'
+											: `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`}
+									</p>
 								</div>
+								<button
+									type="button"
+									onClick={() => setShowNotificationModal(false)}
+									className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
+								>
+									<X size={18} />
+								</button>
 							</div>
 
-							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
-								<div className="flex gap-4">
-									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-										<Users size={16} className="text-gray-600" />
-									</div>
-									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">New client saved</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">Karim Alami booked an experience through Reserva.</p>
-										<span className="text-xs text-gray-400 font-light">Hier at 14:15</span>
-									</div>
-								</div>
-							</div>
-
-							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
-								<div className="flex gap-4">
-									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-										<Bell size={16} className="text-gray-600" />
-									</div>
-									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">Demandes at confirmer</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">5 reservations demandent une validation avant tomorrow.</p>
-										<span className="text-xs text-gray-400 font-light">Hier at 09:00</span>
-									</div>
-								</div>
+							<div className="flex gap-2">
+								<button
+									type="button"
+									onClick={() => setNotificationTab('all')}
+									className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-medium transition-colors ${
+										notificationTab === 'all'
+											? 'border border-primary bg-primary/15 text-gray-900'
+											: 'border border-neutral-200 bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+									}`}
+								>
+									All
+								</button>
+								<button
+									type="button"
+									onClick={() => setNotificationTab('unread')}
+									className={`cursor-pointer rounded-full px-4 py-1.5 text-xs font-medium transition-colors ${
+										notificationTab === 'unread'
+											? 'border border-primary bg-primary/15 text-gray-900'
+											: 'border border-neutral-200 bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+									}`}
+								>
+									Unread
+								</button>
 							</div>
 						</div>
-					)}
-					{/* This Week Section */}
-					{notificationTab === 'all' && (
-						<div className="px-8 py-6 border-t border-gray-100">
-							<p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-4">This week</p>
 
-							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
-								<div className="flex gap-4">
-									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-										<FileText size={16} className="text-gray-600" />
-									</div>
-									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">New statement available</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">The Reserva payment statement was generated automatically.</p>
-										<span className="text-xs text-gray-400 font-light">Il y a 3 jours</span>
-									</div>
-								</div>
-							</div>
+						<div className="flex-1 overflow-y-auto px-6 py-4">
+							{visibleNotifications.length === 0 ? (
+								<p className="py-8 text-center text-sm text-gray-400">No notifications in this view.</p>
+							) : (
+								notificationSections.map((section) => {
+									const sectionItems = visibleNotifications.filter((n) => n.section === section);
+									if (sectionItems.length === 0) return null;
 
-							<div className="group relative bg-white border border-neutral-200 rounded-xl p-4 mb-2 hover:border-neutral-300  transition-all cursor-pointer opacity-60 hover:opacity-100">
-								<div className="flex gap-4">
-									<div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center flex-shrink-0">
-										<Building size={16} className="text-gray-600" />
-									</div>
-									<div className="flex-1 min-w-0">
-										<p className="text-sm font-medium text-gray-900 mb-1">System update</p>
-										<p className="text-xs text-gray-500 leading-relaxed mb-2">News options disponibles dans la section Admin.</p>
-										<span className="text-xs text-gray-400 font-light">Il y a 5 jours</span>
-									</div>
-								</div>
-							</div>
+									return (
+										<div key={section} className="mb-4 last:mb-0">
+											<p className="mb-3 text-xs font-medium tracking-wide text-gray-400">{sectionLabels[section]}</p>
+											<div className="space-y-2">
+												{sectionItems.map((notification) => {
+													const Icon = notificationIconMap[notification.icon];
+													return (
+														<div
+															key={notification.id}
+															className={`group relative cursor-pointer rounded-xl border border-neutral-200 p-3 transition-all hover:border-primary/40 hover:bg-primary/5 ${
+																notification.read ? 'opacity-60 hover:opacity-100' : ''
+															}`}
+														>
+															{!notification.read && (
+																<div className="absolute top-3 right-3 h-1.5 w-1.5 rounded-full bg-primary" />
+															)}
+															<div className={`flex gap-3 ${notification.read ? '' : 'pr-3'}`}>
+																<div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-50">
+																	<Icon size={16} className="text-gray-600" />
+																</div>
+																<div className="min-w-0 flex-1">
+																	<p className="mb-0.5 text-sm font-medium text-gray-900">{notification.title}</p>
+																	<p className="mb-1 text-xs leading-relaxed text-gray-500">{notification.message}</p>
+																	<span className="text-xs font-light text-gray-400">{notification.timeAgo}</span>
+																</div>
+															</div>
+														</div>
+													);
+												})}
+											</div>
+										</div>
+									);
+								})
+							)}
 						</div>
-					)}
-				</div>
 
-				{/* Footer Actions */}
-				<div className="border-t border-gray-100 p-6">
-					<button className="w-full py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors cursor-pointer">
-						Tuequer tout comme lu
-					</button>
+						<div className="border-t border-gray-100 p-6 pt-4">
+							<button
+								type="button"
+								onClick={handleMarkAllRead}
+								disabled={unreadCount === 0}
+								className="w-full cursor-pointer rounded-full border border-primary/30 bg-primary/10 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-40"
+							>
+								Mark all as read
+							</button>
+						</div>
+					</div>
 				</div>
-			</div>
-		</>
-	)}
+			)}
 
 			{/* Main Content Wrapper to prevent overlap */}
 			<div className="ml-66">

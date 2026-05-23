@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, User, Phone, Mail, X, ChevronLeft, ChevronRight, MoreVertical, Plus, CalendarIcon, MapPin, Ticket, HelpCircle } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Calendar, Clock, User, Phone, Mail, X, ChevronLeft, ChevronRight, Plus, CalendarIcon, MapPin, Ticket, HelpCircle } from 'lucide-react';
 import { bookingModeLabels } from '@/lib/mock-data';
 import type { BookingModeType } from '@/lib/types';
 import { format } from 'date-fns';
@@ -27,8 +27,104 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import DatePickerDemo from '@/components/ui/datepicker';
-
 import type { Appointment } from '@/lib/types';
+
+const controlTrackClass = 'inline-flex h-10 items-center rounded-full bg-neutral-200 p-1';
+
+const controlNavButtonClass =
+  'flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-neutral-500 transition-colors hover:text-gray-900';
+
+const newAppointmentButtonClass =
+  'flex h-10 cursor-pointer items-center gap-2 rounded-full border border-primary bg-primary px-4 text-xs font-medium text-primary-foreground transition-colors hover:border-[var(--reserva-ink)] hover:bg-[var(--reserva-ink)] hover:text-white';
+
+const viewOptions = [
+  { value: 'day', label: 'Day' },
+  { value: 'week', label: 'Week' },
+  { value: 'month', label: 'Month' },
+] as const;
+
+type AgendaView = (typeof viewOptions)[number]['value'];
+
+function getAgendaDateLabel(currentDate: Date, view: string) {
+  if (view === 'month') {
+    return currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+  if (view === 'week') {
+    const start = new Date(currentDate);
+    const day = start.getDay();
+    const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+    start.setDate(diff);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    const formatShort = (date: Date) =>
+      date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `${formatShort(start)} – ${formatShort(end)}`;
+  }
+  return currentDate.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function AgendaViewTabs({
+  value,
+  onChange,
+}: {
+  value: AgendaView;
+  onChange: (value: AgendaView) => void;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  const updateIndicator = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const activeButton = container.querySelector<HTMLButtonElement>(`[data-view="${value}"]`);
+    if (!activeButton) return;
+    setIndicatorStyle({
+      left: activeButton.offsetLeft,
+      width: activeButton.offsetWidth,
+    });
+  }, [value]);
+
+  useEffect(() => {
+    updateIndicator();
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [updateIndicator]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative inline-flex h-10 max-w-full items-center overflow-x-auto rounded-full bg-neutral-200 p-1"
+      role="tablist"
+      aria-label="Calendar view"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1 bottom-1 rounded-full bg-white transition-[left,width] duration-300 ease-out"
+        style={{ left: indicatorStyle.left, width: indicatorStyle.width }}
+      />
+      {viewOptions.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          role="tab"
+          aria-selected={value === option.value}
+          data-view={option.value}
+          onClick={() => onChange(option.value)}
+          className={`relative z-10 flex h-8 cursor-pointer items-center whitespace-nowrap rounded-full px-4 text-xs font-medium transition-colors ${
+            value === option.value ? 'text-gray-900' : 'text-neutral-500 hover:text-neutral-700'
+          }`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 type Client = {
   id: number;
@@ -144,14 +240,15 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
   return (
   <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-    <div className="bg-white rounded-xl border border-neutral-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp">
+    <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl border border-neutral-200 bg-white animate-slideUp">
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 z-40">
+      <div className="sticky top-0 z-40 border-b border-gray-100 bg-white px-8 py-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-light text-gray-900">New reservation</h2>
+          <h2 className="text-2xl font-light text-gray-900">New</h2>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
+            className="cursor-pointer rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
           >
             <X size={20} />
           </button>
@@ -161,7 +258,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
       <div className="px-8 py-6 space-y-8">
         {/* Client Info */}
         <div className="space-y-4">
-          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Client</h3>
+          <h3 className="text-sm font-medium tracking-wide text-gray-500">Client</h3>
 
           {/* Client Search/Select */}
           <div className="space-y-2">
@@ -173,7 +270,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                 value={clientSearch}
                 onChange={(e) => handleClientSearchChange(e.target.value)}
                 placeholder="Type a name, email, or phone..."
-                className="rounded-full px-4 py-2 mt-2"
+                className="mt-2 cursor-pointer rounded-full px-4 py-2"
               />
 
               {/* Dropdown with filtered clients */}
@@ -186,7 +283,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                           key={client.id}
                           type="button"
                           onClick={() => handleClientSelect(client)}
-                          className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center gap-3"
+                          className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
                         >
                           <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center shrink-0">
                             <span className="text-white font-medium text-sm">
@@ -213,7 +310,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                       <button
                         type="button"
                         onClick={() => window.location.href = '/dashboard/bookings/clients'}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-xs font-medium rounded-full hover:bg-gray-800 transition-colors"
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-gray-900 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-gray-800"
                       >
                         <Plus size={14} />
                         Add client
@@ -252,7 +349,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                     setSelectedClient(null);
                     setClientSearch('');
                   }}
-                  className="p-1 text-gray-400 hover:text-gray-900 transition-colors"
+                  className="cursor-pointer rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
                 >
                   <X size={16} />
                 </button>
@@ -303,14 +400,16 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
           {/* Service */}
           <div className="space-y-2">
-            <Label htmlFor="service">Offre</Label>
+            <Label htmlFor="service">Service</Label>
             <Select value={service} onValueChange={setService}>
-              <SelectTrigger id="service" className="rounded-full px-4 py-2 mt-2">
-                <SelectValue placeholder="Select une offre" />
+              <SelectTrigger id="service" className="mt-2 cursor-pointer rounded-full px-4 py-2">
+                <SelectValue placeholder="Select a service" />
               </SelectTrigger>
               <SelectContent>
                 {sampleBookableServices.map((option) => (
-                  <SelectItem key={option.id} value={option.name}>{option.name}</SelectItem>
+                  <SelectItem key={option.id} value={option.name} className="cursor-pointer">
+                    {option.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -319,7 +418,7 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
         {/* DateTime */}
         <div className="space-y-4">
-          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Planification</h3>
+          <h3 className="text-sm font-medium tracking-wide text-gray-500">Scheduling</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Date</Label>
@@ -328,8 +427,8 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal rounded-full px-4 py-2 mt-2 h-auto",
-                      !date && "text-muted-foreground"
+                      'mt-2 h-auto w-full cursor-pointer justify-start rounded-full px-4 py-2 text-left font-normal',
+                      !date && 'text-muted-foreground',
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -355,19 +454,19 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
             <div className="space-y-2">
               <Label htmlFor="duration">Duration</Label>
               <Select value={duration} onValueChange={setDuration}>
-                <SelectTrigger id="duration" className="rounded-full px-4 py-2 mt-2">
+                <SelectTrigger id="duration" className="mt-2 cursor-pointer rounded-full px-4 py-2">
                   <SelectValue placeholder="Select duration" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="30">30 min</SelectItem>
-                  <SelectItem value="45">45 min</SelectItem>
-                  <SelectItem value="60">60 min</SelectItem>
-                  <SelectItem value="90">90 min</SelectItem>
-                  <SelectItem value="120">120 min</SelectItem>
-                  <SelectItem value="150">150 min</SelectItem>
-                  <SelectItem value="180">180 min</SelectItem>
-                  <SelectItem value="240">240 min</SelectItem>
-                  <SelectItem value="360">360 min</SelectItem>
+                  <SelectItem value="30" className="cursor-pointer">30 min</SelectItem>
+                  <SelectItem value="45" className="cursor-pointer">45 min</SelectItem>
+                  <SelectItem value="60" className="cursor-pointer">60 min</SelectItem>
+                  <SelectItem value="90" className="cursor-pointer">90 min</SelectItem>
+                  <SelectItem value="120" className="cursor-pointer">120 min</SelectItem>
+                  <SelectItem value="150" className="cursor-pointer">150 min</SelectItem>
+                  <SelectItem value="180" className="cursor-pointer">180 min</SelectItem>
+                  <SelectItem value="240" className="cursor-pointer">240 min</SelectItem>
+                  <SelectItem value="360" className="cursor-pointer">360 min</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -376,30 +475,32 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
 
         {/* Notes */}
         <div className="space-y-4">
-          <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Notes</h3>
+          <h3 className="text-sm font-medium tracking-wide text-gray-500">Notes</h3>
           <Textarea
             rows={3}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Add des notes..."
+            placeholder="Add notes (optional)"
             className="rounded-xl px-4 py-2 border-neutral-200 focus:ring-2 focus:ring-gray-900"
           />
         </div>
       </div>
 
       {/* Actions */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 px-8 py-4 flex gap-3">
+      <div className="sticky bottom-0 flex gap-3 border-t border-gray-100 bg-white px-8 py-4">
         <button
+          type="button"
           onClick={onClose}
-          className="flex-1 px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          className="flex-1 cursor-pointer rounded-full border border-red-200 bg-red-50 px-6 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
         >
-          Annuler
+          Cancel
         </button>
         <button
+          type="button"
           onClick={handleCreate}
-          className="flex-1 px-6 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-[var(--reserva-ink)] hover:text-white cursor-pointer transition-colors"
+          className="flex-1 cursor-pointer rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-[var(--reserva-ink)] hover:text-white"
         >
-          Create la reservation
+          Create
         </button>
       </div>
     </div>
@@ -493,7 +594,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
     );
   }
 
-  if (viewType === 'week') {
+  if (viewType === 'day') {
     return (
       <div
         draggable
@@ -507,15 +608,31 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           }
         }}
         onDragStart={(e) => onDragStart && onDragStart(e, apt)}
-        className="flex flex-col gap-1 p-2.5 rounded-xl border text-xs cursor-pointer transition-all hover:brightness-95 select-none w-full"
+        className="flex h-full min-h-9 w-full cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium leading-snug transition-all hover:brightness-95 select-none"
         style={getStyle(color)}
       >
-        <div className="font-semibold truncate">{apt.clientName}</div>
-        <div className="text-[10px] opacity-75 truncate">{apt.service}</div>
-        <div className="flex items-center gap-1 text-[10px] opacity-60 tabular-nums">
-          <Clock size={10} />
-          <span>{apt.time} ({apt.duration}m)</span>
-        </div>
+        <span className="shrink-0 font-semibold tabular-nums">{apt.time}</span>
+        <span className="shrink-0 truncate">{apt.clientName}</span>
+        <span className="hidden shrink-0 text-current/40 sm:inline" aria-hidden>
+          ·
+        </span>
+        <span className="min-w-0 flex-1 truncate opacity-80">{apt.service}</span>
+        {apt.notes ? (
+          <>
+            <span className="hidden shrink-0 text-current/40 md:inline" aria-hidden>
+              ·
+            </span>
+            <span className="hidden min-w-0 max-w-[30%] truncate opacity-65 md:inline">
+              {apt.notes}
+            </span>
+          </>
+        ) : null}
+        {mode ? (
+          <span className="ml-auto hidden shrink-0 items-center gap-1 rounded-full bg-white/50 px-2 py-0.5 text-[10px] lg:inline-flex">
+            <mode.Icon size={10} />
+            {mode.label}
+          </span>
+        ) : null}
       </div>
     );
   }
@@ -533,49 +650,16 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
         }
       }}
       onDragStart={(e) => onDragStart && onDragStart(e, apt)}
-      className="flex flex-row items-center justify-between gap-3 p-4 rounded-xl border text-sm cursor-pointer transition-all hover:brightness-95 select-none w-full"
+      className="flex h-full min-h-[4.5rem] w-full cursor-pointer flex-col justify-center gap-1 rounded-xl border p-2.5 text-xs transition-all hover:brightness-95 select-none"
       style={getStyle(color)}
     >
-      <div className="flex flex-col gap-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-gray-900">{apt.clientName}</span>
-          {mode && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/60 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider">
-              <mode.Icon size={10} />
-              {mode.label}
-            </span>
-          )}
-          <span className={cn(
-            "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border capitalize bg-white/40",
-            apt.status === 'confirmed' && 'border-emerald-200 text-emerald-800 bg-emerald-50/50',
-            apt.status === 'pending' && 'border-amber-200 text-amber-800 bg-amber-50/50',
-            apt.status === 'completed' && 'border-blue-200 text-blue-800 bg-blue-50/50',
-            apt.status === 'cancelled' && 'border-rose-200 text-rose-800 bg-rose-50/50',
-            apt.status === 'no_show' && 'border-purple-200 text-purple-800 bg-purple-50/50',
-          )}>
-            {apt.status.replace('_', ' ')}
-          </span>
-        </div>
-        <div className="text-xs text-gray-500 font-medium">{apt.service}</div>
-        {apt.notes && (
-          <div className="text-xs text-gray-400 italic mt-1 line-clamp-1 max-w-xl">
-            "{apt.notes}"
-          </div>
-        )}
-      </div>
-      <div className="flex items-center gap-4 shrink-0 text-xs text-gray-600">
-        <div className="flex items-center gap-1.5 tabular-nums">
-          <Clock size={14} className="text-gray-400" />
-          <span className="font-medium">{apt.time}</span>
-          <span className="text-gray-300">|</span>
-          <span>{apt.duration} min</span>
-        </div>
-        <button 
-          onClick={(e) => { e.stopPropagation(); onOpen?.(apt); }}
-          className="p-1.5 rounded-full hover:bg-black/5 text-gray-400 hover:text-gray-900 transition-colors"
-        >
-          <MoreVertical size={16} />
-        </button>
+      <div className="truncate font-semibold">{apt.clientName}</div>
+      <div className="truncate text-[10px] opacity-75">{apt.service}</div>
+      <div className="flex items-center gap-1 text-[10px] opacity-60 tabular-nums">
+        <Clock size={10} />
+        <span>
+          {apt.time} ({apt.duration}m)
+        </span>
       </div>
     </div>
   );
@@ -679,7 +763,7 @@ function BookingDetailModal({
 }
 
 const AgendaPage = () => {
-  const [view, setView] = useState('week'); // day, week, month
+  const [view, setView] = useState<AgendaView>('week');
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [showNewRDV, setShowNewRDV] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -687,21 +771,14 @@ const AgendaPage = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Listen for sidebar filter changes and sidebar date changes
   useEffect(() => {
     const handleStatusFilter = (event: Event) => {
       const ev = event as CustomEvent<string>;
       setFilterStatus(ev.detail);
     };
-    const handleSidebarDateChange = (event: Event) => {
-      const ev = event as CustomEvent<string>;
-      setCurrentDate(new Date(ev.detail));
-    };
     window.addEventListener('statusFilterChange', handleStatusFilter as EventListener);
-    window.addEventListener('sidebarDateChange', handleSidebarDateChange as EventListener);
     return () => {
       window.removeEventListener('statusFilterChange', handleStatusFilter as EventListener);
-      window.removeEventListener('sidebarDateChange', handleSidebarDateChange as EventListener);
     };
   }, []);
 
@@ -752,13 +829,6 @@ const AgendaPage = () => {
     }
   }, [appointments]);
 
-  // Dispatch event when main calendar date changes to sync sidebar
-  useEffect(() => {
-    if (currentDate) {
-      window.dispatchEvent(new CustomEvent('mainCalendarDateChange', { detail: currentDate }));
-    }
-  }, [currentDate]);
-
   const timeSlots = Array.from({ length: 15 }, (_, i) => `${(i + 9).toString().padStart(2, '0')}:00`);
 
   // Get week days - normalized
@@ -807,12 +877,6 @@ const AgendaPage = () => {
     }
     newDate.setHours(0, 0, 0, 0);
     setCurrentDate(newDate);
-  };
-
-  const goToToday = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    setCurrentDate(today);
   };
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, appointment: Appointment) => {
@@ -868,105 +932,40 @@ const AgendaPage = () => {
         .animate-slideDown { animation: slideDown 0.3s ease-out; }
       `}</style>
 
-      {/* Header - Ultra Minimalist Premium */}
-      <div className="mb-8 animate-slideDown pt-20">
-        <div className="flex items-center justify-between">
-          {/* Left: Date & Time */}
-          <div className="flex items-center gap-8">
-            {/* Date Block */}
-            <div className="flex items-baseline gap-3">
-              <h1 className="text-5xl font-light text-gray-900 tracking-tight">
-                {currentDate.getDate().toString().padStart(2, '0')}
-              </h1>
-              <div className="flex flex-col justify-center">
-                <span className="text-sm font-medium text-gray-900">
-                  {currentDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
-                </span>
-                <span className="text-xs text-gray-400">
-                  {currentDate.getFullYear()}
-                </span>
-              </div>
-              <div className="h-12 w-px bg-gray-200 mx-2"></div>
-              <div className="flex flex-col justify-center">
-                <span className="text-sm font-medium text-gray-900 capitalize">
-                  {currentDate.toLocaleDateString('en-US', { weekday: 'long' })}
-                </span>
-                <span className="text-xs text-gray-400">
-                  Week {Math.ceil((currentDate.getDate() + new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay()) / 7)}
-                </span>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex items-center gap-1">
-              <button
-                onClick={goToToday}
-                className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
-              >
-                Today
-              </button>
-              <button
-                onClick={() => navigateDate(-1)}
-                className="p-1.5 text-gray-400 hover:text-gray-900 transition-colors"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <button
-                onClick={() => navigateDate(1)}
-                className="p-1.5 text-gray-400 hover:text-gray-900 transition-colors"
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
+      <div className="mb-8 pt-20">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-6">
+          <div>
+            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Agenda</h1>
+            <p className="text-sm text-neutral-500">Manage appointments and your daily schedule</p>
           </div>
+          <button type="button" onClick={() => setShowNewRDV(true)} className={newAppointmentButtonClass}>
+            <Plus size={14} />
+            New
+          </button>
+        </div>
 
-          {/* Right: Controls */}
-          <div className="flex items-center gap-6">
-            {/* View Toggle */}
-            <div className="flex items-center gap-0.5">
-              <button
-                onClick={() => setView('day')}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-                  view === 'day'
-                    ? 'text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                Day
-              </button>
-              <span className="text-gray-300">/</span>
-              <button
-                onClick={() => setView('week')}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-                  view === 'week'
-                    ? 'text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                Week
-              </button>
-              <span className="text-gray-300">/</span>
-              <button
-                onClick={() => setView('month')}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-                  view === 'month'
-                    ? 'text-gray-900'
-                    : 'text-gray-400 hover:text-gray-600'
-                }`}
-              >
-                Month
-              </button>
-            </div>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <AgendaViewTabs value={view} onChange={setView} />
 
-            <div className="h-8 w-px bg-gray-200"></div>
-
-            {/* CTA */}
+          <div className={controlTrackClass}>
             <button
-              onClick={() => setShowNewRDV(true)}
-              className="px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-full hover:bg-[var(--reserva-ink)] hover:text-white cursor-pointer transition-colors"
+              type="button"
+              onClick={() => navigateDate(-1)}
+              className={controlNavButtonClass}
+              aria-label="Previous period"
             >
-              New
-              <Plus size={16} className="inline-block ml-2 -mt-0.5" />
+              <ChevronLeft size={16} />
+            </button>
+            <span className="flex h-8 min-w-[9rem] items-center justify-center px-2 text-xs font-medium text-gray-900">
+              {getAgendaDateLabel(currentDate, view)}
+            </span>
+            <button
+              type="button"
+              onClick={() => navigateDate(1)}
+              className={controlNavButtonClass}
+              aria-label="Next period"
+            >
+              <ChevronRight size={16} />
             </button>
           </div>
         </div>
@@ -1051,52 +1050,53 @@ const AgendaPage = () => {
         )}
 
         {view === 'day' && (
-          <div className="p-0">
-            <div className="space-y-1">
-              {timeSlots.map((time) => (
-                <div
-                  key={time}
-                  className="grid bg-white grid-cols-12 gap-4 p-4 border border-neutral-200 rounded-xl hover:bg-gray-50/50 transition-colors group/time relative"
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, time, currentDate)}
-                >
-                  <button
-                    onClick={() => setShowNewRDV(true)}
-                    className="absolute right-3 top-3 w-6 h-6 rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 flex items-center justify-center opacity-0 group-hover/time:opacity-100 transition-all z-10"
+          <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+            <div className="overflow-x-auto">
+              <div className="min-w-[640px]">
+                {timeSlots.map((time) => (
+                  <div
+                    key={time}
+                    className="group/time relative grid grid-cols-[5rem_1fr] border-b border-gray-100 transition-colors last:border-b-0 hover:bg-gray-50/30"
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, time, currentDate)}
                   >
-                    <Plus size={14} />
-                  </button>
-                  <div className="col-span-2 text-xs font-light text-gray-400">
-                    {time}
-                  </div>
-                  <div className="col-span-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {appointments
-                      .filter(apt => {
-                        // Normalize both dates for comparison
-                        const aptDate = new Date(apt.date);
-                        aptDate.setHours(0, 0, 0, 0);
-                        const compareDate = new Date(currentDate);
-                        compareDate.setHours(0, 0, 0, 0);
+                    <div className="border-r border-gray-100 p-3 text-xs font-light text-gray-400">
+                      {time}
+                    </div>
+                    <div className="relative flex min-h-[4.5rem] flex-col justify-center gap-1.5 p-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowNewRDV(true)}
+                        className="absolute bottom-2 right-2 z-10 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-400 opacity-0 transition-all hover:bg-gray-200 hover:text-gray-600 group-hover/time:opacity-100"
+                      >
+                        <Plus size={12} />
+                      </button>
+                      {appointments
+                        .filter((apt) => {
+                          const aptDate = new Date(apt.date);
+                          aptDate.setHours(0, 0, 0, 0);
+                          const compareDate = new Date(currentDate);
+                          compareDate.setHours(0, 0, 0, 0);
 
-                        const matches = aptDate.getTime() === compareDate.getTime() &&
-                          apt.time === time &&
-                          (filterStatus === 'all' || apt.status === filterStatus);
-
-                        return matches;
-                      })
-                      .map(apt => (
-                        <AppointmentCard
-                          key={apt.id}
-                          apt={apt}
-                          viewType="day"
-                          onDragStart={handleDragStart}
-                          onOpen={setSelectedAppointment}
-                        />
-                      ))
-                    }
+                          return (
+                            aptDate.getTime() === compareDate.getTime() &&
+                            apt.time === time &&
+                            (filterStatus === 'all' || apt.status === filterStatus)
+                          );
+                        })
+                        .map((apt) => (
+                          <AppointmentCard
+                            key={apt.id}
+                            apt={apt}
+                            viewType="day"
+                            onDragStart={handleDragStart}
+                            onOpen={setSelectedAppointment}
+                          />
+                        ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}

@@ -49,14 +49,4 @@ export const sampleTransactions: Transaction[] = [
     note: "Private dining cancelled within policy",
     category: "Refund",
   },
-  {
-    id: "TX-1005",
-    type: "Sale",
-    amount: 620,
-    method: "Cash",
-    client: "Walk-in client",
-    date: daysAgo(4, 14, 20),
-    note: "Lunch — terrace",
-    category: "Dining",
-  },
 ];
