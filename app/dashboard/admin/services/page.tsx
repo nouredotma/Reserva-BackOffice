@@ -322,7 +322,7 @@ export default function ServicesManagementPage() {
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Services</h1>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-neutral-500">
               Bookable units for Le Jardin — table reservations, private dining, and experiences.
             </p>
           </div>

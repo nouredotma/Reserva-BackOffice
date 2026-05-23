@@ -1,13 +1,11 @@
 'use client';
 
-import { useMemo, useState, type ComponentType } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
 import {
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
   CreditCard,
   Download,
   Store,
@@ -46,9 +44,40 @@ type DonutDatum = {
   color: string;
 };
 
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'Jun', 'July', 'August', 'September', 'October', 'November', 'December'];
+type PeriodFilter = 'today' | 'week' | 'month' | 'year' | 'all';
+
+const periodOptions: { value: PeriodFilter; label: string }[] = [
+  { value: 'today', label: 'Today' },
+  { value: 'week', label: '7 days' },
+  { value: 'month', label: '1 month' },
+  { value: 'year', label: '1 year' },
+  { value: 'all', label: 'All time' },
+];
 
 const dashboardData = {
+  today: {
+    directBookings: 1,
+    onlineBookings: 6,
+    totalBookings: 7,
+    onlineRate: 85.7,
+    activeServices: 8,
+    totalRevenue: 3200,
+    avgRevenue: 3200,
+    peakDay: 'Today',
+    appointmentsTrend: [
+      { day: '08', direct: 0, online: 1 },
+      { day: '10', direct: 1, online: 2 },
+      { day: '12', direct: 0, online: 1 },
+      { day: '14', direct: 0, online: 2 },
+      { day: '16', direct: 0, online: 0 },
+      { day: '18', direct: 0, online: 0 },
+      { day: '20', direct: 0, online: 0 },
+    ],
+    revenueData: [
+      { name: 'AM', value: 1200 },
+      { name: 'PM', value: 2000 },
+    ],
+  },
   week: {
     directBookings: 8,
     onlineBookings: 36,
@@ -163,6 +192,28 @@ const dashboardData = {
       { name: 'Dec', value: 68300 },
     ],
   },
+  all: {
+    directBookings: 1240,
+    onlineBookings: 5820,
+    totalBookings: 7060,
+    onlineRate: 82.4,
+    activeServices: 8,
+    totalRevenue: 2840000,
+    avgRevenue: 4020,
+    peakDay: 'August',
+    appointmentsTrend: [
+      { day: '2022', direct: 280, online: 1320 },
+      { day: '2023', direct: 360, online: 1680 },
+      { day: '2024', direct: 420, online: 1920 },
+      { day: '2025', direct: 180, online: 900 },
+    ],
+    revenueData: [
+      { name: '2022', value: 520000 },
+      { name: '2023', value: 680000 },
+      { name: '2024', value: 820000 },
+      { name: '2025', value: 820000 },
+    ],
+  },
 };
 
 const directVsOnlineData: DonutDatum[] = [
@@ -212,7 +263,7 @@ function KpiCard({
 
   return (
     <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
-      <div className="mb-8 flex items-start justify-between">
+      <div className="mb-4 flex items-start justify-between">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 transition-colors group-hover:bg-gray-100">
           <Icon size={18} className="text-gray-400" />
         </div>
@@ -227,134 +278,119 @@ function KpiCard({
   );
 }
 
-function DonutChartCard({
-  chartId,
-  data,
-  getView,
-  subtitle,
-  title,
-  toggleView,
+function PeriodSegmentedControl({
+  value,
+  onChange,
 }: {
-  chartId: string;
-  data: DonutDatum[];
-  getView: (chartId: string) => 'graphe' | 'tableau';
-  subtitle: string;
-  title: string;
-  toggleView: (chartId: string) => void;
+  value: PeriodFilter;
+  onChange: (value: PeriodFilter) => void;
 }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  const updateIndicator = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const activeButton = container.querySelector<HTMLButtonElement>(`[data-period="${value}"]`);
+    if (!activeButton) return;
+    setIndicatorStyle({
+      left: activeButton.offsetLeft,
+      width: activeButton.offsetWidth,
+    });
+  }, [value]);
+
+  useEffect(() => {
+    updateIndicator();
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [updateIndicator]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative inline-flex h-10 max-w-full items-center overflow-x-auto rounded-full bg-neutral-200 p-1"
+      role="tablist"
+      aria-label="Time period"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1 bottom-1 rounded-full bg-white transition-[left,width] duration-300 ease-out"
+        style={{ left: indicatorStyle.left, width: indicatorStyle.width }}
+      />
+      {periodOptions.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          role="tab"
+          aria-selected={value === option.value}
+          data-period={option.value}
+          onClick={() => onChange(option.value)}
+          className={`relative z-10 flex h-8 cursor-pointer items-center whitespace-nowrap rounded-full px-4 text-xs font-medium transition-colors ${
+            value === option.value ? 'text-gray-900' : 'text-neutral-500 hover:text-neutral-700'
+          }`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function DonutChartCard({ data, subtitle, title }: { data: DonutDatum[]; subtitle: string; title: string }) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
-  const currentView = getView(chartId);
 
   return (
     <div className="rounded-xl border border-neutral-200 bg-white p-6 transition-all">
       <div className="mb-4">
         <h3 className="mb-1 text-sm font-medium text-gray-900">{title}</h3>
-        <p className="text-xs text-gray-400">{subtitle}</p>
+        <p className="text-xs text-neutral-500">{subtitle}</p>
       </div>
 
-      {currentView === 'graphe' ? (
-        <>
-          <div className="relative">
-            <ReResponsiveContainer width="100%" height={220}>
-              <PieChart>
-                <RePie data={data} cx="50%" cy="50%" innerRadius={70} outerRadius={90} paddingAngle={2} dataKey="value" startAngle={90} endAngle={450}>
-                  {data.map((entry) => (
-                    <ReCell key={entry.name} fill={entry.color} />
-                  ))}
-                </RePie>
-                <ReTooltip
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      return (
-                        <div className="rounded-xl border border-neutral-200 bg-white px-3 py-2">
-                          <p className="text-xs font-medium text-gray-900">{payload[0].name}</p>
-                          <p className="text-xs text-gray-500">{payload[0].value}%</p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-              </PieChart>
-            </ReResponsiveContainer>
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-              <p className="text-3xl font-light text-gray-900">{total.toFixed(0)}%</p>
-            </div>
-          </div>
-
-          <div className="mt-6 space-y-2">
-            {data.map((item) => (
-              <div key={item.name} className="flex items-center justify-between">
-                <div className="flex min-w-0 flex-1 items-center gap-2">
-                  <div className="h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="truncate text-xs text-gray-600">{item.name}</span>
-                </div>
-                <span className="ml-2 text-xs font-medium text-gray-900">{item.value}%</span>
-              </div>
-            ))}
-          </div>
-        </>
-      ) : (
-        <div className="mt-4">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Name</th>
-                <th className="px-3 py-2 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Value</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {data.map((item) => (
-                <tr key={item.name} className="hover:bg-gray-50">
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
-                      <span className="text-xs text-gray-900">{item.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 text-right">
-                    <span className="text-sm font-medium text-gray-900">{item.value}%</span>
-                  </td>
-                </tr>
+      <div className="relative">
+        <ReResponsiveContainer width="100%" height={220}>
+          <PieChart>
+            <RePie data={data} cx="50%" cy="50%" innerRadius={70} outerRadius={90} paddingAngle={2} dataKey="value" startAngle={90} endAngle={450}>
+              {data.map((entry) => (
+                <ReCell key={entry.name} fill={entry.color} />
               ))}
-              <tr className="bg-gray-50 font-medium">
-                <td className="px-3 py-3">
-                  <span className="text-xs text-gray-900">Total</span>
-                </td>
-                <td className="px-3 py-3 text-right">
-                  <span className="text-sm font-medium text-gray-900">{total.toFixed(1)}%</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+            </RePie>
+            <ReTooltip
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="rounded-xl border border-neutral-200 bg-white px-3 py-2">
+                      <p className="text-xs font-medium text-gray-900">{payload[0].name}</p>
+                      <p className="text-xs text-gray-500">{payload[0].value}%</p>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+          </PieChart>
+        </ReResponsiveContainer>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+          <p className="text-3xl font-light text-gray-900">{total.toFixed(0)}%</p>
         </div>
-      )}
+      </div>
 
-      <div className="mt-6 flex items-center justify-center gap-6 border-t border-gray-100 pt-4">
-        <button
-          onClick={() => toggleView(chartId)}
-          className={`text-xs font-medium transition-colors ${currentView === 'graphe' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
-        >
-          Graphe
-        </button>
-        <span className="text-gray-300">|</span>
-        <button
-          onClick={() => toggleView(chartId)}
-          className={`text-xs font-medium transition-colors ${currentView === 'tableau' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
-        >
-          Tableau
-        </button>
+      <div className="mt-6 space-y-2">
+        {data.map((item) => (
+          <div key={item.name} className="flex items-center justify-between">
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <div className="h-3 w-3 flex-shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
+              <span className="truncate text-xs text-gray-600">{item.name}</span>
+            </div>
+            <span className="ml-2 text-xs font-medium text-gray-900">{item.value}%</span>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
 export default function AdminOverviewPage() {
-  const [timeFilter, setTimeFilter] = useState<'week' | 'month' | 'year'>('month');
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [chartViews, setChartViews] = useState<Record<string, 'graphe' | 'tableau'>>({});
-
+  const [timeFilter, setTimeFilter] = useState<PeriodFilter>('month');
   const currentData = dashboardData[timeFilter];
 
   const metrics = useMemo(() => {
@@ -392,15 +428,6 @@ export default function AdminOverviewPage() {
 
   const totalServiceVolume = serviceData.reduce((sum, service) => sum + service.value, 0);
 
-  const toggleView = (chartId: string) => {
-    setChartViews((current) => ({
-      ...current,
-      [chartId]: current[chartId] === 'tableau' ? 'graphe' : 'tableau',
-    }));
-  };
-
-  const getView = (chartId: string) => chartViews[chartId] ?? 'graphe';
-
   return (
     <div className="min-h-screen p-0">
       <style>{`
@@ -417,52 +444,18 @@ export default function AdminOverviewPage() {
         .accent-color { color: #0A0A0A; }
       `}</style>
 
-      <div className="mb-12 pt-20 animate-slideUp">
+      <div className="mb-8 pt-20 animate-slideUp">
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Admin overview</h1>
-            <p className="text-sm text-gray-400">Overview des performances</p>
+            <p className="text-sm text-neutral-500">Overview des performances</p>
           </div>
-          <div className="flex flex-wrap items-center gap-6">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setSelectedMonth((current) => (current === 0 ? 11 : current - 1))}
-                className="p-1.5 text-gray-400 transition-colors hover:text-gray-900"
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <span className="min-w-[180px] text-center text-lg font-light text-gray-900">
-                {monthNames[selectedMonth]} {selectedYear}
-              </span>
-              <button
-                onClick={() => setSelectedMonth((current) => (current === 11 ? 0 : current + 1))}
-                className="p-1.5 text-gray-400 transition-colors hover:text-gray-900"
-              >
-                <ChevronRight size={16} />
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedMonth(new Date().getMonth());
-                  setSelectedYear(new Date().getFullYear());
-                }}
-                className="px-3 py-1.5 text-xs font-medium text-gray-500 transition-colors hover:text-gray-900"
-              >
-                Today
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              {(['week', 'month', 'year'] as const).map((period) => (
-                <button
-                  key={period}
-                  onClick={() => setTimeFilter(period)}
-                  className={`px-4 py-2 text-xs font-medium transition-all ${timeFilter === period ? 'accent-color' : 'text-gray-400 hover:text-gray-600'}`}
-                >
-                  {period === 'week' ? '7j' : period === 'month' ? '30j' : '1an'}
-                </button>
-              ))}
-            </div>
-            <div className="h-8 w-px bg-gray-200" />
-            <button className="flex items-center gap-2 px-4 py-2 text-xs font-medium text-gray-600 transition-colors hover:text-gray-900">
+          <div className="flex flex-wrap items-center gap-3">
+            <PeriodSegmentedControl value={timeFilter} onChange={setTimeFilter} />
+            <button
+              type="button"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
+            >
               <Download size={14} />
               Export
             </button>
@@ -569,23 +562,9 @@ export default function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="mb-8 grid gap-6 xl:grid-cols-3 animate-fadeIn">
-        <DonutChartCard
-          chartId="rdv-pris"
-          data={directVsOnlineData}
-          getView={getView}
-          subtitle="By channel"
-          title="Bookings taken"
-          toggleView={toggleView}
-        />
-        <DonutChartCard
-          chartId="service-total"
-          data={serviceBookingData}
-          getView={getView}
-          subtitle="Complete service distribution"
-          title="Total bookings by service"
-          toggleView={toggleView}
-        />
+      <div className="mb-8 grid gap-6 md:grid-cols-2 animate-fadeIn">
+        <DonutChartCard data={directVsOnlineData} subtitle="By channel" title="Bookings taken" />
+        <DonutChartCard data={serviceBookingData} subtitle="Complete service distribution" title="Total bookings by service" />
       </div>
 
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4 animate-fadeIn">

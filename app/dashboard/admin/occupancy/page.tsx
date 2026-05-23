@@ -1,39 +1,295 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Calendar, Download, Printer, ChevronLeft, ChevronRight, TrendingUp, Activity, BarChart3, Filter } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Calendar,
+  Download,
+  Printer,
+  ChevronLeft,
+  ChevronRight,
+  TrendingUp,
+  Activity,
+  BarChart3,
+} from 'lucide-react';
 import { sampleOccupancyData } from '@/lib/mock-data';
 
 type OccupancyData = {
   [key: string]: { [key: string]: number };
 };
 
-const StatistiquesPage = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [timeRange, setTimeRange] = useState('all'); // all, morning, afternoon, evening
-  const [draggedCell, setDraggedCell] = useState<{day: string, time: string} | null>(null);
+type HeatmapColumn = {
+  id: string;
+  label: string;
+  dataKey: string;
+  date: Date;
+  inMonth: boolean;
+};
 
-  const daysOfWeek = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
-  const timeSlots = [
-    '10:00 - 11:00',
-    '11:00 - 12:00',
-    '12:00 - 13:00',
-    '13:00 - 14:00',
-    '14:00 - 15:00',
-    '15:00 - 16:00',
-    '16:00 - 17:00',
-    '17:00 - 18:00',
-    '18:00 - 19:00',
-    '19:00 - 20:00'
+type MonthWeek = {
+  label: string;
+  dates: Date[];
+};
+
+const timeSlots = [
+  '10:00 - 11:00',
+  '11:00 - 12:00',
+  '12:00 - 13:00',
+  '13:00 - 14:00',
+  '14:00 - 15:00',
+  '15:00 - 16:00',
+  '16:00 - 17:00',
+  '17:00 - 18:00',
+  '18:00 - 19:00',
+  '19:00 - 20:00',
+];
+
+const weekdayDataKeys = ['DIM', 'LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM'] as const;
+
+const exportButtonClass =
+  'flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white';
+
+const printButtonClass =
+  'flex h-10 cursor-pointer items-center gap-2 rounded-full border border-blue-500 bg-blue-50 px-4 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-600 hover:text-white';
+
+const controlTrackClass = 'inline-flex h-10 items-center rounded-full bg-neutral-200 p-1';
+
+const controlNavButtonClass =
+  'flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-neutral-500 transition-colors hover:text-gray-900';
+
+const controlPillClass = (active: boolean) =>
+  `flex h-8 cursor-pointer items-center whitespace-nowrap rounded-full px-4 text-xs font-medium transition-colors ${
+    active ? 'bg-white text-gray-900' : 'text-neutral-500 hover:text-neutral-700'
+  }`;
+
+function dateToDataKey(date: Date) {
+  return weekdayDataKeys[date.getDay()];
+}
+
+function formatDayHeader(date: Date) {
+  const day = date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase().slice(0, 3);
+  return `${day} ${date.getDate()}`;
+}
+
+function dateId(date: Date) {
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+}
+
+/** Four weeks per month, seven days each. */
+function getMonthWeeks(year: number, month: number): MonthWeek[] {
+  const lastDay = new Date(year, month + 1, 0).getDate();
+  const ranges = [
+    { label: 'Week 1', start: 1, end: Math.min(7, lastDay) },
+    { label: 'Week 2', start: 8, end: Math.min(14, lastDay) },
+    { label: 'Week 3', start: 15, end: Math.min(21, lastDay) },
+    { label: 'Week 4', start: Math.min(22, lastDay), end: Math.min(28, lastDay) },
   ];
+
+  return ranges
+    .filter((range) => range.start <= range.end)
+    .map((range) => {
+      const dates: Date[] = [];
+      for (let day = range.start; day <= range.end; day++) {
+        dates.push(new Date(year, month, day));
+      }
+      return { label: range.label, dates };
+    });
+}
+
+function buildColumn(date: Date, month: number, year: number): HeatmapColumn {
+  return {
+    id: dateId(date),
+    label: formatDayHeader(date),
+    dataKey: dateToDataKey(date),
+    date,
+    inMonth: date.getMonth() === month && date.getFullYear() === year,
+  };
+}
+
+function getCurrentWeekIndex(weeks: MonthWeek[], today = new Date()) {
+  const index = weeks.findIndex((week) =>
+    week.dates.some(
+      (date) =>
+        date.getFullYear() === today.getFullYear() &&
+        date.getMonth() === today.getMonth() &&
+        date.getDate() === today.getDate(),
+    ),
+  );
+  if (index >= 0) return index;
+
+  const day = today.getDate();
+  if (day <= 7) return 0;
+  if (day <= 14) return 1;
+  if (day <= 21) return 2;
+  return 3;
+}
+
+function calculateStats(data: OccupancyData, columns: HeatmapColumn[], slots: string[]) {
+  let total = 0;
+  let count = 0;
+  let max = 0;
+  let maxDay = '';
+  let maxTime = '';
+
+  columns.forEach((column) => {
+    slots.forEach((time) => {
+      const value = data[column.dataKey]?.[time] ?? 0;
+      total += value;
+      count++;
+      if (value > max) {
+        max = value;
+        maxDay = column.label;
+        maxTime = time;
+      }
+    });
+  });
+
+  return {
+    average: Math.round(total / Math.max(count, 1)),
+    peak: max,
+    peakDay: maxDay,
+    peakTime: maxTime,
+  };
+}
+
+function SlidingPillTabs<T extends string>({
+  value,
+  onChange,
+  options,
+  ariaLabel,
+  dataAttribute,
+}: {
+  value: T;
+  onChange: (value: T) => void;
+  options: { value: T; label: string }[];
+  ariaLabel: string;
+  dataAttribute: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+
+  const updateIndicator = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const activeButton = container.querySelector<HTMLButtonElement>(`[data-${dataAttribute}="${value}"]`);
+    if (!activeButton) return;
+    setIndicatorStyle({
+      left: activeButton.offsetLeft,
+      width: activeButton.offsetWidth,
+    });
+  }, [dataAttribute, value]);
+
+  useEffect(() => {
+    updateIndicator();
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [updateIndicator]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative inline-flex h-10 max-w-full items-center overflow-x-auto rounded-full bg-neutral-200 p-1"
+      role="tablist"
+      aria-label={ariaLabel}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1 bottom-1 rounded-full bg-white transition-[left,width] duration-300 ease-out"
+        style={{ left: indicatorStyle.left, width: indicatorStyle.width }}
+      />
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          role="tab"
+          aria-selected={value === option.value}
+          {...{ [`data-${dataAttribute}`]: option.value }}
+          onClick={() => onChange(option.value)}
+          className={`relative z-10 flex h-8 cursor-pointer items-center whitespace-nowrap rounded-full px-4 text-xs font-medium transition-colors ${
+            value === option.value ? 'text-gray-900' : 'text-neutral-500 hover:text-neutral-700'
+          }`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const StatistiquesPage = () => {
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+  const [weekIndex, setWeekIndex] = useState(() => {
+    const now = new Date();
+    const weeks = getMonthWeeks(now.getFullYear(), now.getMonth());
+    return getCurrentWeekIndex(weeks, now);
+  });
+  const [showToday, setShowToday] = useState(false);
+  const [draggedCell, setDraggedCell] = useState<{ day: string; time: string } | null>(null);
   const [occupancyData, setOccupancyData] = useState<OccupancyData>(sampleOccupancyData);
+
+  const monthWeeks = useMemo(
+    () => getMonthWeeks(currentMonth.getFullYear(), currentMonth.getMonth()),
+    [currentMonth],
+  );
+
+  const currentWeek = monthWeeks[weekIndex] ?? monthWeeks[0];
+
+  const weekOptions = useMemo(
+    () => monthWeeks.map((week, index) => ({ value: String(index), label: week.label })),
+    [monthWeeks],
+  );
+
+  const month = currentMonth.getMonth();
+  const year = currentMonth.getFullYear();
+
+  const heatmapColumns = useMemo((): HeatmapColumn[] => {
+    if (showToday) {
+      const now = new Date();
+      return [buildColumn(now, month, year)];
+    }
+
+    return currentWeek.dates.map((date) => buildColumn(date, month, year));
+  }, [showToday, currentWeek, month, year]);
+
+  const stats = useMemo(
+    () => calculateStats(occupancyData, heatmapColumns, timeSlots),
+    [occupancyData, heatmapColumns],
+  );
+
+  const monthLabel = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  const heatmapTitle = useMemo(() => {
+    if (showToday) {
+      const dayLabel = heatmapColumns[0]?.label ?? 'Today';
+      return `Average occupancy rate by time slot — ${dayLabel}`;
+    }
+    const startLabel = currentWeek.dates[0] ? formatDayHeader(currentWeek.dates[0]) : '';
+    const endLabel = currentWeek.dates[6] ? formatDayHeader(currentWeek.dates[6]) : '';
+    return `Average occupancy rate by day and time slot — ${currentWeek.label} (${startLabel} – ${endLabel})`;
+  }, [showToday, heatmapColumns, monthLabel, currentWeek, month, year]);
+
+  const navigateMonth = (direction: number) => {
+    setShowToday(false);
+    setCurrentMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + direction, 1));
+    setWeekIndex(0);
+  };
+
+  const goToToday = () => {
+    const now = new Date();
+    const weeks = getMonthWeeks(now.getFullYear(), now.getMonth());
+    const index = getCurrentWeekIndex(weeks, now);
+    setCurrentMonth(new Date(now.getFullYear(), now.getMonth(), 1));
+    setWeekIndex(index);
+    setShowToday(true);
+  };
+
+  useEffect(() => {
+    if (weekIndex >= monthWeeks.length) {
+      setWeekIndex(0);
+    }
+  }, [monthWeeks, weekIndex]);
 
   const getColorClass = (value: number) => {
     if (value === 0) return 'bg-gray-100 text-gray-400';
@@ -42,41 +298,6 @@ const StatistiquesPage = () => {
     if (value <= 75) return 'bg-emerald-400 text-emerald-900';
     return 'bg-emerald-600 text-white';
   };
-
-  const navigateMonth = (direction: number) => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() + direction);
-    setCurrentDate(newDate);
-  };
-
-  const calculateStats = () => {
-    let total = 0;
-    let count = 0;
-    let max = 0;
-    let maxDay = '';
-    let maxTime = '';
-
-    Object.entries(occupancyData).forEach(([day, times]) => {
-      Object.entries(times).forEach(([time, value]) => {
-        total += value;
-        count++;
-        if (value > max) {
-          max = value;
-          maxDay = day;
-          maxTime = time;
-        }
-      });
-    });
-
-    return {
-      average: Math.round(total / count),
-      peak: max,
-      peakDay: maxDay,
-      peakTime: maxTime
-    };
-  };
-
-  const stats = calculateStats();
 
   const handleDragStart = (day: string, time: string) => {
     setDraggedCell({ day, time });
@@ -91,16 +312,16 @@ const StatistiquesPage = () => {
       const sourceValue = occupancyData[draggedCell.day][draggedCell.time];
       const targetValue = occupancyData[targetDay][targetTime];
 
-      setOccupancyData(prev => ({
+      setOccupancyData((prev) => ({
         ...prev,
         [draggedCell.day]: {
           ...prev[draggedCell.day],
-          [draggedCell.time]: targetValue
+          [draggedCell.time]: targetValue,
         },
         [targetDay]: {
           ...prev[targetDay],
-          [targetTime]: sourceValue
-        }
+          [targetTime]: sourceValue,
+        },
       }));
 
       setDraggedCell(null);
@@ -109,17 +330,17 @@ const StatistiquesPage = () => {
 
   const exportData = () => {
     const csvContent = [
-      ['Horaire', ...daysOfWeek].join(','),
-      ...timeSlots.map(time =>
-        [time, ...daysOfWeek.map(day => occupancyData[day][time] + '%')].join(',')
-      )
+      ['Time slot', ...heatmapColumns.map((col) => col.label)].join(','),
+      ...timeSlots.map((time) =>
+        [time, ...heatmapColumns.map((col) => `${occupancyData[col.dataKey]?.[time] ?? 0}%`)].join(','),
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `taux-occupation-${currentDate.toISOString().split('T')[0]}.csv`;
+    a.download = `occupancy-${currentMonth.getFullYear()}-${currentMonth.getMonth() + 1}-week${weekIndex + 1}.csv`;
     a.click();
   };
 
@@ -127,6 +348,9 @@ const StatistiquesPage = () => {
     window.print();
   };
 
+  const gridTemplateColumns = showToday
+    ? 'minmax(7rem, auto) 1fr'
+    : 'minmax(7rem, auto) repeat(7, minmax(3.25rem, 1fr))';
 
   return (
     <div className="min-h-screen p-0 md:p-0">
@@ -139,215 +363,177 @@ const StatistiquesPage = () => {
           from { transform: translateY(20px); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
         }
-        @keyframes slideDown {
-          from { transform: translateY(-20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
         .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
         .animate-slideUp { animation: slideUp 0.3s ease-out; }
-        .animate-slideDown { animation: slideDown 0.3s ease-out; }
-
         @media print {
           .no-print { display: none !important; }
         }
       `}</style>
 
-      {/* Header */}
       <div className="mb-8 animate-slideDown pt-20">
-        <div className="flex items-center justify-between mb-6">
-          {/* Left: Title & Date */}
-          <div className="flex items-center gap-8">
-            <div className="flex items-baseline gap-3">
-              <h1 className="text-5xl font-light text-gray-900 tracking-tight">
-                Overview
-              </h1>
-              <div className="flex items-center gap-2 text-sm text-gray-400">
-                <Activity size={16} />
-              </div>
-            </div>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-6">
+          <div>
+            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Occupancy</h1>
+            <p className="text-sm text-neutral-500">
+              Browse by month and week, or jump to today for a single-day view
+            </p>
           </div>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-4 no-print">
-            <button
-              onClick={exportData}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <Download size={16} />
+          <div className="flex flex-wrap items-center gap-3 no-print">
+            <button type="button" onClick={exportData} className={exportButtonClass}>
+              <Download size={14} />
               Exporter
             </button>
-            <button
-              onClick={printReport}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <Printer size={16} />
+            <button type="button" onClick={printReport} className={printButtonClass}>
+              <Printer size={14} />
               Print
             </button>
           </div>
         </div>
 
-        {/* Controls Bar */}
-        <div className="flex items-center justify-between">
-          {/* Date Navigation */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigateMonth(-1)}
-              className="p-1.5 text-gray-400 hover:text-gray-900 transition-colors"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <span className="text-lg font-light text-gray-900 min-w-[180px] text-center">
-              {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-            </span>
-            <button
-              onClick={() => navigateMonth(1)}
-              className="p-1.5 text-gray-400 hover:text-gray-900 transition-colors"
-            >
-              <ChevronRight size={16} />
-            </button>
-            <button
-              onClick={() => setCurrentDate(new Date())}
-              className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
-            >
-              Today
-            </button>
+        <div className="flex flex-wrap items-center justify-between gap-4 no-print">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className={controlTrackClass}>
+              <button
+                type="button"
+                onClick={() => navigateMonth(-1)}
+                className={controlNavButtonClass}
+                aria-label="Previous month"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span className="flex h-8 min-w-[9rem] items-center justify-center px-2 text-xs font-medium text-gray-900">
+                {monthLabel}
+              </span>
+              <button
+                type="button"
+                onClick={() => navigateMonth(1)}
+                className={controlNavButtonClass}
+                aria-label="Next month"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+            <div className={controlTrackClass}>
+              <button type="button" onClick={goToToday} className={controlPillClass(showToday)}>
+                Today
+              </button>
+            </div>
           </div>
 
-          {/* Filters */}
-          <div className="flex items-center gap-4 no-print">
-            <Filter size={14} className="text-gray-400" />
-            <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="w-[160px] rounded-full border-neutral-200 text-sm">
-                <SelectValue placeholder="All hours" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All hours</SelectItem>
-                <SelectItem value="morning">Matin (10h-14h)</SelectItem>
-                <SelectItem value="afternoon">Afternoon (14h-18h)</SelectItem>
-                <SelectItem value="evening">Soir (18h-20h)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <SlidingPillTabs
+            value={String(weekIndex)}
+            onChange={(value) => {
+              setShowToday(false);
+              setWeekIndex(Number(value));
+            }}
+            options={weekOptions}
+            ariaLabel="Week of month"
+            dataAttribute="week"
+          />
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-xl border border-neutral-200 p-6  transition-all group">
-          <div className="flex items-start justify-between mb-6">
-            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
+      <div className="mb-8 grid grid-cols-4 gap-4 animate-fadeIn">
+        <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+          <div className="mb-6 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
               <TrendingUp size={20} className="text-gray-400" />
             </div>
-            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+            <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-emerald-600">
               <TrendingUp size={12} />
-              <span className="text-[10px] font-medium">Moyenne</span>
+              <span className="text-[10px] font-medium">Average</span>
             </div>
           </div>
-          <div>
-            <p className="text-xs text-gray-500 mb-1 font-medium">Occupancy rate moyen</p>
-            <p className="text-3xl font-light text-gray-900">{stats.average}%</p>
-          </div>
+          <p className="mb-1 text-xs font-medium text-gray-500">Occupancy rate moyen</p>
+          <p className="text-3xl font-light text-gray-900">{stats.average}%</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-neutral-200 p-6  transition-all group">
-          <div className="flex items-start justify-between mb-6">
-            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
+        <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+          <div className="mb-6 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
               <Activity size={20} className="text-gray-400" />
             </div>
-            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+            <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-emerald-600">
               <TrendingUp size={12} />
-              <span className="text-[10px] font-medium">Pic</span>
+              <span className="text-[10px] font-medium">Peak</span>
             </div>
           </div>
-          <div>
-            <p className="text-xs text-gray-500 mb-1 font-medium">Taux maximum atteint</p>
-            <p className="text-3xl font-light text-gray-900">{stats.peak}%</p>
-          </div>
+          <p className="mb-1 text-xs font-medium text-gray-500">Taux maximum atteint</p>
+          <p className="text-3xl font-light text-gray-900">{stats.peak}%</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-neutral-200 p-6  transition-all group">
-          <div className="flex items-start justify-between mb-6">
-            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
+        <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+          <div className="mb-6 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
               <Calendar size={20} className="text-gray-400" />
             </div>
-            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+            <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-emerald-600">
               <TrendingUp size={12} />
-              <span className="text-[10px] font-medium">Day Pic</span>
+              <span className="text-[10px] font-medium">Day</span>
             </div>
           </div>
-          <div>
-            <p className="text-xs text-gray-500 mb-1 font-medium">Busiest day</p>
-            <p className="text-3xl font-light text-gray-900">{stats.peakDay}</p>
-          </div>
+          <p className="mb-1 text-xs font-medium text-gray-500">Busiest day</p>
+          <p className="text-3xl font-light text-gray-900">{stats.peakDay || '—'}</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-neutral-200 p-6  transition-all group">
-          <div className="flex items-start justify-between mb-6">
-            <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center transition-colors">
+        <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+          <div className="mb-6 flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
               <BarChart3 size={20} className="text-gray-400" />
             </div>
-            <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+            <div className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-emerald-600">
               <TrendingUp size={12} />
-              <span className="text-[10px] font-medium">Time Pic</span>
+              <span className="text-[10px] font-medium">Time</span>
             </div>
           </div>
-          <div>
-            <p className="text-xs text-gray-500 mb-1 font-medium">Most requested time slot</p>
-            <p className="text-3xl font-light text-gray-900">{stats.peakTime}</p>
-          </div>
+          <p className="mb-1 text-xs font-medium text-gray-500">Most requested time slot</p>
+          <p className="text-3xl font-light text-gray-900">{stats.peakTime || '—'}</p>
         </div>
       </div>
 
-      {/* Heatmap */}
-      <div className="bg-white rounded-xl border border-neutral-200  overflow-hidden animate-slideUp">
-        {/* Title Bar */}
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h3 className="text-sm font-medium text-gray-900">
-            Average occupancy rate* by weekday and time range
-          </h3>
+      <div className="animate-slideUp overflow-hidden rounded-xl border border-neutral-200 bg-white">
+        <div className="border-b border-gray-100 px-6 py-4">
+          <h3 className="text-sm font-medium text-gray-900">{heatmapTitle}</h3>
         </div>
 
-        {/* Heatmap Grid */}
         <div className="overflow-x-auto">
-          <div className="min-w-[1000px] p-6">
-            {/* Header Row */}
-            <div className="grid grid-cols-8 gap-2 mb-2">
-              <div className="text-xs font-medium text-gray-400 uppercase tracking-wider"></div>
-              {daysOfWeek.map(day => (
-                <div key={day} className="text-center">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {day}
+          <div className="min-w-[480px] p-6">
+            <div className="mb-2 grid gap-2" style={{ gridTemplateColumns }}>
+              <div />
+              {heatmapColumns.map((column) => (
+                <div key={column.id} className="text-center">
+                  <span
+                    className={`text-xs font-medium uppercase tracking-wider ${
+                      column.inMonth ? 'text-gray-500' : 'text-gray-300'
+                    }`}
+                  >
+                    {column.label}
                   </span>
                 </div>
               ))}
             </div>
 
-            {/* Data Rows */}
             <div className="space-y-2">
-              {timeSlots.map(time => (
-                <div key={time} className="grid grid-cols-8 gap-2">
+              {timeSlots.map((time) => (
+                <div key={time} className="grid gap-2" style={{ gridTemplateColumns }}>
                   <div className="flex items-center">
                     <span className="text-xs font-light text-gray-500">{time}</span>
                   </div>
-                  {daysOfWeek.map(day => {
-                    const value = occupancyData[day][time];
+                  {heatmapColumns.map((column) => {
+                    const value = occupancyData[column.dataKey]?.[time] ?? 0;
                     return (
                       <div
-                        key={`${day}-${time}`}
-                        draggable
-                        onDragStart={() => handleDragStart(day, time)}
+                        key={`${column.id}-${time}`}
+                        draggable={column.inMonth}
+                        onDragStart={() => column.inMonth && handleDragStart(column.dataKey, time)}
                         onDragOver={handleDragOver}
-                        onDrop={() => handleDrop(day, time)}
-                        className={`
-                          ${getColorClass(value)}
-                          rounded-xl p-4 text-center font-medium text-sm
-                          cursor-move
-                          transition-all duration-200
-                          flex items-center justify-center
-                          min-h-[56px]
-                        `}
+                        onDrop={() => column.inMonth && handleDrop(column.dataKey, time)}
+                        className={`${getColorClass(value)} flex h-14 items-center justify-center rounded-xl text-center text-sm font-medium transition-all duration-200 ${
+                          column.inMonth ? 'cursor-move' : 'opacity-40'
+                        }`}
                       >
-                        {value}%
+                        {column.inMonth ? `${value}%` : '—'}
                       </div>
                     );
                   })}
@@ -357,34 +543,33 @@ const StatistiquesPage = () => {
           </div>
         </div>
 
-        {/* Footer Note */}
-        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
-          <p className="text-xs text-gray-500 leading-relaxed">
-            * <span className="font-medium">Occupancy rate</span>: Ratio: total worked hours plus breaks divided by total open hours, based on opening hours and number of agendas
+        <div className="border-t border-gray-100 bg-gray-50 px-6 py-4">
+          <p className="text-xs leading-relaxed text-gray-500">
+            * <span className="font-medium">Occupancy rate</span>: Ratio of worked hours to open hours for the
+            selected {showToday ? 'day' : 'week'}.
           </p>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="mt-6 flex items-center justify-center gap-6 text-xs text-gray-500 no-print animate-fadeIn">
+      <div className="animate-fadeIn mt-6 flex items-center justify-center gap-6 text-xs text-gray-500 no-print">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-gray-100"></div>
+          <div className="h-4 w-4 rounded bg-gray-100" />
           <span>0%</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-emerald-100"></div>
+          <div className="h-4 w-4 rounded bg-emerald-100" />
           <span>1-25%</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-emerald-200"></div>
+          <div className="h-4 w-4 rounded bg-emerald-200" />
           <span>26-50%</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-emerald-400"></div>
+          <div className="h-4 w-4 rounded bg-emerald-400" />
           <span>51-75%</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-emerald-600"></div>
+          <div className="h-4 w-4 rounded bg-emerald-600" />
           <span>76-100%</span>
         </div>
       </div>

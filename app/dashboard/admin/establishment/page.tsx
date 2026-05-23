@@ -199,7 +199,7 @@ export default function EstablishmentManagementPage() {
         <div className="flex flex-wrap items-center justify-between gap-6">
           <div>
             <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Establishment</h1>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-neutral-500">
               Public venue profile for {ownerCategory?.label ?? 'your category'} — aligned with the Reserva client model.
             </p>
           </div>

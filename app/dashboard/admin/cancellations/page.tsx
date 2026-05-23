@@ -72,24 +72,26 @@ export default function CancellationsPage() {
               <h1 className="text-5xl font-light text-gray-900 tracking-tight">
                 Canceled appointments
               </h1>
-              <p className="text-base text-gray-400 mt-2">Canceled appointments from 10/13/2025 to 11/12/2025</p>
+              <p className="mt-2 text-sm text-neutral-500">Canceled appointments from 10/13/2025 to 11/12/2025</p>
             </div>
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-4 no-print">
+          <div className="flex items-center gap-3 no-print">
             <button
+              type="button"
               onClick={exportData}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
             >
-              <Download size={16} />
+              <Download size={14} />
               Exporter
             </button>
             <button
+              type="button"
               onClick={printReport}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-blue-500 bg-blue-50 px-4 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-600 hover:text-white"
             >
-              <Printer size={16} />
+              <Printer size={14} />
               Print
             </button>
             <button className="flex items-center px-4 gap-2 py-2 text-sm font-medium text-gray-700 bg-white border border-neutral-200 rounded-full hover:bg-gray-50 transition-colors">
