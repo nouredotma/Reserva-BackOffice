@@ -1,9 +1,20 @@
 'use client';
 
-import { useMemo, useState, type ChangeEvent, type KeyboardEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type KeyboardEvent,
+} from 'react';
 import {
   Building2,
   CheckCircle2,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   FileImage,
   Globe2,
   Image as ImageIcon,
@@ -23,9 +34,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import {
+  cities,
   CUISINES_LOCALIZED,
   getOwnerCategory,
-  getOwnerCity,
   getOwnerSubcategoryOptions,
   ownerEstablishment,
   ownerRestaurantDetails,
@@ -36,6 +47,9 @@ const cuisineOptions = Object.entries(CUISINES_LOCALIZED).map(([key, labels]) =>
   label: labels.en,
 }));
 
+const MAX_GALLERY_IMAGES = 8;
+const GALLERY_THUMB_WIDTH = 112;
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -44,38 +58,156 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, '');
 }
 
-function SectionRow({
+function CollapsibleSection({
   title,
-  description,
   icon: Icon,
+  defaultOpen = true,
   children,
 }: {
   title: string;
-  description: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
+
   return (
-    <section className="rounded-xl border border-neutral-200 bg-white p-6">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
-          <Icon size={18} className="text-gray-500" />
+    <section className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-neutral-50/80"
+        aria-expanded={open}
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-100">
+            <Icon size={18} className="text-gray-500" />
+          </div>
+          <h2 className="text-lg font-medium text-gray-900">{title}</h2>
         </div>
-        <div>
-          <h2 className="text-xl font-light text-gray-900">{title}</h2>
-          <p className="text-sm text-gray-400">{description}</p>
-        </div>
-      </div>
-      {children}
+        <ChevronDown
+          size={20}
+          className={`shrink-0 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+      {open ? <div className="border-t border-neutral-100 px-6 pb-6 pt-5">{children}</div> : null}
     </section>
+  );
+}
+
+function GalleryCarousel({
+  images,
+  onRemove,
+  onAdd,
+}: {
+  images: string[];
+  onRemove: (index: number) => void;
+  onAdd: (event: ChangeEvent<HTMLInputElement>) => void;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollBack, setCanScrollBack] = useState(false);
+  const [canScrollForward, setCanScrollForward] = useState(false);
+  const showAddSlot = images.length < MAX_GALLERY_IMAGES;
+
+  const updateScrollState = useCallback(() => {
+    const node = scrollRef.current;
+    if (!node) {
+      setCanScrollBack(false);
+      setCanScrollForward(false);
+      return;
+    }
+    const maxScroll = node.scrollWidth - node.clientWidth;
+    setCanScrollBack(node.scrollLeft > 4);
+    setCanScrollForward(node.scrollLeft < maxScroll - 4);
+  }, []);
+
+  useEffect(() => {
+    updateScrollState();
+    const node = scrollRef.current;
+    if (!node) return;
+
+    node.addEventListener('scroll', updateScrollState, { passive: true });
+    const observer = new ResizeObserver(updateScrollState);
+    observer.observe(node);
+
+    return () => {
+      node.removeEventListener('scroll', updateScrollState);
+      observer.disconnect();
+    };
+  }, [images.length, showAddSlot, updateScrollState]);
+
+  const scrollBy = (direction: 'back' | 'forward') => {
+    scrollRef.current?.scrollBy({
+      left: direction === 'back' ? -GALLERY_THUMB_WIDTH * 2 : GALLERY_THUMB_WIDTH * 2,
+      behavior: 'smooth',
+    });
+  };
+
+  const showNav = canScrollBack || canScrollForward;
+
+  return (
+    <div className="relative">
+      {showNav ? (
+        <>
+          {canScrollBack ? (
+            <button
+              type="button"
+              onClick={() => scrollBy('back')}
+              className="absolute -left-3 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-neutral-200 bg-white text-gray-700 shadow-sm transition-colors hover:border-primary hover:text-gray-900"
+              aria-label="Previous images"
+            >
+              <ChevronLeft size={16} />
+            </button>
+          ) : null}
+          {canScrollForward ? (
+            <button
+              type="button"
+              onClick={() => scrollBy('forward')}
+              className="absolute -right-3 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-neutral-200 bg-white text-gray-700 shadow-sm transition-colors hover:border-primary hover:text-gray-900"
+              aria-label="Next images"
+            >
+              <ChevronRight size={16} />
+            </button>
+          ) : null}
+        </>
+      ) : null}
+
+      <div
+        ref={scrollRef}
+        className="flex gap-2.5 overflow-x-auto scroll-smooth pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {images.map((preview, index) => (
+          <div
+            key={`${preview}-${index}`}
+            className="group relative h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-neutral-100"
+          >
+            <img src={preview} alt={`Gallery ${index + 1}`} className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onRemove(index)}
+              className="absolute right-1.5 top-1.5 hidden h-7 w-7 cursor-pointer items-center justify-center rounded-full border border-neutral-200 bg-white text-gray-700 shadow group-hover:flex"
+              aria-label={`Remove image ${index + 1}`}
+            >
+              <Trash2 size={12} />
+            </button>
+          </div>
+        ))}
+        {showAddSlot ? (
+          <label className="flex h-20 w-28 shrink-0 cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-neutral-200 bg-neutral-100 text-gray-400 transition-colors hover:border-primary hover:bg-primary/5 hover:text-gray-700">
+            <Plus size={20} className="text-gray-400 transition-colors group-hover:text-primary" />
+            <input type="file" accept="image/*" multiple className="sr-only" onChange={onAdd} />
+          </label>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
 export default function EstablishmentManagementPage() {
   const ownerCategory = getOwnerCategory();
-  const ownerCity = getOwnerCity();
   const subcategoryOptions = getOwnerSubcategoryOptions();
 
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const [saved, setSaved] = useState(false);
   const [coverPreview, setCoverPreview] = useState(ownerEstablishment.cover_image);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>(ownerEstablishment.gallery_images);
@@ -88,7 +220,9 @@ export default function EstablishmentManagementPage() {
     subcategory: ownerEstablishment.subcategory ?? '',
     cuisineTypes: [...ownerRestaurantDetails.cuisine_type],
     shortDescription: ownerEstablishment.short_description,
+    shortDescriptionFr: ownerEstablishment.short_description_fr,
     fullDescription: ownerEstablishment.full_description,
+    fullDescriptionFr: ownerEstablishment.full_description_fr,
     cityId: ownerEstablishment.city_id,
     address: ownerEstablishment.address,
     latitude: String(ownerEstablishment.coordinates.lat),
@@ -97,7 +231,7 @@ export default function EstablishmentManagementPage() {
     email: ownerEstablishment.email,
     website: ownerEstablishment.website ?? '',
     priceLevel: ownerEstablishment.price_level,
-    status: ownerEstablishment.status,
+    status: ownerEstablishment.status === 'active' ? 'active' : 'inactive',
     tags: [...ownerEstablishment.tags],
   });
 
@@ -113,14 +247,16 @@ export default function EstablishmentManagementPage() {
     const file = event.target.files?.[0];
     if (!file) return;
     setCoverPreview(URL.createObjectURL(file));
+    event.target.value = '';
   };
 
   const handleGalleryChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
     if (!files.length) return;
     setGalleryPreviews((current) =>
-      [...current, ...files.map((file) => URL.createObjectURL(file))].slice(0, 8),
+      [...current, ...files.map((file) => URL.createObjectURL(file))].slice(0, MAX_GALLERY_IMAGES),
     );
+    event.target.value = '';
   };
 
   const toggleCuisine = (key: string) => {
@@ -172,7 +308,7 @@ export default function EstablishmentManagementPage() {
   };
 
   const selectedSubcategoryLabel = useMemo(
-    () => subcategoryOptions.find((s) => s.key === form.subcategory)?.label ?? 'Not set',
+    () => subcategoryOptions.find((s) => s.key === form.subcategory)?.label ?? 'Select subcategory',
     [form.subcategory, subcategoryOptions],
   );
 
@@ -185,88 +321,56 @@ export default function EstablishmentManagementPage() {
     window.setTimeout(() => setSaved(false), 2200);
   };
 
+  const hasCover = Boolean(coverPreview);
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-16">
       <div className="mb-10 pt-20">
-        <div className="flex flex-wrap items-center justify-between gap-6">
-          <div>
-            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Establishment</h1>
-            <p className="text-sm text-neutral-500">
-              Public venue profile for {ownerCategory?.label ?? 'your category'} — aligned with the Reserva client model.
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            {saved && (
-              <span className="flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
-                <CheckCircle2 size={16} />
-                Saved
-              </span>
-            )}
-            <Button type="button" size="lg" onClick={saveProfile}>
-              <Save size={16} />
-              Save establishment
-            </Button>
-          </div>
-        </div>
+        <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Establishment</h1>
+        <p className="text-sm text-neutral-500">
+          Manage your {ownerCategory?.label?.toLowerCase() ?? 'venue'} public profile and listing details.
+        </p>
       </div>
 
-      <div className="space-y-6">
-        {/* Row 1 — Media */}
-        <SectionRow
-          title="Photos"
-          description="Cover image and gallery shown on your public listing."
-          icon={ImageIcon}
-        >
-          <div className="space-y-6">
-            <div>
-              <label className="mb-3 block text-sm font-medium text-gray-700">Cover image</label>
-              <div className="relative h-56 overflow-hidden rounded-xl bg-gray-100 md:h-72">
-                <img src={coverPreview} alt="Establishment cover" className="h-full w-full object-cover" />
-                <label className="absolute bottom-4 right-4 inline-flex cursor-pointer items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow-sm">
-                  <FileImage size={16} />
-                  Change cover
-                  <input type="file" accept="image/*" className="sr-only" onChange={handleCoverChange} />
-                </label>
-              </div>
+      <div className="space-y-4">
+        <CollapsibleSection title="Photos" icon={ImageIcon} defaultOpen>
+          <div className="space-y-5">
+            <div className="relative aspect-video w-full max-w-md overflow-hidden rounded-xl bg-neutral-100">
+              {hasCover ? (
+                <img
+                  src={coverPreview}
+                  alt="Establishment cover"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center border border-dashed border-neutral-200 bg-neutral-100">
+                  <ImageIcon size={28} className="text-gray-300" />
+                </div>
+              )}
+              <label className="absolute bottom-4 right-4 inline-flex cursor-pointer items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 shadow-sm transition-colors hover:border-primary hover:bg-primary/5">
+                <FileImage size={16} />
+                {hasCover ? 'Change cover' : 'Add cover'}
+                <input
+                  ref={coverInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={handleCoverChange}
+                />
+              </label>
             </div>
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">Gallery</label>
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-neutral-200 px-3 py-1.5 text-xs font-medium text-gray-700">
-                  <Plus size={14} />
-                  Add images
-                  <input type="file" accept="image/*" multiple className="sr-only" onChange={handleGalleryChange} />
-                </label>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {galleryPreviews.map((preview, index) => (
-                  <div
-                    key={`${preview}-${index}`}
-                    className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100"
-                  >
-                    <img src={preview} alt={`Gallery ${index + 1}`} className="h-full w-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setGalleryPreviews((current) => current.filter((_, imageIndex) => imageIndex !== index))
-                      }
-                      className="absolute right-2 top-2 hidden h-8 w-8 items-center justify-center rounded-full border border-neutral-200 bg-white text-gray-700 shadow group-hover:flex"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </SectionRow>
 
-        {/* Row 2 — Name & descriptions */}
-        <SectionRow
-          title="Identity"
-          description="Name and descriptions in English and French."
-          icon={Building2}
-        >
+            <GalleryCarousel
+              images={galleryPreviews}
+              onRemove={(index) =>
+                setGalleryPreviews((current) => current.filter((_, imageIndex) => imageIndex !== index))
+              }
+              onAdd={handleGalleryChange}
+            />
+          </div>
+        </CollapsibleSection>
+
+        <CollapsibleSection title="Identity" icon={Building2}>
           <div className="grid gap-5 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">Name (EN)</label>
@@ -276,53 +380,61 @@ export default function EstablishmentManagementPage() {
               <label className="mb-2 block text-sm font-medium text-gray-700">Name (FR)</label>
               <Input value={form.nameFr} onChange={(event) => updateField('nameFr', event.target.value)} />
             </div>
-            <div className="md:col-span-2">
-              <label className="mb-2 block text-sm font-medium text-gray-700">Short description</label>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Short description (EN)</label>
               <Textarea
                 value={form.shortDescription}
                 onChange={(event) => updateField('shortDescription', event.target.value)}
               />
             </div>
-            <div className="md:col-span-2">
-              <label className="mb-2 block text-sm font-medium text-gray-700">Full description</label>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Short description (FR)</label>
               <Textarea
-                className="min-h-32"
+                value={form.shortDescriptionFr}
+                onChange={(event) => updateField('shortDescriptionFr', event.target.value)}
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Full description (EN)</label>
+              <Textarea
+                className="min-h-28"
                 value={form.fullDescription}
                 onChange={(event) => updateField('fullDescription', event.target.value)}
               />
             </div>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Full description (FR)</label>
+              <Textarea
+                className="min-h-28"
+                value={form.fullDescriptionFr}
+                onChange={(event) => updateField('fullDescriptionFr', event.target.value)}
+              />
+            </div>
           </div>
-        </SectionRow>
+        </CollapsibleSection>
 
-        {/* Row 3 — Contact & publication */}
-        <SectionRow
-          title="Contact & status"
-          description="Slug, publication state, price level, and client contact channels."
-          icon={Mail}
-        >
+        <CollapsibleSection title="Contact" icon={Mail}>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">Slug</label>
-              <Input value={form.slug} onChange={(event) => updateField('slug', event.target.value)} />
+              <Input value={form.slug} disabled className="cursor-not-allowed bg-neutral-50 text-gray-600" />
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">Status</label>
               <Select value={form.status} onValueChange={(value) => updateField('status', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="cursor-pointer">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">Price level</label>
               <Select value={form.priceLevel} onValueChange={(value) => updateField('priceLevel', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="cursor-pointer">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -355,29 +467,23 @@ export default function EstablishmentManagementPage() {
               <Input value={form.website} onChange={(event) => updateField('website', event.target.value)} />
             </div>
           </div>
-        </SectionRow>
+        </CollapsibleSection>
 
-        {/* Row 4 — Category, subcategory, cuisines, tags */}
-        <SectionRow
-          title="Category & discovery"
-          description="Category is set by Reserva super admin. Choose one subcategory and your cuisines."
-          icon={Tag}
-        >
+        <CollapsibleSection title="Category & cuisine" icon={Tag}>
           <div className="grid gap-5 md:grid-cols-2">
             <div>
               <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Lock size={14} className="text-gray-400" />
-                Category (super admin)
+                Category
               </label>
-              <div className="flex h-10 items-center rounded-full border border-dashed border-neutral-200 bg-gray-50 px-3 text-sm text-gray-700">
+              <div className="flex h-10 items-center rounded-full border border-dashed border-neutral-200 bg-neutral-50 px-3 text-sm text-gray-700">
                 {ownerCategory?.label ?? ownerEstablishment.category}
               </div>
-              <p className="mt-1 text-xs text-gray-400">Each establishment belongs to one category only.</p>
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">Subcategory</label>
               <Select value={form.subcategory} onValueChange={(value) => updateField('subcategory', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="cursor-pointer">
                   <SelectValue placeholder="Select subcategory">{selectedSubcategoryLabel}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -391,10 +497,10 @@ export default function EstablishmentManagementPage() {
             </div>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-5">
             <label className="mb-3 flex items-center gap-2 text-sm font-medium text-gray-700">
               <Utensils size={14} />
-              Cuisines (super admin catalog)
+              Cuisine
             </label>
             <div className="flex flex-wrap gap-2">
               {cuisineOptions.map((cuisine) => {
@@ -404,10 +510,10 @@ export default function EstablishmentManagementPage() {
                     key={cuisine.key}
                     type="button"
                     onClick={() => toggleCuisine(cuisine.key)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                    className={`cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                       selected
                         ? 'border-primary bg-primary/10 text-gray-900'
-                        : 'border-neutral-200 text-gray-600 hover:border-neutral-300'
+                        : 'border-neutral-200 text-gray-600 hover:border-primary/60'
                     }`}
                   >
                     {cuisine.label}
@@ -417,7 +523,7 @@ export default function EstablishmentManagementPage() {
             </div>
           </div>
 
-          <div className="mt-6">
+          <div className="mt-5">
             <label className="mb-2 block text-sm font-medium text-gray-700">Tags</label>
             <div className="flex gap-2">
               <Input
@@ -426,7 +532,7 @@ export default function EstablishmentManagementPage() {
                 onKeyDown={handleTagKeyDown}
                 placeholder="Add a tag"
               />
-              <Button type="button" variant="outline" onClick={addTag}>
+              <Button type="button" variant="outline" onClick={addTag} className="cursor-pointer shrink-0">
                 <Plus size={16} />
               </Button>
             </div>
@@ -436,27 +542,31 @@ export default function EstablishmentManagementPage() {
                   key={tag}
                   type="button"
                   onClick={() => removeTag(tag)}
-                  className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 hover:bg-red-50 hover:text-red-600"
+                  className="cursor-pointer rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600"
                 >
                   {tag}
                 </button>
               ))}
             </div>
           </div>
-        </SectionRow>
+        </CollapsibleSection>
 
-        {/* Row 5 — Location */}
-        <SectionRow
-          title="Location"
-          description={`${ownerCity?.name ?? 'City'}, address, and map coordinates.`}
-          icon={MapPin}
-        >
+        <CollapsibleSection title="Location" icon={MapPin}>
           <div className="grid gap-5 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">City</label>
-              <div className="flex h-10 items-center rounded-full border border-neutral-200 bg-white px-3 text-sm text-gray-700">
-                {ownerCity?.name ?? form.cityId}
-              </div>
+              <Select value={form.cityId} onValueChange={(value) => updateField('cityId', value)}>
+                <SelectTrigger className="cursor-pointer">
+                  <SelectValue placeholder="Select city" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cities.map((city) => (
+                    <SelectItem key={city.id} value={city.id}>
+                      {city.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">Address</label>
@@ -472,13 +582,26 @@ export default function EstablishmentManagementPage() {
             </div>
           </div>
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Button type="button" variant="outline" onClick={useCurrentLocation}>
+            <Button type="button" variant="outline" onClick={useCurrentLocation} className="cursor-pointer">
               <Navigation size={16} />
               Use current location
             </Button>
-            {locationStatus && <span className="text-sm text-gray-500">{locationStatus}</span>}
+            {locationStatus ? <span className="text-sm text-gray-500">{locationStatus}</span> : null}
           </div>
-        </SectionRow>
+        </CollapsibleSection>
+
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-neutral-100 pt-8">
+          {saved ? (
+            <span className="flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
+              <CheckCircle2 size={16} />
+              Saved
+            </span>
+          ) : null}
+          <Button type="button" size="lg" onClick={saveProfile} className="cursor-pointer">
+            <Save size={16} />
+            Save establishment
+          </Button>
+        </div>
       </div>
     </div>
   );
