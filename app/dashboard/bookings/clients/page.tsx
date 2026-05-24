@@ -69,7 +69,7 @@ export default function ClientsPage() {
   if (detailOpen && selectedClient) {
     return (
       <div className="min-h-screen">
-        <div className="mb-8 pt-20">
+        <div className="mb-5 md:mb-8 pt-32 md:pt-20">
           <button
             type="button"
             onClick={() => setDetailOpen(false)}
@@ -78,20 +78,20 @@ export default function ClientsPage() {
             <ArrowLeft size={16} />
             Back to clients
           </button>
-          <div className="flex flex-wrap items-start justify-between gap-5">
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-                <span className="text-2xl font-medium text-primary-foreground">
+          <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-5">
+            <div className="flex items-center gap-3 md:gap-4 min-w-0">
+              <div className="flex h-12 w-12 md:h-16 md:w-16 shrink-0 items-center justify-center rounded-full bg-primary">
+                <span className="text-xl md:text-2xl font-medium text-primary-foreground">
                   {selectedClient.name.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <div>
-                <h1 className="text-5xl font-light tracking-tight text-gray-900">{selectedClient.name}</h1>
+              <div className="min-w-0">
+                <h1 className="text-2xl md:text-5xl font-light tracking-tight text-gray-900 break-words">{selectedClient.name}</h1>
                 <p className="mt-2 text-sm text-gray-400">Client profile</p>
               </div>
             </div>
             <span
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
+              className={`self-start rounded-full px-3 py-1 text-xs font-medium ${
                 selectedClient.status === 'Active' ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-600'
               }`}
             >
@@ -101,7 +101,7 @@ export default function ClientsPage() {
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-          <section className="rounded-xl border border-neutral-200 bg-white p-6">
+          <section className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <Users size={18} className="text-gray-500" />
@@ -136,7 +136,7 @@ export default function ClientsPage() {
             )}
           </section>
 
-          <aside className="rounded-xl border border-neutral-200 bg-white p-6">
+          <aside className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
             <h2 className="mb-5 text-xl font-light text-gray-900">Contact</h2>
             <div className="space-y-3 text-sm text-gray-700">
               <div className="flex items-center gap-2">
@@ -170,15 +170,15 @@ export default function ClientsPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="mb-8 pt-20">
+      <div className="mb-5 md:mb-8 pt-32 md:pt-20">
         <div className="flex flex-wrap items-baseline gap-4">
-          <h1 className="text-5xl font-light tracking-tight text-gray-900">Clients</h1>
+          <h1 className="text-2xl md:text-5xl font-light tracking-tight text-gray-900">Clients</h1>
           <span className="text-sm text-gray-400">{filteredClients.length} records</span>
         </div>
       </div>
 
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
+      <div className="mb-6 flex flex-col items-start md:flex-row md:flex-wrap md:items-center gap-3">
+        <div className="flex h-10 w-full md:min-w-0 md:flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
           <Search size={16} className="shrink-0 text-gray-400" />
           <input
             type="text"
@@ -188,7 +188,7 @@ export default function ClientsPage() {
             className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
           />
         </div>
-        <div className={filterTrackClass} role="group" aria-label="Client status">
+        <div className={`${filterTrackClass} max-w-full overflow-x-auto`} role="group" aria-label="Client status">
           {statusFilterOptions.map((status) => (
             <button
               key={status.value}
@@ -202,32 +202,32 @@ export default function ClientsPage() {
         </div>
       </div>
 
-      <div className="mb-8 grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+      <div className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-3">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
             <Users size={18} className="text-gray-400" />
           </div>
           <p className="mb-1 text-xs font-medium text-gray-400">Total clients</p>
-          <p className="text-3xl font-light text-gray-900">{clients.length}</p>
+          <p className="text-2xl md:text-3xl font-light text-gray-900">{clients.length}</p>
         </div>
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
             <Calendar size={18} className="text-gray-400" />
           </div>
           <p className="mb-1 text-xs font-medium text-gray-400">Active clients</p>
-          <p className="text-3xl font-light text-gray-900">{activeCount}</p>
+          <p className="text-2xl md:text-3xl font-light text-gray-900">{activeCount}</p>
         </div>
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
             <Users size={18} className="text-gray-400" />
           </div>
           <p className="mb-1 text-xs font-medium text-gray-400">Inactive clients</p>
-          <p className="text-3xl font-light text-gray-900">{inactiveCount}</p>
+          <p className="text-2xl md:text-3xl font-light text-gray-900">{inactiveCount}</p>
         </div>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-        <div className="overflow-x-auto">
+        <div className="scroll-hint overflow-x-auto">
           <table className="w-full min-w-[920px]">
             <thead className="border-b border-gray-100 bg-gray-50">
               <tr>

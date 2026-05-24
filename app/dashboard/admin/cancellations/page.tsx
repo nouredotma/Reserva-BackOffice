@@ -48,42 +48,42 @@ export default function CancellationsPage() {
       `}</style>
 
       {/* Header */}
-      <div className="mb-8 pt-20">
-        <div className="flex items-center justify-between mb-6">
+      <div className="mb-5 md:mb-8 pt-32 md:pt-20">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between mb-6">
           {/* Left: Title */}
-          <div className="flex items-center gap-8">
-            <div>
-              <h1 className="text-5xl font-light text-gray-900 tracking-tight">
+          <div className="flex items-center gap-8 min-w-0">
+            <div className="min-w-0">
+              <h1 className="text-2xl md:text-5xl font-light text-gray-900 tracking-tight">
                 Canceled appointments
               </h1>
-              <p className="mt-2 text-sm text-neutral-500">Canceled appointments from 10/13/2025 to 11/12/2025</p>
+              <p className="mt-2 text-xs md:text-sm text-neutral-500">Canceled appointments from 10/13/2025 to 11/12/2025</p>
             </div>
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-3 no-print">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 no-print">
             <button
               type="button"
               onClick={exportData}
-              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-3 sm:px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
             >
               <Download size={14} />
-              Export
+              <span className="hidden sm:inline">Export</span>
             </button>
             <button
               type="button"
               onClick={printReport}
-              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-blue-500 bg-blue-50 px-4 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-600 hover:text-white"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-blue-500 bg-blue-50 px-3 sm:px-4 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-600 hover:text-white"
             >
               <Printer size={14} />
-              Print
+              <span className="hidden sm:inline">Print</span>
             </button>
             <button
               type="button"
-              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 sm:px-4 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
             >
               <Trash2 size={14} />
-              Empty trash
+              <span className="hidden sm:inline">Empty trash</span>
             </button>
           </div>
         </div>
@@ -91,8 +91,8 @@ export default function CancellationsPage() {
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="scroll-hint overflow-x-auto">
+          <table className="w-full min-w-[760px]">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">

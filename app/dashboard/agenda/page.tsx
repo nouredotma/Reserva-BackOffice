@@ -239,8 +239,8 @@ const NewAppointmentModal: React.FC<NewAppointmentModalProps> = ({ onClose, onCr
   };
 
   return (
-  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-    <div className="w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl border border-neutral-200 bg-white animate-slideUp">
+  <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4 animate-fadeIn">
+    <div className="w-full max-w-3xl max-h-[calc(100vh-1.5rem)] md:max-h-[90vh] overflow-y-auto rounded-xl border border-neutral-200 bg-white animate-slideUp">
       {/* Header */}
       <div className="sticky top-0 z-40 border-b border-gray-100 bg-white px-8 py-6">
         <div className="flex items-center justify-between">
@@ -680,8 +680,8 @@ function BookingDetailModal({
     : '/dashboard/bookings';
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-lg rounded-xl border border-neutral-200 bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-3 md:p-4">
+      <div className="w-full max-w-lg max-h-[calc(100vh-1.5rem)] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-5 md:p-6 shadow-xl">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-gray-400">
@@ -780,6 +780,12 @@ const AgendaPage = () => {
     return () => {
       window.removeEventListener('statusFilterChange', handleStatusFilter as EventListener);
     };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setView('day');
+    }
   }, []);
 
   // Sample appointments data - normalize dates and load from localStorage
@@ -932,11 +938,11 @@ const AgendaPage = () => {
         .animate-slideDown { animation: slideDown 0.3s ease-out; }
       `}</style>
 
-      <div className="mb-8 pt-20">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-6">
+      <div className="mb-6 md:mb-8 pt-20">
+        <div className="mb-4 md:mb-6 flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6">
           <div>
-            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Agenda</h1>
-            <p className="text-sm text-neutral-500">Manage appointments and your daily schedule</p>
+            <h1 className="mb-1.5 text-2xl md:text-5xl font-light tracking-tight text-gray-900">Agenda</h1>
+            <p className="text-xs md:text-sm text-neutral-500">Manage appointments and your daily schedule</p>
           </div>
           <button type="button" onClick={() => setShowNewRDV(true)} className={newAppointmentButtonClass}>
             <Plus size={14} />
@@ -944,7 +950,7 @@ const AgendaPage = () => {
           </button>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-4">
           <AgendaViewTabs value={view} onChange={setView} />
 
           <div className={controlTrackClass}>
@@ -956,7 +962,7 @@ const AgendaPage = () => {
             >
               <ChevronLeft size={16} />
             </button>
-            <span className="flex h-8 min-w-[9rem] items-center justify-center px-2 text-xs font-medium text-gray-900">
+            <span className="flex h-8 min-w-0 md:min-w-[9rem] items-center justify-center px-2 text-xs font-medium text-gray-900">
               {getAgendaDateLabel(currentDate, view)}
             </span>
             <button
@@ -974,7 +980,7 @@ const AgendaPage = () => {
       {/* Calendar Views */}
       <div key={refreshKey} className=" overflow-hidden animate-fadeIn">
         {view === 'week' && (
-          <div className="overflow-x-auto bg-white rounded-xl border border-neutral-200 ">
+          <div className="scroll-hint overflow-x-auto bg-white rounded-xl border border-neutral-200 ">
             <div className="min-w-[1000px]">
               {/* Header */}
               <div className="grid grid-cols-8 border-b border-gray-100">
@@ -1051,7 +1057,7 @@ const AgendaPage = () => {
 
         {view === 'day' && (
           <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-            <div className="overflow-x-auto">
+            <div className="scroll-hint overflow-x-auto">
               <div className="min-w-[640px]">
                 {timeSlots.map((time) => (
                   <div
@@ -1118,7 +1124,7 @@ const AgendaPage = () => {
                 if (!date) return (
                   <div
                     key={i}
-                    className="min-h-[140px] bg-gray-50/30 border-r border-b border-gray-100"
+                    className="min-h-[80px] md:min-h-[140px] bg-gray-50/30 border-r border-b border-gray-100"
                   ></div>
                 );
                 const isToday = date.toDateString() === new Date().toDateString();
@@ -1139,7 +1145,7 @@ const AgendaPage = () => {
                 return (
                   <div
                     key={i}
-                    className={`min-h-[140px] border-r border-b border-gray-100 p-2 hover:bg-gray-50/50 transition-all group/date relative ${
+                    className={`min-h-[80px] md:min-h-[140px] border-r border-b border-gray-100 p-1 md:p-2 hover:bg-gray-50/50 transition-all group/date relative ${
                       isToday ? 'bg-gray-50/50' : 'bg-white'
                     }`}
                     onDragOver={handleDragOver}
@@ -1172,19 +1178,26 @@ const AgendaPage = () => {
 
                     {/* Appointments - use AppointmentCard for color logic */}
                     <div className="space-y-1">
-                      {dayAppointments.slice(0, 3).map(apt => (
-                        <AppointmentCard
-                          key={apt.id}
-                          apt={apt}
-                          viewType="month"
-                          onDragStart={handleDragStart}
-                          onOpen={setSelectedAppointment}
-                        />
-                      ))}
-                      {/* More indicator */}
-                      {dayAppointments.length > 3 && (
-                        <div className="text-[10px] text-gray-500 font-medium px-1.5 py-1 hover:text-gray-900 transition-colors">
-                          +{dayAppointments.length - 3} more
+                      <div className="hidden md:block space-y-1">
+                        {dayAppointments.slice(0, 3).map(apt => (
+                          <AppointmentCard
+                            key={apt.id}
+                            apt={apt}
+                            viewType="month"
+                            onDragStart={handleDragStart}
+                            onOpen={setSelectedAppointment}
+                          />
+                        ))}
+                        {dayAppointments.length > 3 && (
+                          <div className="text-[10px] text-gray-500 font-medium px-1.5 py-1 hover:text-gray-900 transition-colors">
+                            +{dayAppointments.length - 3} more
+                          </div>
+                        )}
+                      </div>
+                      {/* Mobile: just show count dot */}
+                      {dayAppointments.length > 0 && (
+                        <div className="md:hidden flex items-center justify-center mt-1">
+                          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                         </div>
                       )}
                     </div>

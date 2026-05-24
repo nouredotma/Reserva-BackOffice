@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, Trash2, Users, File, BarChart3, LogOut, Settings2, Calendar, Clock, Filter, UserCheck, Building, TrendingUp, FileText, ChevronDown, Bell, CreditCard, X, HelpCircle, Mail, MessageCircle, Phone } from 'lucide-react';
+import { Home, Trash2, Users, File, BarChart3, LogOut, Settings2, Calendar, Clock, Filter, UserCheck, Building, TrendingUp, FileText, ChevronDown, Bell, CreditCard, X, HelpCircle, Mail, MessageCircle, Phone, Menu } from 'lucide-react';
 import { useAuth } from '@/lib/mock-auth';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
@@ -32,6 +32,61 @@ const menuItems = [
 	{ name: 'Cash Desk', href: '/dashboard/cash-desk', icon: CreditCard },
 	{ name: 'Admin', href: '/dashboard/admin', icon: Settings2 },
 ];
+
+const bookingsNavItems = [
+	{ name: 'All bookings', href: '/dashboard/bookings', icon: Calendar, match: (p: string) => p === '/dashboard/bookings' },
+	{ name: 'Clients', href: '/dashboard/bookings/clients', icon: FileText, match: (p: string) => p === '/dashboard/bookings/clients' },
+	{ name: 'Reviews', href: '/dashboard/bookings/reviews', icon: UserCheck, match: (p: string) => p === '/dashboard/bookings/reviews' },
+];
+
+const adminNavItems = [
+	{ name: 'Overview', href: '/dashboard/admin', icon: BarChart3, match: (p: string) => p === '/dashboard/admin' },
+	{ name: 'Profile', href: '/dashboard/admin/profile', icon: UserCheck, match: (p: string) => p === '/dashboard/admin/profile' },
+	{ name: 'Establishment', href: '/dashboard/admin/establishment', icon: Settings2, match: (p: string) => p === '/dashboard/admin/establishment' },
+	{ name: 'Services', href: '/dashboard/admin/services', icon: FileText, match: (p: string) => p === '/dashboard/admin/services' },
+	{ name: 'Occupancy', href: '/dashboard/admin/occupancy', icon: TrendingUp, match: (p: string) => p === '/dashboard/admin/occupancy' },
+	{ name: 'Cancellations', href: '/dashboard/admin/cancellations', icon: Trash2, match: (p: string) => p === '/dashboard/admin/cancellations' },
+	{ name: 'Invoices', href: '/dashboard/admin/invoices', icon: File, match: (p: string) => p === '/dashboard/admin/invoices' },
+];
+
+function MobileSectionTabs({ pathname }: { pathname: string | null }) {
+	let items: typeof bookingsNavItems = [];
+	if (pathname?.startsWith('/dashboard/bookings') || pathname?.startsWith('/dashboard/clients')) {
+		items = bookingsNavItems;
+	} else if (pathname?.startsWith('/dashboard/admin')) {
+		items = adminNavItems;
+	}
+	if (items.length === 0) return null;
+
+	return (
+		<div className="md:hidden fixed top-16 left-0 right-0 z-30 border-b border-neutral-200 bg-white/95 backdrop-blur-sm">
+			<nav
+				className="flex items-center gap-1.5 overflow-x-auto px-3 py-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+				aria-label="Section pages"
+			>
+				{items.map((item) => {
+					const Icon = item.icon;
+					const isActive = item.match(pathname ?? '');
+					return (
+						<Link
+							key={item.href}
+							href={item.href}
+							aria-current={isActive ? 'page' : undefined}
+							className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+								isActive
+									? 'bg-primary text-primary-foreground'
+									: 'bg-neutral-100 text-gray-600 hover:bg-neutral-200 hover:text-gray-900'
+							}`}
+						>
+							<Icon size={13} strokeWidth={2.5} />
+							{item.name}
+						</Link>
+					);
+				})}
+			</nav>
+		</div>
+	);
+}
 
 const AgendaSidebar = () => {
 	const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -203,20 +258,17 @@ const BookingsSidebar = () => {
 		}`;
 
 	return (
-		<div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6">
+		<div className="sidebar-scrollbar hidden md:block flex-1 overflow-y-auto px-4 py-6">
 			<div className="space-y-3">
-				<Link href="/dashboard/bookings" className={linkClass(pathname === '/dashboard/bookings')}>
-					<Calendar size={14} />
-					All bookings
-				</Link>
-				<Link href="/dashboard/bookings/clients" className={linkClass(pathname === '/dashboard/bookings/clients')}>
-					<FileText size={14} />
-					Clients
-				</Link>
-				<Link href="/dashboard/bookings/reviews" className={linkClass(pathname === '/dashboard/bookings/reviews')}>
-					<UserCheck size={14} />
-					Reviews
-				</Link>
+				{bookingsNavItems.map((item) => {
+					const Icon = item.icon;
+					return (
+						<Link key={item.href} href={item.href} className={linkClass(item.match(pathname ?? ''))}>
+							<Icon size={14} />
+							{item.name}
+						</Link>
+					);
+				})}
 			</div>
 		</div>
 	);
@@ -231,36 +283,17 @@ const AdminSidebar = () => {
 		}`;
 
 	return (
-		<div className="sidebar-scrollbar flex-1 overflow-y-auto px-4 py-6">
+		<div className="sidebar-scrollbar hidden md:block flex-1 overflow-y-auto px-4 py-6">
 			<div className="space-y-3">
-				<Link href="/dashboard/admin" className={linkClass(pathname === '/dashboard/admin')}>
-					<BarChart3 size={14} />
-					Overview
-				</Link>
-				<Link href="/dashboard/admin/profile" className={linkClass(pathname === '/dashboard/admin/profile')}>
-					<UserCheck size={14} />
-					Profile
-				</Link>
-				<Link href="/dashboard/admin/establishment" className={linkClass(pathname === '/dashboard/admin/establishment')}>
-					<Settings2 size={14} />
-					Establishment
-				</Link>
-				<Link href="/dashboard/admin/services" className={linkClass(pathname === '/dashboard/admin/services')}>
-					<FileText size={14} />
-					Services
-				</Link>
-				<Link href="/dashboard/admin/occupancy" className={linkClass(pathname === '/dashboard/admin/occupancy')}>
-					<TrendingUp size={14} />
-					Occupancy
-				</Link>
-				<Link href="/dashboard/admin/cancellations" className={linkClass(pathname === '/dashboard/admin/cancellations')}>
-					<Trash2 size={14} />
-					Cancellations
-				</Link>
-				<Link href="/dashboard/admin/invoices" className={linkClass(pathname === '/dashboard/admin/invoices')}>
-					<File size={14} />
-					Invoices
-				</Link>
+				{adminNavItems.map((item) => {
+					const Icon = item.icon;
+					return (
+						<Link key={item.href} href={item.href} className={linkClass(item.match(pathname ?? ''))}>
+							<Icon size={14} />
+							{item.name}
+						</Link>
+					);
+				})}
 			</div>
 		</div>
 	);
@@ -363,6 +396,11 @@ function DashboardSidebar() {
 
 	const [profileImage, setProfileImage] = useState<string | null>(null);
 	const [showSupportModal, setShowSupportModal] = useState(false);
+	const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+	useEffect(() => {
+		setMobileNavOpen(false);
+	}, [pathname]);
 
 	const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
@@ -409,10 +447,23 @@ function DashboardSidebar() {
 	return (
 		<>
 			{/* Modern Top Bar */}
-			<header className="fixed top-0 left-68 right-0 h-16 backdrop-blur-lg border-b border-gray-200/50 z-40">
-				<div className="h-full ml-0 px-8 flex items-center justify-between">
-					{/* Left Section - Navigation */}
-					<nav className="flex items-center gap-1">
+			<header className="fixed top-0 left-0 md:left-68 right-0 h-16 backdrop-blur-lg border-b border-gray-200/50 z-40 bg-white/80">
+				<div className="h-full px-3 md:px-8 flex items-center justify-between gap-2">
+					{/* Mobile: hamburger + logo */}
+					<div className="flex items-center gap-2 md:hidden min-w-0">
+						<button
+							type="button"
+							onClick={() => setMobileNavOpen(true)}
+							className="p-2 -ml-1 rounded-full text-gray-700 hover:bg-gray-100 cursor-pointer"
+							aria-label="Open menu"
+						>
+							<Menu size={22} strokeWidth={2} />
+						</button>
+						<img src="/logo.png" alt="Reserva" className="h-7 w-auto object-contain" />
+					</div>
+
+					{/* Desktop: Navigation */}
+					<nav className="hidden md:flex items-center gap-1">
 						{menuItems.map((item) => {
 							const Icon = item.icon;
 							const isActive =
@@ -440,12 +491,12 @@ function DashboardSidebar() {
 					</nav>
 
 					{/* Right Section - Actions & Profile */}
-					<div className="flex items-center gap-3">
+					<div className="flex items-center gap-1 md:gap-3">
 						{/* Support */}
 						<button
 							type="button"
 							onClick={() => setShowSupportModal(true)}
-							className="relative p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all cursor-pointer"
+							className="relative p-2 md:p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all cursor-pointer"
 							title="Support"
 						>
 							<span className="w-5 h-5 flex items-center justify-center">
@@ -455,7 +506,7 @@ function DashboardSidebar() {
 						{/* Notifications */}
 						<button
 							type="button"
-							className="relative p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all cursor-pointer"
+							className="relative p-2 md:p-2.5 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all cursor-pointer"
 							onClick={() => setShowNotificationModal(true)}
 						>
 							<Bell size={20} strokeWidth={2} />
@@ -464,12 +515,12 @@ function DashboardSidebar() {
 							)}
 						</button>
 
-						{/* Divider */}
-						<div className="w-px h-8 bg-gray-200"></div>
+						{/* Divider - desktop only */}
+						<div className="hidden md:block w-px h-8 bg-gray-200"></div>
 
 						{/* User Profile */}
-						<Link href="/dashboard/admin/profile" className="flex items-center gap-3 pl-2 rounded-full p-1 transition-all hover:bg-gray-100">
-							<div className="text-right">
+						<Link href="/dashboard/admin/profile" className="flex items-center gap-3 md:pl-2 rounded-full p-1 transition-all hover:bg-gray-100">
+							<div className="text-right hidden sm:block">
 								<p className="text-sm font-semibold text-gray-900 leading-tight">
 									{mounted ? user?.name || 'User' : ''}
 								</p>
@@ -479,9 +530,9 @@ function DashboardSidebar() {
 							</div>
 							<div className="relative">
 								{profileImage ? (
-									<img src={profileImage} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+									<img src={profileImage} alt="Profile" className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover" />
 								) : (
-									<div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+									<div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary flex items-center justify-center">
 										<span className="text-white font-semibold text-sm">
 											{mounted ? user?.name?.charAt(0) || 'U' : ''}
 										</span>
@@ -495,7 +546,7 @@ function DashboardSidebar() {
 						{mounted && (
 							<button
 								onClick={handleLogout}
-								className="p-2.5 rounded-full text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all ml-1 cursor-pointer"
+								className="hidden md:inline-flex p-2.5 rounded-full text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all ml-1 cursor-pointer"
 								title="Sign out"
 							>
 								<LogOut size={20} strokeWidth={2} />
@@ -505,13 +556,75 @@ function DashboardSidebar() {
 				</div>
 			</header>
 
+			{/* Mobile section tabs (bookings/admin) below header */}
+			<MobileSectionTabs pathname={pathname} />
+
+			{/* Mobile drawer backdrop */}
+			{mobileNavOpen && (
+				<div
+					className="fixed inset-0 bg-black/40 z-40 md:hidden"
+					onClick={() => setMobileNavOpen(false)}
+					aria-hidden
+				/>
+			)}
+
 			{/* Sidebar */}
-			<aside className="fixed left-0 top-0 w-66 bg-[#0a0a0a] h-screen flex flex-col border-r border-white/10 z-50">
-				<div className="px-4 pb-4 pt-6">
+			<aside
+				className={`fixed left-0 top-0 w-72 md:w-66 bg-[#0a0a0a] h-screen flex flex-col border-r border-white/10 z-50 transform transition-transform duration-300 ease-out md:translate-x-0 ${
+					mobileNavOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+				}`}
+			>
+				<div className="px-4 pb-4 pt-6 relative">
 					<div className="flex items-center justify-center w-full">
 						<img src="/logo.png" alt="Reserva" className="h-9 w-auto object-contain brightness-0 invert" />
 					</div>
+					<button
+						type="button"
+						onClick={() => setMobileNavOpen(false)}
+						className="md:hidden absolute right-3 top-5 p-1.5 rounded-full text-white/60 hover:bg-white/10 hover:text-white cursor-pointer"
+						aria-label="Close menu"
+					>
+						<X size={20} />
+					</button>
 				</div>
+
+				{/* Mobile-only top-level section nav */}
+				<nav className="md:hidden px-4 pb-3 mb-1 space-y-1.5 border-b border-white/10">
+					{menuItems.map((item) => {
+						const Icon = item.icon;
+						const isActive =
+							(item.href === '/dashboard/agenda' && (pathname === '/dashboard' || pathname?.startsWith('/dashboard/agenda'))) ||
+							(item.href === '/dashboard/bookings' && (pathname?.startsWith('/dashboard/bookings') || pathname?.startsWith('/dashboard/clients'))) ||
+							(item.href === '/dashboard/cash-desk' && pathname?.startsWith('/dashboard/cash-desk')) ||
+							(item.href === '/dashboard/admin' && pathname?.startsWith('/dashboard/admin')) ||
+							pathname === item.href;
+						return (
+							<Link
+								key={item.href}
+								href={item.href}
+								aria-current={isActive ? 'page' : undefined}
+								className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold cursor-pointer transition-colors ${
+									isActive
+										? 'bg-primary text-primary-foreground'
+										: 'text-white/70 hover:bg-white/10 hover:text-white'
+								}`}
+							>
+								<Icon size={16} strokeWidth={2.5} />
+								<span>{item.name}</span>
+							</Link>
+						);
+					})}
+					{mounted && (
+						<button
+							type="button"
+							onClick={handleLogout}
+							className="flex w-full items-center gap-2 px-3 py-2 rounded-full text-sm font-semibold text-white/70 hover:bg-red-500/15 hover:text-red-300 cursor-pointer transition-colors"
+						>
+							<LogOut size={16} strokeWidth={2.5} />
+							<span>Sign out</span>
+						</button>
+					)}
+				</nav>
 
 				{getSidebarContent()}
 				<SidebarClock />
@@ -519,12 +632,12 @@ function DashboardSidebar() {
 
 			{showSupportModal && (
 				<div
-					className="fixed inset-0 z-[70] flex items-center justify-center bg-black/35 p-4"
+					className="fixed inset-0 z-[70] flex items-center justify-center bg-black/35 p-3 md:p-4"
 					onClick={() => setShowSupportModal(false)}
 					role="presentation"
 				>
 					<div
-						className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl"
+						className="w-full max-w-md max-h-[calc(100vh-1.5rem)] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-5 md:p-6 shadow-xl"
 						onClick={(e) => e.stopPropagation()}
 						role="dialog"
 						aria-labelledby="support-modal-title"
@@ -614,12 +727,12 @@ function DashboardSidebar() {
 
 			{showNotificationModal && (
 				<div
-					className="fixed inset-0 z-[70] flex items-center justify-center bg-black/35 p-4"
+					className="fixed inset-0 z-[70] flex items-center justify-center bg-black/35 p-3 md:p-4"
 					onClick={() => setShowNotificationModal(false)}
 					role="presentation"
 				>
 					<div
-						className="flex w-full max-w-lg max-h-[min(85vh,640px)] flex-col rounded-xl border border-neutral-200 bg-white shadow-xl"
+						className="flex w-full max-w-lg max-h-[min(90vh,640px)] flex-col rounded-xl border border-neutral-200 bg-white shadow-xl"
 						onClick={(e) => e.stopPropagation()}
 						role="dialog"
 						aria-labelledby="notifications-modal-title"
@@ -733,9 +846,6 @@ function DashboardSidebar() {
 				</div>
 			)}
 
-			{/* Main Content Wrapper to prevent overlap */}
-			<div className="ml-66">
-			</div>
 		</>
 	);
 }
@@ -754,7 +864,7 @@ export default function DashboardLayout({
             .sidebar { display: none !important; }
           }
         `}</style>
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 md:p-8 md:ml-66 min-w-0">
           {children}
         </main>
       </div>

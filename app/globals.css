@@ -332,6 +332,30 @@ input[type="password"] {
   display: none;
 }
 
+/* Mobile horizontal-scroll hint: subtle right-edge fade indicating more content. */
+.scroll-hint {
+  position: relative;
+}
+
+.scroll-hint::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
+  pointer-events: none;
+  border-top-right-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+@media (min-width: 768px) {
+  .scroll-hint::after {
+    display: none;
+  }
+}
+
 /* Blob hover button */
 .btn-blob {
   position: relative;

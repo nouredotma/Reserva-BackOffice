@@ -119,14 +119,14 @@ export default function ReviewsPage() {
         .animate-slideUp { animation: slideUp 0.4s ease-out; }
       `}</style>
 
-      <div className="mb-8 pt-20 animate-slideUp">
+      <div className="mb-5 md:mb-8 pt-32 md:pt-20 animate-slideUp">
         <div>
-          <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Reviews</h1>
-          <p className="text-sm text-neutral-500">Moderation, published feedback, hidden reviews, rules, and statistics in one place.</p>
+          <h1 className="mb-2 text-2xl md:text-5xl font-light tracking-tight text-gray-900">Reviews</h1>
+          <p className="text-xs md:text-sm text-neutral-500">Moderation, published feedback, hidden reviews, rules, and statistics in one place.</p>
         </div>
       </div>
 
-      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5 animate-fadeIn">
+      <div className="mb-8 grid gap-4 grid-cols-2 md:grid-cols-2 xl:grid-cols-5 animate-fadeIn">
         {[
           { label: 'Total reviews', value: reviews.length, icon: MessageSquare },
           { label: 'Pending', value: reviews.filter((review) => review.status === 'pending').length, icon: AlertCircle },
@@ -136,19 +136,19 @@ export default function ReviewsPage() {
         ].map((item) => {
           const Icon = item.icon;
           return (
-            <div key={item.label} className="rounded-xl border border-neutral-200 bg-white p-6">
+            <div key={item.label} className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
               <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <Icon size={18} className="text-gray-400" />
               </div>
               <p className="mb-1 text-xs text-gray-400">{item.label}</p>
-              <p className="text-3xl font-light text-gray-900">{item.value}</p>
+              <p className="text-2xl md:text-3xl font-light text-gray-900">{item.value}</p>
             </div>
           );
         })}
       </div>
 
-      <div className="mb-6 flex flex-wrap items-center gap-3 animate-fadeIn">
-        <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
+      <div className="mb-6 flex flex-col items-start md:flex-row md:flex-wrap md:items-center gap-3 animate-fadeIn">
+        <div className="flex h-10 w-full md:min-w-0 md:flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
           <Search size={16} className="shrink-0 text-gray-400" />
           <input
             type="text"
@@ -158,7 +158,7 @@ export default function ReviewsPage() {
             className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
           />
         </div>
-        <div className={filterTrackClass} role="group" aria-label="Review status">
+        <div className={`${filterTrackClass} max-w-full overflow-x-auto`} role="group" aria-label="Review status">
           {reviewStatusOptions.map((status) => (
             <button
               key={status.value}
@@ -174,7 +174,7 @@ export default function ReviewsPage() {
 
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 animate-fadeIn">
         {filteredReviews.map((review) => (
-          <div key={review.id} className="rounded-xl border border-neutral-200 bg-white p-6">
+          <div key={review.id} className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-900">
@@ -228,8 +228,8 @@ export default function ReviewsPage() {
         ))}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_1fr] animate-fadeIn">
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+      <div className="grid gap-6 md:grid-cols-2 animate-fadeIn">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-light text-gray-900">Moderation rules</h2>
@@ -252,7 +252,7 @@ export default function ReviewsPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-light text-gray-900">Review statistics</h2>

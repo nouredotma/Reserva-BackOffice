@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/select';
 
 const selectFilterClassName =
-  'h-10 w-[180px] cursor-pointer rounded-full border border-neutral-200 bg-white px-4 text-xs font-medium';
+  'h-10 w-full md:w-[180px] cursor-pointer rounded-full border border-neutral-200 bg-white px-4 text-xs font-medium';
 
 const modeIcons: Record<BookingMode, typeof Calendar> = {
   appointment: Clock,
@@ -102,7 +102,7 @@ export default function BookingsPage() {
 
     return (
       <div className="min-h-screen">
-        <div className="mb-8 pt-20">
+        <div className="mb-5 md:mb-8 pt-32 md:pt-20">
           <button
             type="button"
             onClick={closeDetail}
@@ -111,17 +111,17 @@ export default function BookingsPage() {
             <ArrowLeft size={16} />
             Back to bookings
           </button>
-          <div className="flex flex-wrap items-start justify-between gap-5">
-            <div>
+          <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-5">
+            <div className="min-w-0">
               <p className="mb-2 flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-gray-400">
                 <ModeIcon size={14} />
                 {bookingModeLabels[selected.mode]}
               </p>
-              <h1 className="text-5xl font-light tracking-tight text-gray-900">{selected.serviceName}</h1>
+              <h1 className="text-2xl md:text-5xl font-light tracking-tight text-gray-900 break-words">{selected.serviceName}</h1>
               <p className="mt-2 text-sm text-gray-400">{selected.id}</p>
             </div>
             <span
-              className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusStyles[selected.status] ?? 'bg-gray-100 text-gray-600'}`}
+              className={`self-start rounded-full px-3 py-1 text-xs font-medium capitalize ${statusStyles[selected.status] ?? 'bg-gray-100 text-gray-600'}`}
             >
               {formatStatus(selected.status)}
             </span>
@@ -129,7 +129,7 @@ export default function BookingsPage() {
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-          <section className="rounded-xl border border-neutral-200 bg-white p-6">
+          <section className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <Calendar size={18} className="text-gray-500" />
@@ -173,7 +173,7 @@ export default function BookingsPage() {
             )}
           </section>
 
-          <aside className="rounded-xl border border-neutral-200 bg-white p-6">
+          <aside className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
                 <span className="text-sm font-semibold text-primary-foreground">
@@ -208,14 +208,14 @@ export default function BookingsPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="mb-10 pt-20">
-        <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Bookings</h1>
-        <p className="text-sm text-gray-400">
+      <div className="mb-5 md:mb-10 pt-32 md:pt-20">
+        <h1 className="mb-2 text-2xl md:text-5xl font-light tracking-tight text-gray-900">Bookings</h1>
+        <p className="text-xs md:text-sm text-gray-400">
           All client bookings across appointment, reservation, ticket, and request modes.
         </p>
       </div>
 
-      <div className="mb-6 flex flex-wrap items-center gap-3">
+      <div className="mb-6 flex flex-col items-start md:flex-row md:flex-wrap md:items-center gap-3">
         <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
           <Search size={16} className="shrink-0 text-gray-400" />
           <input
@@ -242,7 +242,7 @@ export default function BookingsPage() {
           </SelectContent>
         </Select>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className={`${selectFilterClassName} w-[160px]`}>
+          <SelectTrigger className={`${selectFilterClassName} md:w-[160px]`}>
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -269,7 +269,7 @@ export default function BookingsPage() {
       </div>
 
       <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-        <div className="overflow-x-auto">
+        <div className="scroll-hint overflow-x-auto">
           <table className="w-full min-w-[920px]">
             <thead className="border-b border-gray-100 bg-gray-50">
               <tr>

@@ -229,6 +229,12 @@ const StatistiquesPage = () => {
   const [draggedCell, setDraggedCell] = useState<{ day: string; time: string } | null>(null);
   const [occupancyData, setOccupancyData] = useState<OccupancyData>(sampleOccupancyData);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 640) {
+      setShowToday(true);
+    }
+  }, []);
+
   const monthWeeks = useMemo(
     () => getMonthWeeks(currentMonth.getFullYear(), currentMonth.getMonth()),
     [currentMonth],
@@ -360,29 +366,29 @@ const StatistiquesPage = () => {
         }
       `}</style>
 
-      <div className="mb-8 pt-20">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-6">
+      <div className="mb-5 md:mb-8 pt-32 md:pt-20">
+        <div className="mb-6 flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6">
           <div>
-            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Occupancy</h1>
-            <p className="text-sm text-neutral-500">
+            <h1 className="mb-2 text-2xl md:text-5xl font-light tracking-tight text-gray-900">Occupancy</h1>
+            <p className="text-xs md:text-sm text-neutral-500">
               Browse by month and week, or jump to today for a single-day view
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 no-print">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 no-print">
             <button type="button" onClick={exportData} className={exportButtonClass}>
               <Download size={14} />
-              Export
+              <span className="hidden sm:inline">Export</span>
             </button>
             <button type="button" onClick={printReport} className={printButtonClass}>
               <Printer size={14} />
-              Print
+              <span className="hidden sm:inline">Print</span>
             </button>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 no-print">
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-4 no-print">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3">
             <div className={controlTrackClass}>
               <button
                 type="button"
@@ -392,7 +398,7 @@ const StatistiquesPage = () => {
               >
                 <ChevronLeft size={16} />
               </button>
-              <span className="flex h-8 min-w-[9rem] items-center justify-center px-2 text-xs font-medium text-gray-900">
+              <span className="flex h-8 min-w-0 md:min-w-[9rem] items-center justify-center px-2 text-xs font-medium text-gray-900 whitespace-nowrap">
                 {monthLabel}
               </span>
               <button
@@ -411,22 +417,24 @@ const StatistiquesPage = () => {
             </div>
           </div>
 
-          <SlidingPillTabs
-            value={String(weekIndex)}
-            onChange={(value) => {
-              setShowToday(false);
-              setWeekIndex(Number(value));
-            }}
-            options={weekOptions}
-            ariaLabel="Week of month"
-            dataAttribute="week"
-          />
+          <div className="max-w-full overflow-x-auto">
+            <SlidingPillTabs
+              value={String(weekIndex)}
+              onChange={(value) => {
+                setShowToday(false);
+                setWeekIndex(Number(value));
+              }}
+              options={weekOptions}
+              ariaLabel="Week of month"
+              dataAttribute="week"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="mb-8 grid grid-cols-4 gap-4">
-        <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
-          <div className="mb-6 flex items-start justify-between">
+      <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="group rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
+          <div className="mb-4 md:mb-6 flex items-start justify-between gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
               <TrendingUp size={20} className="text-gray-400" />
             </div>
@@ -436,11 +444,11 @@ const StatistiquesPage = () => {
             </div>
           </div>
           <p className="mb-1 text-xs font-medium text-gray-500">Average occupancy rate</p>
-          <p className="text-3xl font-light text-gray-900">{stats.average}%</p>
+          <p className="text-2xl md:text-3xl font-light text-gray-900">{stats.average}%</p>
         </div>
 
-        <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
-          <div className="mb-6 flex items-start justify-between">
+        <div className="group rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
+          <div className="mb-4 md:mb-6 flex items-start justify-between gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
               <Activity size={20} className="text-gray-400" />
             </div>
@@ -450,11 +458,11 @@ const StatistiquesPage = () => {
             </div>
           </div>
           <p className="mb-1 text-xs font-medium text-gray-500">Taux maximum atteint</p>
-          <p className="text-3xl font-light text-gray-900">{stats.peak}%</p>
+          <p className="text-2xl md:text-3xl font-light text-gray-900">{stats.peak}%</p>
         </div>
 
-        <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
-          <div className="mb-6 flex items-start justify-between">
+        <div className="group rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
+          <div className="mb-4 md:mb-6 flex items-start justify-between gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
               <Calendar size={20} className="text-gray-400" />
             </div>
@@ -464,11 +472,11 @@ const StatistiquesPage = () => {
             </div>
           </div>
           <p className="mb-1 text-xs font-medium text-gray-500">Busiest day</p>
-          <p className="text-3xl font-light text-gray-900">{stats.peakDay || '—'}</p>
+          <p className="text-2xl md:text-3xl font-light text-gray-900">{stats.peakDay || '—'}</p>
         </div>
 
-        <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
-          <div className="mb-6 flex items-start justify-between">
+        <div className="group rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
+          <div className="mb-4 md:mb-6 flex items-start justify-between gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
               <BarChart3 size={20} className="text-gray-400" />
             </div>
@@ -478,17 +486,17 @@ const StatistiquesPage = () => {
             </div>
           </div>
           <p className="mb-1 text-xs font-medium text-gray-500">Most requested time slot</p>
-          <p className="text-3xl font-light text-gray-900">{stats.peakTime || '—'}</p>
+          <p className="text-2xl md:text-3xl font-light text-gray-900">{stats.peakTime || '—'}</p>
         </div>
       </div>
 
       <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-        <div className="border-b border-gray-100 px-6 py-4">
+        <div className="border-b border-gray-100 px-4 md:px-6 py-4">
           <h3 className="text-sm font-medium text-gray-900">{heatmapTitle}</h3>
         </div>
 
-        <div className="overflow-x-auto">
-          <div className="min-w-[480px] p-6">
+        <div className="scroll-hint overflow-x-auto">
+          <div className="min-w-[480px] p-4 md:p-6">
             <div className="mb-2 grid gap-2" style={{ gridTemplateColumns }}>
               <div />
               {heatmapColumns.map((column) => (
@@ -541,7 +549,7 @@ const StatistiquesPage = () => {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-center gap-6 text-xs text-gray-500 no-print">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-6 text-xs text-gray-500 no-print">
         <div className="flex items-center gap-2">
           <div className="h-4 w-4 rounded bg-gray-100" />
           <span>0%</span>

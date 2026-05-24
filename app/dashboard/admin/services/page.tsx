@@ -229,18 +229,18 @@ function SectionRow({
   actions?: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-neutral-200 bg-white p-6">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
+    <section className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-50">
             <Icon size={18} className="text-gray-500" />
           </div>
-          <div>
-            <h2 className="text-xl font-light text-gray-900">{title}</h2>
+          <div className="min-w-0">
+            <h2 className="text-lg md:text-xl font-light text-gray-900">{title}</h2>
             <p className="text-sm text-gray-400">{description}</p>
           </div>
         </div>
-        {actions}
+        {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
       </div>
       {children}
     </section>
@@ -370,25 +370,25 @@ export default function ServicesManagementPage() {
 
   return (
     <div className="min-h-screen">
-      <div className="mb-10 pt-20">
-        <div className="flex flex-wrap items-center justify-between gap-6">
+      <div className="mb-5 md:mb-10 pt-32 md:pt-20">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6">
           <div>
-            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Services</h1>
-            <p className="text-sm text-neutral-500">
+            <h1 className="mb-2 text-2xl md:text-5xl font-light tracking-tight text-gray-900">Services</h1>
+            <p className="text-xs md:text-sm text-neutral-500">
               Bookable units for Le Jardin — table reservations, private dining, and experiences.
             </p>
           </div>
           <button
             type="button"
             onClick={addService}
-            className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-primary bg-primary px-4 text-xs font-medium text-primary-foreground transition-colors hover:border-[var(--reserva-ink)] hover:bg-[var(--reserva-ink)] hover:text-white md:text-sm"
+            className="self-start md:self-auto flex h-10 cursor-pointer items-center gap-2 rounded-full border border-primary bg-primary px-4 text-xs font-medium text-primary-foreground transition-colors hover:border-[var(--reserva-ink)] hover:bg-[var(--reserva-ink)] hover:text-white md:text-sm"
           >
             <Plus size={14} />
             New service
           </button>
         </div>
-        <div className="mt-6 flex items-center gap-3">
-          <div className="flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
+        <div className="mt-6 flex flex-col items-start md:flex-row md:items-center gap-3">
+          <div className="flex h-10 w-full md:min-w-0 md:flex-1 items-center gap-2 rounded-full border border-neutral-200 bg-white px-3">
             <Search size={16} className="shrink-0 text-gray-400" />
             <input
               value={query}
@@ -397,13 +397,13 @@ export default function ServicesManagementPage() {
               className="w-full bg-transparent text-sm outline-none placeholder:text-gray-400"
             />
           </div>
-          <div className="shrink-0">
+          <div className="md:shrink-0 max-w-full overflow-x-auto">
             <ServiceStatusFilterControl value={statusFilter} onChange={setStatusFilter} />
           </div>
         </div>
       </div>
 
-      <div className="mb-8 grid gap-4 md:grid-cols-3">
+      <div className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-3">
         {[
           { icon: Settings2, label: 'Active services', value: stats.active.toString() },
           { icon: Star, label: 'Featured', value: stats.featured.toString() },
@@ -416,7 +416,7 @@ export default function ServicesManagementPage() {
                 <Icon size={18} className="text-gray-500" />
               </div>
               <p className="mb-1 text-xs font-medium text-gray-400">{item.label}</p>
-              <p className="text-3xl font-light text-gray-900">{item.value}</p>
+              <p className="text-2xl md:text-3xl font-light text-gray-900">{item.value}</p>
             </div>
           );
         })}
@@ -424,7 +424,7 @@ export default function ServicesManagementPage() {
 
       {!detailOpen ? (
         <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
-          <div className="overflow-x-auto">
+          <div className="scroll-hint overflow-x-auto">
             <table className="w-full min-w-[920px]">
               <thead className="border-b border-gray-100 bg-gray-50">
                 <tr>

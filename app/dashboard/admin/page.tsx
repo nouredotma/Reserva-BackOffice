@@ -262,7 +262,7 @@ function KpiCard({
   const TrendIcon = tone === 'up' ? TrendingUp : ArrowDownRight;
 
   return (
-    <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+    <div className="group rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 transition-colors group-hover:bg-gray-100">
           <Icon size={18} className="text-gray-400" />
@@ -273,7 +273,7 @@ function KpiCard({
         </div>
       </div>
       <p className="mb-1 text-xs text-gray-400">{label}</p>
-      <p className="text-3xl font-light text-gray-900">{value}</p>
+      <p className="text-2xl md:text-3xl font-light text-gray-900">{value}</p>
     </div>
   );
 }
@@ -340,14 +340,14 @@ function DonutChartCard({ data, subtitle, title }: { data: DonutDatum[]; subtitl
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+    <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
       <div className="mb-4">
         <h3 className="mb-1 text-sm font-medium text-gray-900">{title}</h3>
         <p className="text-xs text-neutral-500">{subtitle}</p>
       </div>
 
-      <div className="relative">
-        <ReResponsiveContainer width="100%" height={220}>
+      <div className="relative h-[180px] md:h-[220px] min-h-0">
+        <ReResponsiveContainer width="100%" height="100%" minHeight={180}>
           <PieChart>
             <RePie data={data} cx="50%" cy="50%" innerRadius={70} outerRadius={90} paddingAngle={2} dataKey="value" startAngle={90} endAngle={450}>
               {data.map((entry) => (
@@ -370,7 +370,7 @@ function DonutChartCard({ data, subtitle, title }: { data: DonutDatum[]; subtitl
           </PieChart>
         </ReResponsiveContainer>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-          <p className="text-3xl font-light text-gray-900">{total.toFixed(0)}%</p>
+          <p className="text-2xl md:text-3xl font-light text-gray-900">{total.toFixed(0)}%</p>
         </div>
       </div>
 
@@ -432,26 +432,28 @@ export default function AdminOverviewPage() {
     <div className="min-h-screen p-0">
       <style>{`.accent-color { color: #0A0A0A; }`}</style>
 
-      <div className="mb-8 pt-20">
-        <div className="flex flex-wrap items-center justify-between gap-6">
+      <div className="mb-5 md:mb-8 pt-32 md:pt-20">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6">
           <div>
-            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Admin overview</h1>
-            <p className="text-sm text-neutral-500">Performance overview</p>
+            <h1 className="mb-2 text-2xl md:text-5xl font-light tracking-tight text-gray-900">Admin overview</h1>
+            <p className="text-xs md:text-sm text-neutral-500">Performance overview</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <PeriodSegmentedControl value={timeFilter} onChange={setTimeFilter} />
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 max-w-full">
+            <div className="max-w-full overflow-x-auto">
+              <PeriodSegmentedControl value={timeFilter} onChange={setTimeFilter} />
+            </div>
             <button
               type="button"
-              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-3 sm:px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
             >
               <Download size={14} />
-              Export
+              <span className="hidden sm:inline">Export</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <div className="mb-8 grid gap-4 grid-cols-2 md:grid-cols-2 xl:grid-cols-5">
         <KpiCard icon={Calendar} label="Online bookings" value={currentData.onlineBookings.toString()} trend="+12%" />
         <KpiCard icon={Users} label="Total bookings" value={currentData.totalBookings.toString()} trend="+8%" />
         <KpiCard icon={BarChart3} label="Online rate" value={`${currentData.onlineRate}%`} trend="+15%" />
@@ -459,12 +461,13 @@ export default function AdminOverviewPage() {
         <KpiCard icon={CreditCard} label="Revenue" value={formatMoney(metrics.totalRevenue)} trend="+9%" />
       </div>
 
-      <div className="mb-8 rounded-xl border border-neutral-200 bg-white p-6">
+      <div className="mb-8 rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
         <div className="mb-6">
           <h2 className="mb-1 text-xl font-light text-gray-900">Bookings over time</h2>
           <p className="text-xs text-gray-400">Daily trend</p>
         </div>
-        <ReResponsiveContainer width="100%" height={320}>
+        <div className="h-[260px] md:h-[320px] min-h-0">
+        <ReResponsiveContainer width="100%" height="100%" minHeight={260}>
           <ReLineChart data={currentData.appointmentsTrend}>
             <ReCartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
             <ReXAxis dataKey="day" tick={{ fill: '#9ca3af', fontSize: 11 }} axisLine={{ stroke: '#f0f0f0' }} tickLine={false} />
@@ -474,7 +477,8 @@ export default function AdminOverviewPage() {
             <ReLine type="monotone" dataKey="online" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981', strokeWidth: 0, r: 3 }} name="Online" />
           </ReLineChart>
         </ReResponsiveContainer>
-        <div className="mt-4 flex items-center justify-center gap-8 border-t border-gray-100 pt-4">
+        </div>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-4 sm:gap-8 border-t border-gray-100 pt-4">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-gray-900" />
             <span className="text-xs text-gray-600">Walk-in / direct</span>
@@ -486,13 +490,14 @@ export default function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="mb-8 grid gap-6 xl:grid-cols-3">
-        <div className="rounded-xl border border-neutral-200 bg-white p-6 xl:col-span-2">
+      <div className="mb-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6 md:col-span-2 xl:col-span-2">
           <div className="mb-6">
             <h3 className="mb-1 text-sm font-medium text-gray-900">Revenue</h3>
             <p className="text-xs text-gray-400">Financial performance</p>
           </div>
-          <ReResponsiveContainer width="100%" height={240}>
+          <div className="h-[200px] md:h-[240px] min-h-0">
+          <ReResponsiveContainer width="100%" height="100%" minHeight={200}>
             <ReAreaChart data={currentData.revenueData}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -507,7 +512,8 @@ export default function AdminOverviewPage() {
               <ReArea type="monotone" dataKey="value" stroke="#FFC900" strokeWidth={2} fill="url(#colorRevenue)" />
             </ReAreaChart>
           </ReResponsiveContainer>
-          <div className="mt-4 grid grid-cols-3 gap-4 border-t border-gray-100 pt-4">
+          </div>
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4 border-t border-gray-100 pt-4">
             <div>
               <p className="mb-1 text-xs text-gray-400">Total</p>
               <p className="text-lg font-medium text-gray-900">{currentData.totalRevenue.toLocaleString()} MAD</p>
@@ -523,7 +529,7 @@ export default function AdminOverviewPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-6">
             <h3 className="mb-1 text-sm font-medium text-gray-900">Popular services</h3>
             <p className="text-xs text-gray-400">Breakdown by service</p>
@@ -555,8 +561,8 @@ export default function AdminOverviewPage() {
         <DonutChartCard data={serviceBookingData} subtitle="Complete service distribution" title="Total bookings by service" />
       </div>
 
-      <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+      <div className="mb-8 grid gap-4 grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">Cancellation rate</p>
             <div className="flex items-center gap-1 text-emerald-600">
@@ -567,7 +573,7 @@ export default function AdminOverviewPage() {
           <p className="mb-1 text-2xl font-light text-gray-900">{metrics.cancelled}</p>
           <p className="text-xs text-gray-500">Canceled reservations</p>
         </div>
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">No-shows</p>
             <div className="flex items-center gap-1 text-red-500">
@@ -578,7 +584,7 @@ export default function AdminOverviewPage() {
           <p className="mb-1 text-2xl font-light text-gray-900">{metrics.noShows}</p>
           <p className="text-xs text-gray-500">Clients absent</p>
         </div>
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">Average order value</p>
             <div className="flex items-center gap-1 text-emerald-600">
@@ -589,7 +595,7 @@ export default function AdminOverviewPage() {
           <p className="mb-1 text-2xl font-light text-gray-900">{formatMoney(currentData.avgRevenue)}</p>
           <p className="text-xs text-gray-500">Per booking</p>
         </div>
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="mb-4 flex items-center justify-between">
             <p className="text-xs text-gray-400">Average occupancy rate</p>
             <div className="flex items-center gap-1 text-emerald-600">

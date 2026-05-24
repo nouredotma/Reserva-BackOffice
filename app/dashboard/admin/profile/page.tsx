@@ -56,14 +56,14 @@ export default function AdminProfilePage() {
 
   return (
     <div className="min-h-screen">
-      <div className="mb-10 pt-20">
-        <div className="flex flex-wrap items-center justify-between gap-6">
+      <div className="mb-5 md:mb-10 pt-32 md:pt-20">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6">
           <div>
-            <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Admin profile</h1>
-            <p className="text-sm text-neutral-500">Owner account details used for the establishment back office.</p>
+            <h1 className="mb-2 text-2xl md:text-5xl font-light tracking-tight text-gray-900">Admin profile</h1>
+            <p className="text-xs md:text-sm text-neutral-500">Owner account details used for the establishment back office.</p>
           </div>
           {saved && (
-            <div className="flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
+            <div className="self-start flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
               <CheckCircle2 size={16} />
               Saved
             </div>
@@ -71,8 +71,8 @@ export default function AdminProfilePage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[360px_1fr]">
-        <div className="rounded-xl border border-neutral-200 bg-white p-6">
+      <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[300px_1fr] xl:grid-cols-[360px_1fr]">
+        <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
           <div className="flex flex-col items-center text-center">
             <div className="relative mb-5 h-32 w-32 overflow-hidden rounded-full bg-gray-100">
               {avatarPreview ? (
@@ -112,7 +112,7 @@ export default function AdminProfilePage() {
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-xl border border-neutral-200 bg-white p-6">
+          <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <User size={18} className="text-gray-500" />
@@ -155,7 +155,7 @@ export default function AdminProfilePage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-neutral-200 bg-white p-6">
+          <div className="rounded-xl border border-neutral-200 bg-white p-4 md:p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50">
                 <KeyRound size={18} className="text-gray-500" />

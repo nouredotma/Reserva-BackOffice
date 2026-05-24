@@ -76,21 +76,21 @@ function CollapsibleSection({
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="flex w-full cursor-pointer items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-neutral-50/80"
+        className="flex w-full cursor-pointer items-center justify-between gap-4 px-4 md:px-6 py-4 md:py-5 text-left transition-colors hover:bg-neutral-50/80"
         aria-expanded={open}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-100">
             <Icon size={18} className="text-gray-500" />
           </div>
-          <h2 className="text-lg font-medium text-gray-900">{title}</h2>
+          <h2 className="text-base md:text-lg font-medium text-gray-900 truncate">{title}</h2>
         </div>
         <ChevronDown
           size={20}
           className={`shrink-0 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
         />
       </button>
-      {open ? <div className="border-t border-neutral-100 px-6 pb-6 pt-5">{children}</div> : null}
+      {open ? <div className="border-t border-neutral-100 px-4 md:px-6 pb-5 md:pb-6 pt-4 md:pt-5">{children}</div> : null}
     </section>
   );
 }
@@ -325,9 +325,9 @@ export default function EstablishmentManagementPage() {
 
   return (
     <div className="min-h-screen pb-16">
-      <div className="mb-10 pt-20">
-        <h1 className="mb-2 text-5xl font-light tracking-tight text-gray-900">Establishment</h1>
-        <p className="text-sm text-neutral-500">
+      <div className="mb-5 md:mb-10 pt-32 md:pt-20">
+        <h1 className="mb-2 text-2xl md:text-5xl font-light tracking-tight text-gray-900">Establishment</h1>
+        <p className="text-xs md:text-sm text-neutral-500">
           Manage your {ownerCategory?.label?.toLowerCase() ?? 'venue'} public profile and listing details.
         </p>
       </div>
@@ -335,7 +335,7 @@ export default function EstablishmentManagementPage() {
       <div className="space-y-4">
         <CollapsibleSection title="Photos" icon={ImageIcon} defaultOpen>
           <div className="space-y-5">
-            <div className="relative aspect-video w-full max-w-md overflow-hidden rounded-xl bg-neutral-100">
+            <div className="relative aspect-video w-full md:max-w-md overflow-hidden rounded-xl bg-neutral-100">
               {hasCover ? (
                 <img
                   src={coverPreview}
@@ -590,14 +590,14 @@ export default function EstablishmentManagementPage() {
           </div>
         </CollapsibleSection>
 
-        <div className="flex flex-wrap items-center justify-end gap-3 border-t border-neutral-100 pt-8">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-3 border-t border-neutral-100 pt-8">
           {saved ? (
-            <span className="flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
+            <span className="flex items-center justify-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700">
               <CheckCircle2 size={16} />
               Saved
             </span>
           ) : null}
-          <Button type="button" size="lg" onClick={saveProfile} className="cursor-pointer">
+          <Button type="button" size="lg" onClick={saveProfile} className="cursor-pointer w-full sm:w-auto">
             <Save size={16} />
             Save establishment
           </Button>

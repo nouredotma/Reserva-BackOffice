@@ -273,35 +273,39 @@ export default function InvoicesPage() {
 
 
 
-      <div className="mb-8 pt-20">
+      <div className="mb-5 md:mb-8 pt-32 md:pt-20">
 
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-6">
+        <div className="mb-6 flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-6">
 
           <div>
 
-            <h1 className="text-5xl font-light tracking-tight text-gray-900">Invoices</h1>
+            <h1 className="text-2xl md:text-5xl font-light tracking-tight text-gray-900">Invoices</h1>
 
-            <p className="mt-2 text-sm text-neutral-500">Manage and review all invoices</p>
+            <p className="mt-2 text-xs md:text-sm text-neutral-500">Manage and review all invoices</p>
 
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 no-print">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3 no-print">
 
             <button type="button" onClick={createInvoice} className={createInvoiceButtonClass}>
 
               <Plus size={14} />
 
-              Create invoice
+              <span className="hidden sm:inline">Create invoice</span>
+
+              <span className="sm:hidden">New</span>
 
             </button>
 
-            <InvoiceStatusFilter value={filterStatus} onChange={setFilterStatus} />
+            <div className="max-w-full overflow-x-auto">
+              <InvoiceStatusFilter value={filterStatus} onChange={setFilterStatus} />
+            </div>
 
             <button type="button" onClick={exportData} className={exportButtonClass}>
 
               <Download size={14} />
 
-              Export
+              <span className="hidden sm:inline">Export</span>
 
             </button>
 
@@ -309,7 +313,7 @@ export default function InvoicesPage() {
 
               <Printer size={14} />
 
-              Print
+              <span className="hidden sm:inline">Print</span>
 
             </button>
 
@@ -319,9 +323,9 @@ export default function InvoicesPage() {
 
 
 
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <div className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-3">
 
-          <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+          <div className="group rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
 
             <div className="mb-6 flex items-start justify-between">
 
@@ -343,11 +347,11 @@ export default function InvoicesPage() {
 
             <p className="mb-1 text-xs font-medium text-gray-500">Total invoices</p>
 
-            <p className="text-3xl font-light text-gray-900">{invoiceList.length}</p>
+            <p className="text-2xl md:text-3xl font-light text-gray-900">{invoiceList.length}</p>
 
           </div>
 
-          <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+          <div className="group rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
 
             <div className="mb-6 flex items-start justify-between">
 
@@ -369,11 +373,11 @@ export default function InvoicesPage() {
 
             <p className="mb-1 text-xs font-medium text-gray-500">Paid invoices</p>
 
-            <p className="text-3xl font-light text-gray-900">{paidCount}/{invoiceList.length}</p>
+            <p className="text-2xl md:text-3xl font-light text-gray-900">{paidCount}/{invoiceList.length}</p>
 
           </div>
 
-          <div className="group rounded-xl border border-neutral-200 bg-white p-6 transition-all">
+          <div className="group rounded-xl border border-neutral-200 bg-white p-4 md:p-6 transition-all">
 
             <div className="mb-6 flex items-start justify-between">
 
@@ -395,7 +399,7 @@ export default function InvoicesPage() {
 
             <p className="mb-1 text-xs font-medium text-gray-500">Total amount</p>
 
-            <p className="text-3xl font-light text-gray-900">{totalAmount.toFixed(2)} EUR</p>
+            <p className="text-2xl md:text-3xl font-light text-gray-900">{totalAmount.toFixed(2)} EUR</p>
 
           </div>
 
@@ -407,9 +411,9 @@ export default function InvoicesPage() {
 
       <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
 
-        <div className="overflow-x-auto">
+        <div className="scroll-hint overflow-x-auto">
 
-          <table className="w-full">
+          <table className="w-full min-w-[680px]">
 
             <thead className="border-b border-gray-100 bg-gray-50">
 

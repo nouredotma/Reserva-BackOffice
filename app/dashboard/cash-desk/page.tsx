@@ -160,28 +160,28 @@ export default function CashDeskPage() {
       `}</style>
 
       {/* Header */}
-      <div className="mb-8 pt-20 animate-slideUp">
-        <div className="flex items-center justify-between">
+      <div className="mb-5 md:mb-8 pt-20 animate-slideUp">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-5xl font-light text-gray-900 tracking-tight mb-2">Cash Desk</h1>
-            <p className="text-sm text-gray-400">Manage transactions and cash flow</p>
+            <h1 className="text-2xl md:text-5xl font-light text-gray-900 tracking-tight mb-2">Cash Desk</h1>
+            <p className="text-xs md:text-sm text-gray-400">Manage transactions and cash flow</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3">
             <button
               type="button"
               onClick={exportToCSV}
-              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-3 sm:px-4 text-xs font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
             >
               <Download size={14} />
-              Exporter
+              <span className="hidden sm:inline">Exporter</span>
             </button>
             <button
               type="button"
               onClick={() => openTransactionModal('Sale')}
-              className="flex h-10 cursor-pointer items-center gap-2 rounded-full bg-primary px-4 text-xs font-medium text-primary-foreground transition-colors hover:bg-[var(--reserva-ink)] hover:text-white"
+              className="flex h-10 cursor-pointer items-center gap-2 rounded-full bg-primary px-3 sm:px-4 text-xs font-medium text-primary-foreground transition-colors hover:bg-[var(--reserva-ink)] hover:text-white"
             >
               <Plus size={14} />
-              Add
+              <span className="hidden sm:inline">Add</span>
             </button>
           </div>
         </div>
@@ -189,42 +189,42 @@ export default function CashDeskPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8 animate-fadeIn">
-        <div className="bg-white rounded-xl border border-neutral-200 p-6">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Sales</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalSales} MAD</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-6">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Cash</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalCash} MAD</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-6">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <div className="flex items-center gap-2 mb-2">
             <CreditCard className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Card</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalCard} MAD</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-6">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <div className="flex items-center gap-2 mb-2">
             <RefreshCcw className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Refunds</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalRefunds} MAD</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-6">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Deposits</span>
           </div>
           <p className="text-2xl font-light text-gray-900">{totalDeposits} MAD</p>
         </div>
-        <div className="bg-white rounded-xl border border-neutral-200 p-6">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign className="text-gray-400" size={18} />
             <span className="text-xs text-gray-400">Withdrawals</span>
@@ -234,9 +234,9 @@ export default function CashDeskPage() {
       </div>
 
       {/* Analytics Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 animate-fadeIn">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 animate-fadeIn">
         {/* Daily Summary */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-neutral-200 p-6">
+        <div className="md:col-span-2 bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-medium text-gray-900">Daily summary</h3>
             <Calendar className="text-gray-400" size={18} />
@@ -270,7 +270,7 @@ export default function CashDeskPage() {
         </div>
 
         {/* Payment Methods Distribution */}
-        <div className="bg-white rounded-xl border border-neutral-200 p-6">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 md:p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-sm font-medium text-gray-900">Payment breakdown</h3>
             <Wallet className="text-gray-400" size={18} />
@@ -334,8 +334,8 @@ export default function CashDeskPage() {
 
       {/* Transactions Table */}
       <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white animate-fadeIn">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="scroll-hint overflow-x-auto">
+          <table className="w-full min-w-[760px]">
             <thead className="border-b border-gray-100 bg-gray-50">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-normal tracking-wider text-gray-500">Type</th>
@@ -394,9 +394,9 @@ export default function CashDeskPage() {
 
       {/* Modal Add Transaction */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-xl border border-neutral-200 max-w-lg w-full max-h-[90vh] overflow-y-auto animate-slideUp">
-            <div className="sticky top-0 bg-white border-b border-gray-100 px-8 py-6 flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4 animate-fadeIn">
+          <div className="bg-white rounded-xl border border-neutral-200 max-w-lg w-full max-h-[calc(100vh-1.5rem)] md:max-h-[90vh] overflow-y-auto animate-slideUp">
+            <div className="sticky top-0 bg-white border-b border-gray-100 px-5 md:px-8 py-5 md:py-6 flex items-center justify-between">
               <h2 className="text-2xl font-light text-gray-900">New transaction</h2>
               <button
                 type="button"
@@ -406,7 +406,7 @@ export default function CashDeskPage() {
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleAddTransaction} className="px-8 py-6">
+            <form onSubmit={handleAddTransaction} className="px-5 md:px-8 py-5 md:py-6">
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
